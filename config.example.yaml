@@ -1,0 +1,31 @@
+app:
+  name: lucy_cashier
+  debug: true
+
+server:
+  address: 9090
+
+context:
+  timeout: 5
+
+mariadb:
+  host: localhost
+  port: 3306
+  user: root
+  pass: local1234
+  name: lucy_local
+
+mongo:
+  host: localhost
+  port: 27017
+  user:
+  pass:
+  name: lucy_local
+
+jwt:
+  secret: JwtSecretBroh
+  lifetime: 60
+
+admin:
+  username: vian
+  password: 12345678
