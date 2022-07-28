@@ -58,28 +58,28 @@ func InitMongoDatabase() *mongo.Client {
 	dbPort := App.Config.GetString(`mongo.port`)
 	dbUser := App.Config.GetString(`mongo.user`)
 	dbPass := App.Config.GetString(`mongo.pass`)
-	dbName := App.Config.GetString(`mongo.name`)
 
-	mongodbURI := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", dbUser, dbPass, dbHost, dbPort, dbName)
+	mongodbURI := fmt.Sprintf("mongodb://%s:%s@%s:%s", dbUser, dbPass, dbHost, dbPort)
 
 	if dbUser == "" || dbPass == "" {
-		mongodbURI = fmt.Sprintf("mongodb://%s:%s/%s", dbHost, dbPort, dbName)
+		mongodbURI = fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
 	}
 
 	client, err := mongo.NewClient(options.Client().ApplyURI(mongodbURI))
 	if err != nil {
+		color.Red("MariaDB: " + err.Error())
 		log.Fatal(err)
 	}
 
 	err = client.Connect(ctx)
 	if err != nil {
-		color.Red(err.Error())
+		color.Red("MariaDB: " + err.Error())
 		log.Fatal(err)
 	}
 
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		color.Red(err.Error())
+		color.Red("MongoDB: " + err.Error())
 		log.Fatal(err)
 	}
 

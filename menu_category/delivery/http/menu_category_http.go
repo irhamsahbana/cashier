@@ -25,13 +25,14 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 
 	router.POST("/menu-categories", handler.CreateMenuCategory)
 	router.GET("/menu-categories/:id", handler.FindMenuCategory)
+	router.DELETE("/menu-categories/:id", handler.DeleteMenuCategory)
+	router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
 }
 
 func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
 	var request domain.MenuCategory
-	var	err error
 
-	err = c.BindJSON(&request)
+	err := c.BindJSON(&request)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
@@ -44,7 +45,7 @@ func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	result, err, httpCode := handler.MenuCategoryUsecase.CreateMenuCategory(ctx, &request)
+	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenuCategory(ctx, &request)
 	if err != nil {
 		c.JSON(httpCode, gin.H{"error": err.Error()})
 		return
@@ -57,7 +58,47 @@ func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, err, httpCode := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id)
+	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id)
+	if err != nil {
+		c.JSON(httpCode, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(httpCode, result)
+}
+
+func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
+	id := c.Param("id")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id)
+	if err != nil {
+		c.JSON(httpCode, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(httpCode, result)
+}
+
+func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
+	var request domain.MenuCategory
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+	}
+
+	var ok bool
+	if ok, err = isRequestValid(&request); !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+
+	id := c.Param("id")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.UpdateMenuCategory(ctx, id, &request)
 	if err != nil {
 		c.JSON(httpCode, gin.H{"error": err.Error()})
 		return
