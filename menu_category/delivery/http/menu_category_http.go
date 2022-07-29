@@ -3,8 +3,10 @@ package http
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/http_response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -51,7 +53,14 @@ func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
 		return
 	}
 
-	c.JSON(httpCode, result)
+	res := http_response.Response{
+		StatusCode: httpCode,
+		Message: "OK",
+		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
+		Data: result,
+	}
+
+	c.JSON(httpCode, res)
 }
 
 func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {

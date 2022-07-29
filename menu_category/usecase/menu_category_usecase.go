@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"lucy/cashier/domain"
-	"lucy/cashier/lib"
+	"lucy/cashier/lib/validator"
 )
 
 type menuCategoryUsecase struct {
@@ -25,7 +25,7 @@ func (usecase *menuCategoryUsecase) CreateMenuCategory(c context.Context, data *
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
 
-	if ok, err := lib.ValidatorUUID(data.UUID); !ok {
+	if ok, err := validator.IsUUID(data.UUID); !ok {
 		return nil, http.StatusBadRequest, err
 	}
 

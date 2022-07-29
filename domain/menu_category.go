@@ -9,8 +9,8 @@ type MenuCategory struct {
 	ID			uint64			`json:"id" bson:"id"`
 	UUID		string			`json:"uuid" bson:"uuid"`
 	BranchID	uint64			`json:"branch_id" bson:"branch_id"`
-	Name		string			`json:"name" bson:"name" validate:"required"`
-	// Menus		*[]Menu			`json:"menus" bson:"menus"`
+	Name		string			`json:"name" bson:"name"`
+	Menus		[]Menu			`json:"menus" bson:"menus"`
 	CreatedAt	time.Time		`json:"created_at" bson:"created_at"`
 	UpdatedAt	*time.Time		`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
 	DeletedAt	*time.Time		`json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
