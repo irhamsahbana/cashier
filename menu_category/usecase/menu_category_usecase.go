@@ -25,7 +25,7 @@ func (usecase *menuCategoryUsecase) CreateMenuCategory(c context.Context, data *
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
 
-	if ok, err := validator.IsUUID(data.UUID); !ok {
+	if  err := validator.IsUUID(data.UUID); err != nil {
 		return nil, http.StatusBadRequest, err
 	}
 
@@ -61,7 +61,7 @@ func (usecase *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id str
 	return res, http.StatusOK, nil
 }
 
-func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id string, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
+func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id string, data *domain.MenuCategoryUpdatePayload) (*domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
 

@@ -22,8 +22,6 @@ func NewMenuCategoryMongoRepository(DB mongo.Database) domain.MenuCategoryReposi
 		}
 }
 
-
-
 func (repo *menuCategoryMongoRepository) FindMenuCategory(ctx context.Context, id string) (*domain.MenuCategory, error) {
 	var menucategory domain.MenuCategory
 

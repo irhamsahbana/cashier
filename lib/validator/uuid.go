@@ -4,7 +4,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func IsUUID(u string) (bool, error) {
+func IsUUID(u string) error {
     _, err := uuid.Parse(u)
-    return (err == nil), err
+    return err
  }

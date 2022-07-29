@@ -16,17 +16,21 @@ type MenuCategory struct {
 	DeletedAt	*time.Time		`json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
 }
 
+type MenuCategoryUpdatePayload struct {
+	Name		string		`json:"name" bson:"name"`
+}
+
 type MenuCategoryRepositoryContract interface {
 	InsertMenuCategory(ctx context.Context, entity *MenuCategory) (*MenuCategory, error)
 	FindMenuCategory(ctx context.Context, id string) (*MenuCategory, error)
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, error)
-	UpdateMenuCategory(ctx context.Context, id string, entity *MenuCategory) (*MenuCategory, error)
+	UpdateMenuCategory(ctx context.Context, id string, data *MenuCategoryUpdatePayload) (*MenuCategory, error)
 }
 
 type MenuCategoryUsecaseContract interface {
 	CreateMenuCategory(ctx context.Context, entity *MenuCategory) (*MenuCategory, int, error)
 	FindMenuCategory(ctx context.Context, id string) (*MenuCategory, int, error)
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, int, error)
-	UpdateMenuCategory(ctx context.Context, id string, entity *MenuCategory) (*MenuCategory, int, error)
+	UpdateMenuCategory(ctx context.Context, id string, request *MenuCategoryUpdatePayload) (*MenuCategory, int, error)
 }
 

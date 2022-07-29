@@ -1,0 +1,71 @@
+[
+  {
+    "_id": "a17ffa15-5630-4604-8d2a-ed1f57b31d07",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
+    "name": "create menu category",
+    "url": "{{base_url}}/menu-categories",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-07-29T08:05:47.360Z",
+    "modified": "2022-07-29T08:31:03.198Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ad\",\n    \"name\": \"Coffe Base2\",\n    \"created_at\": \"2022-07-29T08:09:00Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "0a61bc37-0c27-4c1e-89b5-0c936677739c",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
+    "name": "get menu category",
+    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363ad",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-07-29T08:10:46.436Z",
+    "modified": "2022-07-29T09:56:45.132Z",
+    "headers": [],
+    "params": [],
+    "tests": [],
+    "docs": "/menu-categories/:id\n\nuntuk melakukaan pencarian kategori menu dapat menggunakan \"id\" atau \"uuid\"\npada path paramaternya."
+  },
+  {
+    "_id": "e89e28fc-bc94-4f85-903f-fd8ef83d7eb5",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
+    "name": "delete menu category",
+    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363ac",
+    "method": "DELETE",
+    "sortNum": 30000,
+    "created": "2022-07-29T08:11:49.344Z",
+    "modified": "2022-07-29T09:56:17.784Z",
+    "headers": [],
+    "params": [],
+    "tests": [],
+    "docs": "/menu-categories/:id\n\nuntuk menghapus kategori menu dapat menggunakan \"id\" atau \"uuid\" pada path parameternya"
+  },
+  {
+    "_id": "6385f76f-5ab3-4583-ba0c-d82c909adba7",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
+    "name": "update menu category",
+    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363ac",
+    "method": "PATCH",
+    "sortNum": 40000,
+    "created": "2022-07-29T08:39:52.967Z",
+    "modified": "2022-07-29T09:57:12.104Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"name\": \"created\"\n}",
+      "form": []
+    },
+    "tests": [],
+    "docs": "/menu-categories/:id\n\nuntuk mengubah kategori menu dapat menggunakan \"id\" atau \"uuid\" pada path parameternya"
+  }
+]

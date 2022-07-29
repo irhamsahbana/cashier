@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"lucy/cashier/domain"
 
@@ -42,7 +43,7 @@ func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context,
 	return &menucategory, nil
 }
 
-func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context, id string, data *domain.MenuCategory) (*domain.MenuCategory, error) {
+func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context, id string, data *domain.MenuCategoryUpdatePayload) (*domain.MenuCategory, error) {
 	var menucategory domain.MenuCategory
 
 	_, err := repo.FindMenuCategory(ctx, id)
@@ -54,6 +55,7 @@ func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context,
 
 	update := bson.M{
 		"name": data.Name,
+		"updated_at": time.Now().Format(time.RFC3339),
 	}
 
 	result, err := repo.Collection.UpdateOne(
