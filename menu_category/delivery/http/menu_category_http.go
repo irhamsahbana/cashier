@@ -23,6 +23,8 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 	router.GET("/menu-categories/:id", handler.FindMenuCategory)
 	router.DELETE("/menu-categories/:id", handler.DeleteMenuCategory)
 	router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
+
+	router.POST("menus/:menuCategoryId", handler.CreateMenu)
 }
 
 func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
@@ -71,17 +73,11 @@ func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 }
 
 func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
-	var request domain.MenuCategoryUpdatePayload
+	var request domain.MenuCategoryUpdateRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
 		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
-		return
-	}
-
-	// validation
-	if request.Name == "" {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, "Name field needed", nil)
 		return
 	}
 
@@ -95,4 +91,25 @@ func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
 	}
 
 	http_response.ReturnResponse(c, httpCode, "Menu category updated successfully", result)
+}
+
+func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
+	var reqResp domain.MenuCreateRequestResponse
+
+	err := c.BindJSON(&reqResp)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	menuCategoryId := c.Param("menuCategoryId")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenu(ctx, menuCategoryId, &reqResp)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, 200, "Menu created successfully", result)
 }

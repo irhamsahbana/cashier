@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -61,9 +62,15 @@ func (usecase *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id str
 	return res, http.StatusOK, nil
 }
 
-func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id string, data *domain.MenuCategoryUpdatePayload) (*domain.MenuCategory, int, error) {
+func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id string, data *domain.MenuCategoryUpdateRequest) (*domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
+
+	res := &domain.MenuCategory{}
+
+	if data.Name == "" {
+		return res, http.StatusUnprocessableEntity, errors.New("Name needed")
+	}
 
 	res, err := usecase.menuCategoryRepo.UpdateMenuCategory(ctx, id, data)
 	if err != nil {
@@ -71,4 +78,35 @@ func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id str
 	}
 
 	return res, http.StatusOK, nil
+}
+
+func (usecase *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, request *domain.MenuCreateRequestResponse) (*domain.MenuCreateRequestResponse, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+	menuData := domain.Menu{
+		UUID: request.UUID,
+		Name: request.Name,
+		Price: request.Price,
+		Description: request.Description,
+		Label: request.Label,
+		Public: request.Public,
+		CreatedAt: request.CreatedAt,
+	}
+
+	res, err := usecase.menuCategoryRepo.InsertMenu(ctx, menuCategoryId, &menuData)
+	if err != nil {
+		return request, http.StatusInternalServerError, err
+	}
+
+	resp := &domain.MenuCreateRequestResponse{
+		UUID: res.UUID,
+		Name: res.Name,
+		Price: res.Price,
+		Description: res.Description,
+		Label: res.Label,
+		Public: res.Public,
+		CreatedAt: res.CreatedAt,
+	}
+	return resp, http.StatusCreated, nil
 }
