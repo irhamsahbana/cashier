@@ -80,11 +80,16 @@ func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id str
 	return res, http.StatusOK, nil
 }
 
-func (usecase *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, request *domain.MenuCreateRequestResponse) (*domain.MenuCreateRequestResponse, int, error) {
+// Menu
+
+func (usecase *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, request *domain.MenuCreateRequestResponse) (*domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
 
+	var menucategory domain.MenuCategory
+
 	menuData := domain.Menu{
+		ID: 0,
 		UUID: request.UUID,
 		Name: request.Name,
 		Price: request.Price,
@@ -96,17 +101,32 @@ func (usecase *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId
 
 	res, err := usecase.menuCategoryRepo.InsertMenu(ctx, menuCategoryId, &menuData)
 	if err != nil {
-		return request, http.StatusInternalServerError, err
+		return &menucategory, http.StatusInternalServerError, err
 	}
 
-	resp := &domain.MenuCreateRequestResponse{
-		UUID: res.UUID,
-		Name: res.Name,
-		Price: res.Price,
-		Description: res.Description,
-		Label: res.Label,
-		Public: res.Public,
-		CreatedAt: res.CreatedAt,
+	return res, http.StatusCreated, nil
+}
+
+func (usecase *menuCategoryUsecase) FindMenu(c context.Context, id string) (*domain.MenuCategory, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+	res, err := usecase.menuCategoryRepo.FindMenu(ctx, id)
+	if err != nil {
+		return res, http.StatusInternalServerError, err
 	}
-	return resp, http.StatusCreated, nil
+
+	return res, http.StatusOK, nil
+}
+
+func (usecase *menuCategoryUsecase) DeleteMenu(c context.Context, id string) (*domain.MenuCategory, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+	res, err := usecase.menuCategoryRepo.DeleteMenu(ctx, id)
+	if err != nil {
+		return res, http.StatusInternalServerError, err
+	}
+
+	return res, http.StatusOK, nil
 }

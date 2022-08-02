@@ -25,6 +25,8 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 	router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
 
 	router.POST("menus/:menuCategoryId", handler.CreateMenu)
+	router.GET("menus/:id", handler.FindMenu)
+	router.DELETE("menus/:id", handler.DeleteMenu)
 }
 
 func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
@@ -93,6 +95,8 @@ func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "Menu category updated successfully", result)
 }
 
+// Menu
+
 func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	var reqResp domain.MenuCreateRequestResponse
 
@@ -112,4 +116,30 @@ func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	}
 
 	http_response.ReturnResponse(c, 200, "Menu created successfully", result)
+}
+
+func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
+	id := c.Param("id")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.FindMenu(ctx, id)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "OK", result)
+}
+
+func (handler *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
+	id := c.Param("id")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "Menu deleted successfully", result)
 }

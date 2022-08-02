@@ -6,7 +6,7 @@ import (
 )
 
 type MenuCategory struct {
-	ID			uint64			`json:"id" bson:"id"`
+	ID			uint64			`json:"id,omitempty" bson:"id"`
 	UUID		string			`json:"uuid" bson:"uuid"`
 	BranchID	uint64			`json:"branch_id" bson:"branch_id"`
 	Name		string			`json:"name" bson:"name"`
@@ -17,7 +17,7 @@ type MenuCategory struct {
 }
 
 type Menu struct {
-	ID				uint64		`json:"id" bson:"id"`
+	ID				uint64		`json:"id,omitempty" bson:"id"`
 	UUID			string		`json:"uuid" bson:"uuid"`
 	Name			string		`json:"name" bson:"name" validate:"required"`
 	Price			float32		`json:"price" bson:"price"`
@@ -50,7 +50,9 @@ type MenuCategoryRepositoryContract interface {
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, error)
 	UpdateMenuCategory(ctx context.Context, id string, payload *MenuCategoryUpdateRequest) (*MenuCategory, error)
 
-	InsertMenu(ctx context.Context, menuCategoryId string, menu *Menu) (*Menu, error)
+	InsertMenu(ctx context.Context, menuCategoryId string, data *Menu) (*MenuCategory, error)
+	FindMenu(ctx context.Context, id string) (*MenuCategory, error)
+	DeleteMenu(ctx context.Context, id string) (*MenuCategory, error)
 }
 
 type MenuCategoryUsecaseContract interface {
@@ -59,6 +61,8 @@ type MenuCategoryUsecaseContract interface {
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, int, error)
 	UpdateMenuCategory(ctx context.Context, id string, payload *MenuCategoryUpdateRequest) (*MenuCategory, int, error)
 
-	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequestResponse) (*MenuCreateRequestResponse, int, error)
+	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequestResponse) (*MenuCategory, int, error)
+	FindMenu(ctx context.Context, id string) (*MenuCategory, int, error)
+	DeleteMenu(ctx context.Context, id string) (*MenuCategory, int, error)
 }
 
