@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/http_response"
@@ -50,9 +51,12 @@ func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
 
 func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 	id := c.Param("id")
+	trashed := c.Query("with_trashed")
+
+	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id)
+	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -63,9 +67,12 @@ func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 
 func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 	id := c.Param("id")
+	permanent := c.Query("permanent")
+
+	forceDelete, _ := strconv.ParseBool(permanent)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id)
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id, forceDelete)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -120,9 +127,12 @@ func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 
 func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
 	id := c.Param("id")
+	trashed := c.Query("with_trashed")
+
+	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.FindMenu(ctx, id)
+	result, httpCode, err := handler.MenuCategoryUsecase.FindMenu(ctx, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -133,9 +143,12 @@ func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
 
 func (handler *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
 	id := c.Param("id")
+	permanent := c.Query("permanent")
+
+	forceDelete, _ := strconv.ParseBool(permanent)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id)
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id, forceDelete)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return

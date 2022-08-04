@@ -10,6 +10,7 @@ import (
 
 	"github.com/fatih/color"
 	_ "github.com/go-sql-driver/mysql"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -65,7 +66,13 @@ func InitMongoDatabase() *mongo.Client {
 		mongodbURI = fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(mongodbURI))
+	cmdMonitor := &event.CommandMonitor{
+		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+			color.Yellow(evt.Command.String())
+		},
+	}
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(mongodbURI).SetMonitor(cmdMonitor))
 	if err != nil {
 		color.Red("MariaDB: " + err.Error())
 		log.Fatal(err)
