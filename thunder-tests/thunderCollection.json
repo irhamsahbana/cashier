@@ -1,0 +1,24 @@
+[
+  {
+    "_id": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "colName": "Lucy Cashier Go",
+    "created": "2022-07-29T08:05:17.407Z",
+    "sortNum": 10000,
+    "folders": [
+      {
+        "_id": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
+        "name": "Menu Category",
+        "containerId": "",
+        "created": "2022-07-29T08:05:30.373Z",
+        "sortNum": 10000
+      },
+      {
+        "_id": "1a9046c1-beed-4418-b94b-a857ccb50457",
+        "name": "menu",
+        "containerId": "",
+        "created": "2022-08-01T04:07:42.908Z",
+        "sortNum": 20000
+      }
+    ]
+  }
+]
