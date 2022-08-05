@@ -1,13 +1,25 @@
 [
   {
-    "_id": "97d795c7-317b-492e-96e8-171cc6e7524f",
-    "name": "(Local Env)",
+    "_id": "29a6b62f-0b8e-4ed4-9fef-39d8886a8403",
+    "name": "(Global Env)",
     "default": false,
     "global": true,
-    "local": true,
-    "sortNum": -2,
-    "created": "2022-07-29T08:05:57.028Z",
-    "modified": "2022-07-29T08:05:57.028Z",
-    "data": []
+    "sortNum": -1,
+    "created": "2022-08-05T02:57:35.618Z",
+    "modified": "2022-08-05T03:01:08.773Z",
+    "data": [
+      {
+        "name": "protocol",
+        "value": "http"
+      },
+      {
+        "name": "domain",
+        "value": "localhost:9090"
+      },
+      {
+        "name": "base_url",
+        "value": "{{protocol}}://{{domain}}"
+      }
+    ]
   }
 ]

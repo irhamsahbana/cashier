@@ -20,7 +20,7 @@ func ReturnResponse(c *gin.Context, statusCode int, message interface{}, data in
 		StatusCode: statusCode,
 		Status: http.StatusText(statusCode),
 		Message: message,
-		Timestamp: time.Now().Format(time.RFC3339),
+		Timestamp: time.Now().Format(time.RFC3339Nano),
 		Data: data,
 	})
 }

@@ -31,6 +31,18 @@ func (repo *menuCategoryMongoRepository) FindMenuCategory(ctx context.Context, i
 										"uuid": id,
 										"deleted_at": bson.M{"$exists": withTrashed},
 									},
+									options.FindOne().
+											SetProjection(bson.M{
+												"uuid": 1,
+												"name": 1,
+												"created_at": 1,
+												"updated_at": 1,
+												"menus": bson.M{
+													"$elemMatch": bson.M{
+														"deleted_at": bson.M{"$exists": withTrashed},
+													},
+												},
+											}),
 								).Decode(&menucategory)
 	if err != nil {
 		return &menucategory, err

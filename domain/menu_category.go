@@ -25,7 +25,7 @@ type Menu struct {
 	ImageUrl		*string		`json:"image_url" bson:"image_url"`
 	CreatedAt		time.Time	`json:"created_at" bson:"created_at"`
 	UpdatedAt		*time.Time	`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
-	DeletedAt		*time.Time	`json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	DeletedAt		*time.Time	`json:"-" bson:"deleted_at,omitempty"`
 }
 
 type MenuCategoryUpdateRequest struct {
