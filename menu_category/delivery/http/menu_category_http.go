@@ -21,6 +21,7 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 	}
 
 	router.POST("/menu-categories", handler.CreateMenuCategory)
+	router.GET("/menu-categories", handler.FindMenuCategories)
 	router.GET("/menu-categories/:id", handler.FindMenuCategory)
 	router.DELETE("/menu-categories/:id", handler.DeleteMenuCategory)
 	router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
@@ -57,6 +58,20 @@ func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 
 	ctx := context.Background()
 	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id, withTrashed)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "OK", result)
+}
+
+func (handler *MenuCategoryHandler) FindMenuCategories(c *gin.Context) {
+	trashed := c.Query("with_trashed")
+	withTrashed, _ := strconv.ParseBool(trashed)
+
+	ctx:= context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategories(ctx, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return

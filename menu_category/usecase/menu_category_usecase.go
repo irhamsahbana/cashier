@@ -50,6 +50,18 @@ func (usecase *menuCategoryUsecase) FindMenuCategory(c context.Context, id strin
 	return res, http.StatusOK, nil
 }
 
+func (usecase *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed bool) ([]domain.MenuCategory, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+	res, err := usecase.menuCategoryRepo.FindMenuCategories(ctx, withTrashed)
+	if err != nil {
+		return res, http.StatusInternalServerError, err
+	}
+
+	return res, http.StatusOK, nil
+}
+
 func (usecase *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string, forceDelete bool) (*domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
