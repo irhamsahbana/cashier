@@ -20,6 +20,7 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 		MenuCategoryUsecase: usecase,
 	}
 
+	router.PUT("/menu-categories", handler.UpsertMenuCategory)
 	router.POST("/menu-categories", handler.CreateMenuCategory)
 	router.GET("/menu-categories", handler.FindMenuCategories)
 	router.GET("/menu-categories/:id", handler.FindMenuCategory)
@@ -115,6 +116,25 @@ func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
 	}
 
 	http_response.ReturnResponse(c, httpCode, "Menu category updated successfully", result)
+}
+
+func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
+	var request domain.MenuCategory
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "Menu category upsert successfully", result)
 }
 
 // Menu

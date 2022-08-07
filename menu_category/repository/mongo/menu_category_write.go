@@ -84,6 +84,52 @@ func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context,
 	return &menucategory, nil
 }
 
+func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, error) {
+	var menucategory domain.MenuCategory
+	var contents bson.M
+
+	filter := bson.M{"uuid": data.UUID}
+
+	countMenuCategory, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return &menucategory, err
+	}
+
+	if countMenuCategory > 0 {
+		update := bson.M{
+			"$set": bson.M{
+				"name": data.Name,
+				"updated_at": time.Now(),
+			},
+		}
+
+		contents = update
+	} else {
+		insert := bson.M{
+			"$set": bson.M{
+				"branch_uuid": data.BranchUUID,
+				"name": data.Name,
+				"created_at": data.CreatedAt,
+			},
+		}
+
+		contents = insert
+	}
+
+
+	opts := options.Update().SetUpsert(true)
+
+	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts);  err != nil {
+		return &menucategory, err
+	}
+
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&menucategory); err != nil {
+		return &menucategory, err
+	}
+
+	return &menucategory, nil
+}
+
 // Menu
 
 func (repo *menuCategoryMongoRepository) InsertMenu(ctx context.Context, menuCategoryId string, data *domain.Menu) (*domain.MenuCategory, error) {

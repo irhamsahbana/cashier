@@ -48,6 +48,7 @@ type MenuCategoryRepositoryContract interface {
 	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategory, error)
 	DeleteMenuCategory(ctx context.Context, id string, forceDelete bool) (*MenuCategory, error)
 	UpdateMenuCategory(ctx context.Context, id string, payload *MenuCategoryUpdateRequest) (*MenuCategory, error)
+	UpsertMenuCategory(ctx context.Context, payload *MenuCategory) (*MenuCategory, error)
 
 	InsertMenu(ctx context.Context, menuCategoryId string, data *Menu) (*MenuCategory, error)
 	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuCategory, error)
@@ -60,6 +61,7 @@ type MenuCategoryUsecaseContract interface {
 	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategory, int, error)
 	DeleteMenuCategory(ctx context.Context, id string, forceDelete bool) (*MenuCategory, int, error)
 	UpdateMenuCategory(ctx context.Context, id string, payload *MenuCategoryUpdateRequest) (*MenuCategory, int, error)
+	UpsertMenuCategory(ctx context.Context, payload *MenuCategory) (*MenuCategory, int, error)
 
 	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequestResponse) (*MenuCategory, int, error)
 	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuCategory, int, error)

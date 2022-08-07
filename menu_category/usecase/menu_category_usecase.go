@@ -92,6 +92,22 @@ func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id str
 	return res, http.StatusOK, nil
 }
 
+func (usecase *menuCategoryUsecase) UpsertMenuCategory(c context.Context, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+	if  err := validator.IsUUID(data.UUID); err != nil {
+		return nil, http.StatusBadRequest, err
+	}
+
+	res, err := usecase.menuCategoryRepo.UpsertMenuCategory(ctx, data)
+	if err != nil {
+		return res, http.StatusInternalServerError, err
+	}
+
+	return res, http.StatusOK, nil
+}
+
 // Menu
 
 func (usecase *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, request *domain.MenuCreateRequestResponse) (*domain.MenuCategory, int, error) {
