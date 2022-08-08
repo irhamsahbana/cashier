@@ -21,6 +21,41 @@ func NewMenuCategoryUsecase(repo domain.MenuCategoryRepositoryContract, timeout 
 	}
 }
 
+func (usecase *menuCategoryUsecase) UpsertMenuCategory(c context.Context, data *domain.MenuCategoryUpsertRequest) (*domain.MenuCategoryUpsertResponse, int, error) {
+	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
+	defer cancel()
+
+
+	if  err := validator.IsUUID(data.UUID); err != nil {
+		return nil, http.StatusBadRequest, err
+	}
+
+	createdAt, err := time.Parse(time.RFC3339Nano, data.CreatedAt)
+	if err != nil {
+		return nil, http.StatusUnprocessableEntity, err
+	}
+
+	var menucategory domain.MenuCategory
+	menucategory.UUID = data.UUID
+	menucategory.Name = data.Name
+	menucategory.CreatedAt = createdAt.UnixMicro()
+
+	result, err := usecase.menuCategoryRepo.UpsertMenuCategory(ctx, &menucategory)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	var resp domain.MenuCategoryUpsertResponse
+	resp.UUID = result.UUID
+	resp.Name = result.Name
+	resp.CreatedAt = time.UnixMicro(result.CreatedAt)
+	respUpdatedAt := time.UnixMicro(*result.UpdatedAt)
+	resp.UpdatedAt = &respUpdatedAt
+
+	return &resp, http.StatusOK, nil
+}
+
+
 func (usecase *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed bool) ([]domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
 	defer cancel()
@@ -38,22 +73,6 @@ func (usecase *menuCategoryUsecase) FindMenuCategory(c context.Context, id strin
 	defer cancel()
 
 	res, err := usecase.menuCategoryRepo.FindMenuCategory(ctx, id, withTrashed)
-	if err != nil {
-		return res, http.StatusInternalServerError, err
-	}
-
-	return res, http.StatusOK, nil
-}
-
-func (usecase *menuCategoryUsecase) UpsertMenuCategory(c context.Context, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
-	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
-	defer cancel()
-
-	if  err := validator.IsUUID(data.UUID); err != nil {
-		return nil, http.StatusBadRequest, err
-	}
-
-	res, err := usecase.menuCategoryRepo.UpsertMenuCategory(ctx, data)
 	if err != nil {
 		return res, http.StatusInternalServerError, err
 	}
@@ -122,40 +141,3 @@ func (usecase *menuCategoryUsecase) DeleteMenu(c context.Context, id string, for
 
 	return res, http.StatusOK, nil
 }
-
-// deprecated
-/**
-func (usecase *menuCategoryUsecase) UpdateMenuCategory(c context.Context, id string, data *domain.MenuCategoryUpdateRequest) (*domain.MenuCategory, int, error) {
-	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
-	defer cancel()
-
-	res := &domain.MenuCategory{}
-
-	if data.Name == "" {
-		return res, http.StatusUnprocessableEntity, errors.New("Name needed")
-	}
-
-	res, err := usecase.menuCategoryRepo.UpdateMenuCategory(ctx, id, data)
-	if err != nil {
-		return res, http.StatusInternalServerError, err
-	}
-
-	return res, http.StatusOK, nil
-}
-
-func (usecase *menuCategoryUsecase) CreateMenuCategory(c context.Context, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
-	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
-	defer cancel()
-
-	if  err := validator.IsUUID(data.UUID); err != nil {
-		return nil, http.StatusBadRequest, err
-	}
-
-	res, err := usecase.menuCategoryRepo.InsertMenuCategory(ctx, data)
-	if err != nil {
-		return res, http.StatusInternalServerError, err
-	}
-
-	return res, http.StatusCreated, nil
-}
-**/
