@@ -27,7 +27,7 @@ func (usecase *menuCategoryUsecase) UpsertMenuCategory(c context.Context, data *
 
 
 	if  err := validator.IsUUID(data.UUID); err != nil {
-		return nil, http.StatusBadRequest, err
+		return nil, http.StatusUnprocessableEntity, err
 	}
 
 	createdAt, err := time.Parse(time.RFC3339Nano, data.CreatedAt)
@@ -54,7 +54,6 @@ func (usecase *menuCategoryUsecase) UpsertMenuCategory(c context.Context, data *
 
 	return &resp, http.StatusOK, nil
 }
-
 
 func (usecase *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed bool) ([]domain.MenuCategory, int, error) {
 	ctx, cancel := context.WithTimeout(c, usecase.contextTimeout)
