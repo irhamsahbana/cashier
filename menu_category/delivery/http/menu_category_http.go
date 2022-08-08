@@ -21,19 +21,19 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 	}
 
 	router.PUT("/menu-categories", handler.UpsertMenuCategory)
-	router.POST("/menu-categories", handler.CreateMenuCategory)
 	router.GET("/menu-categories", handler.FindMenuCategories)
 	router.GET("/menu-categories/:id", handler.FindMenuCategory)
 	router.DELETE("/menu-categories/:id", handler.DeleteMenuCategory)
-	router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
+	// router.PATCH("/menu-categories/:id", handler.UpdateMenuCategory)
+	// router.POST("/menu-categories", handler.CreateMenuCategory)
 
 	router.POST("menus/:menuCategoryId", handler.CreateMenu)
 	router.GET("menus/:id", handler.FindMenu)
 	router.DELETE("menus/:id", handler.DeleteMenu)
 }
 
-func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
-	var request domain.MenuCategory
+func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
+	var request domain.MenuCategoryUpsertRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -41,14 +41,14 @@ func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
 		return
 	}
 
-	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenuCategory(ctx, &request)
-	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		return
-	}
+	// ctx := context.Background()
+	// result, httpCode, err := handler.MenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+	// if err != nil {
+	// 	http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+	// 	return
+	// }
 
-	http_response.ReturnResponse(c, httpCode, "Menu category created successfully", result)
+	http_response.ReturnResponse(c, 200, "Menu category upsert successfully", request)
 }
 
 func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
@@ -95,46 +95,6 @@ func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 	}
 
 	http_response.ReturnResponse(c, httpCode, "Menu category Deleted successfully", result)
-}
-
-func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
-	var request domain.MenuCategoryUpdateRequest
-
-	err := c.BindJSON(&request)
-	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
-		return
-	}
-
-	id := c.Param("id")
-
-	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.UpdateMenuCategory(ctx, id, &request)
-	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		return
-	}
-
-	http_response.ReturnResponse(c, httpCode, "Menu category updated successfully", result)
-}
-
-func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
-	var request domain.MenuCategory
-
-	err := c.BindJSON(&request)
-	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
-		return
-	}
-
-	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
-	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		return
-	}
-
-	http_response.ReturnResponse(c, httpCode, "Menu category upsert successfully", result)
 }
 
 // Menu
@@ -191,3 +151,47 @@ func (handler *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
 
 	http_response.ReturnResponse(c, httpCode, "Menu deleted successfully", result)
 }
+
+// Deprecated
+/**
+func (handler *MenuCategoryHandler) CreateMenuCategory(c *gin.Context) {
+	var request domain.MenuCategory
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenuCategory(ctx, &request)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "Menu category created successfully", result)
+}
+
+func (handler *MenuCategoryHandler) UpdateMenuCategory(c *gin.Context) {
+	var request domain.MenuCategoryUpdateRequest
+
+	err := c.BindJSON(&request)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	id := c.Param("id")
+
+	ctx := context.Background()
+	result, httpCode, err := handler.MenuCategoryUsecase.UpdateMenuCategory(ctx, id, &request)
+	if err != nil {
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpCode, "Menu category updated successfully", result)
+}
+
+**/

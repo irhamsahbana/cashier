@@ -93,23 +93,10 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 	var filterMenuCategory bson.M
 	var filterMenu bson.M
 
-	filterWithTrashed := bson.M{
-						// "uuid": id,
-					}
+	filterWithTrashed := bson.M{}
 
-	filterWithoutTrashed := bson.M{
-		"$and": bson.A{
-			// bson.M{"uuid": id},
-			bson.M{"deleted_at": bson.M{"$exists": false}},
-		},
-	}
-
-	filterMenuWithoutTrashed := bson.M{
-		"$and": bson.A{
-			// bson.M{"uuid": id},
-			bson.M{"menus.deleted_at": bson.M{"$exists": false}},
-		},
-	}
+	filterWithoutTrashed := bson.M{"deleted_at": bson.M{"$exists": false}}
+	filterMenuWithoutTrashed := bson.M{"menus.deleted_at": bson.M{"$exists": false}}
 
 	if withTrashed == true {
 		filterMenuCategory = filterWithTrashed
@@ -121,8 +108,8 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 
 	matchStage := bson.D{{"$match", filterMenuCategory}}
 	unwindMenusStage := bson.D{{"$unwind", "$menus"}}
-	filterMenusWithExistanceOfDeletedAt := bson.D{{"$match", filterMenu}}
-	groupByUuid := bson.D{{
+	filterMenusBaseOnExistanceOfDeletedAtStage := bson.D{{"$match", filterMenu}}
+	groupByUuidStage := bson.D{{
 						"$group", bson.M{
 							"_id": "$uuid",
 							"uuid": bson.M{"$first": "$uuid"},
@@ -135,7 +122,7 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 						},
 					}}
 
-	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindMenusStage, filterMenusWithExistanceOfDeletedAt, groupByUuid})
+	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindMenusStage, filterMenusBaseOnExistanceOfDeletedAtStage, groupByUuidStage})
 	if err != nil {
 		return menucategories, err
 	}

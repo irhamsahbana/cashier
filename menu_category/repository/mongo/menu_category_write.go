@@ -11,79 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repo *menuCategoryMongoRepository) InsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, error) {
-	// validate if uuid or id for menu exists
-	countMenuCategory, err := repo.Collection.CountDocuments(ctx, bson.M{"uuid": data.UUID})
-	if err != nil {
-		return data, err
-	}
-	if countMenuCategory > 0 {
-		return data,  errors.New("uuid of menu category is exists in menu category collection")
-	}
-
-	_, err = repo.Collection.InsertOne(ctx, data)
-	if err != nil {
-		return data, err
-	}
-
-	return data, nil
-}
-
-func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context, id string, forceDelete bool) (*domain.MenuCategory, error) {
-	var menucategory domain.MenuCategory
-	var err error
-
-	if forceDelete {
-		err = repo.Collection.FindOneAndDelete(ctx, bson.M{"uuid": id}).Decode(&menucategory)
-	} else {
-		filter := bson.M{"uuid": id, "deleted_at": bson.M{"$exists": false}}
-
-		err = repo.Collection.FindOneAndUpdate(
-												ctx,
-												filter,
-												bson.M{"$set":
-													bson.M{"deleted_at": time.Now()},
-												},
-											).Decode(&menucategory)
-	}
-
-	if err != nil {
-		return &menucategory, err
-	}
-
-	return &menucategory, nil
-}
-
-func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context, id string, data *domain.MenuCategoryUpdateRequest) (*domain.MenuCategory, error) {
-	var menucategory domain.MenuCategory
-
-	_, err := repo.FindMenuCategory(ctx, id, false)
-	if err != nil {
-		return &menucategory, err
-	}
-
-	update := bson.M{
-		"name": data.Name,
-		"updated_at": time.Now(),
-	}
-
-	result, err := repo.Collection.UpdateOne(ctx, bson.M{"uuid": id}, bson.M{"$set": update})
-
-	if err != nil {
-		return &menucategory, err
-	}
-
-	if result.MatchedCount == 1 {
-		err := repo.Collection.FindOne(ctx,bson.M{"uuid": id}).Decode(&menucategory)
-
-		if err != nil {
-			return &menucategory, err
-		}
-	}
-
-	return &menucategory, nil
-}
-
 func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, error) {
 	var menucategory domain.MenuCategory
 	var contents bson.M
@@ -96,10 +23,15 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 	}
 
 	if countMenuCategory > 0 {
+		updatedAt := time.Now().Nanosecond()
+		if err != nil {
+			return nil, err
+		}
+
 		update := bson.M{
 			"$set": bson.M{
 				"name": data.Name,
-				"updated_at": time.Now(),
+				"updated_at": updatedAt,
 			},
 		}
 
@@ -125,6 +57,42 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&menucategory); err != nil {
 		return &menucategory, err
+	}
+
+	return &menucategory, nil
+}
+
+func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context, id string, forceDelete bool) (*domain.MenuCategory, error) {
+	var menucategory domain.MenuCategory
+
+	if forceDelete {
+		findOne := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
+		result, err := repo.Collection.DeleteOne(ctx, bson.M{"uuid": id})
+		if err != nil {
+			return nil, err
+		}
+
+		if result.DeletedCount > 0 {
+			findOne.Decode(&menucategory)
+		}
+	} else {
+		filter := bson.M{"uuid": id, "deleted_at": bson.M{"$exists": false}}
+
+		result, err := repo.Collection.UpdateOne(
+												ctx,
+												filter,
+												bson.M{"$set":
+													bson.M{"deleted_at": time.Now()},
+												},
+											)
+		if err != nil {
+			return nil, err
+		}
+
+		if result.ModifiedCount > 0 {
+			findOne := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
+			findOne.Decode(&menucategory)
+		}
 	}
 
 	return &menucategory, nil
@@ -285,3 +253,54 @@ func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id stri
 
 	return &menucategory, nil
 }
+
+// Deprecated
+/**
+func (repo *menuCategoryMongoRepository) InsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, error) {
+	// validate if uuid or id for menu exists
+	countMenuCategory, err := repo.Collection.CountDocuments(ctx, bson.M{"uuid": data.UUID})
+	if err != nil {
+		return data, err
+	}
+	if countMenuCategory > 0 {
+		return data,  errors.New("uuid of menu category is exists in menu category collection")
+	}
+
+	_, err = repo.Collection.InsertOne(ctx, data)
+	if err != nil {
+		return data, err
+	}
+
+	return data, nil
+}
+
+func (repo *menuCategoryMongoRepository) UpdateMenuCategory(ctx context.Context, id string, data *domain.MenuCategoryUpdateRequest) (*domain.MenuCategory, error) {
+	var menucategory domain.MenuCategory
+
+	_, err := repo.FindMenuCategory(ctx, id, false)
+	if err != nil {
+		return &menucategory, err
+	}
+
+	update := bson.M{
+		"name": data.Name,
+		"updated_at": time.Now(),
+	}
+
+	result, err := repo.Collection.UpdateOne(ctx, bson.M{"uuid": id}, bson.M{"$set": update})
+
+	if err != nil {
+		return &menucategory, err
+	}
+
+	if result.MatchedCount == 1 {
+		err := repo.Collection.FindOne(ctx,bson.M{"uuid": id}).Decode(&menucategory)
+
+		if err != nil {
+			return &menucategory, err
+		}
+	}
+
+	return &menucategory, nil
+}
+**/

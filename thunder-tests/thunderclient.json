@@ -6,9 +6,9 @@
     "name": "create menu category",
     "url": "{{base_url}}/menu-categories",
     "method": "POST",
-    "sortNum": 10000,
+    "sortNum": 35000,
     "created": "2022-07-29T08:05:47.360Z",
-    "modified": "2022-08-06T02:37:18.619Z",
+    "modified": "2022-08-08T07:16:10.291Z",
     "headers": [],
     "params": [],
     "body": {
@@ -44,13 +44,19 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "delete menu category",
-    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363ae",
+    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363ac?permanent=true",
     "method": "DELETE",
     "sortNum": 30000,
     "created": "2022-07-29T08:11:49.344Z",
-    "modified": "2022-08-07T04:41:31.064Z",
+    "modified": "2022-08-08T02:55:31.311Z",
     "headers": [],
-    "params": [],
+    "params": [
+      {
+        "name": "permanent",
+        "value": "true",
+        "isPath": false
+      }
+    ],
     "tests": [],
     "docs": "/menu-categories/:id\n\nuntuk menghapus kategori menu dapat menggunakan \"id\" atau \"uuid\" pada path parameternya"
   },
@@ -114,11 +120,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "delete menu",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7880",
+    "url": "{{base_url}}/menus/3c4b91d6-f7a4-4414-a2f9-9774d51363ae",
     "method": "DELETE",
     "sortNum": 70000,
     "created": "2022-08-02T06:50:43.933Z",
-    "modified": "2022-08-06T02:59:56.585Z",
+    "modified": "2022-08-08T00:48:07.030Z",
     "headers": [],
     "params": [],
     "tests": [],
@@ -129,17 +135,16 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "get all menu category (restaurant menus)",
-    "url": "{{base_url}}/menu-categories",
+    "url": "{{base_url}}/menu-categories?with_trashed=1",
     "method": "GET",
     "sortNum": 15000,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-08-06T09:50:01.176Z",
+    "modified": "2022-08-08T03:11:47.578Z",
     "headers": [],
     "params": [
       {
         "name": "with_trashed",
         "value": "1",
-        "isDisabled": true,
         "isPath": false
       }
     ],
@@ -152,14 +157,14 @@
     "name": "upsert menu category",
     "url": "{{base_url}}/menu-categories",
     "method": "PUT",
-    "sortNum": 90000,
+    "sortNum": 7500,
     "created": "2022-08-07T01:28:36.386Z",
-    "modified": "2022-08-07T04:58:02.992Z",
+    "modified": "2022-08-08T07:28:48.824Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ae\",\n    \"name\": \"Coffe Base\",\n    \"created_at\": \"2022-07-29T08:12:00Z\"\n}",
+      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ae\",\n    \"name\": \"Coffe Base\",\n    \"created_at\": \"2022-07-29T08:12:19.446577Z\"\n}",
       "form": []
     },
     "tests": []
