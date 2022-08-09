@@ -81,12 +81,9 @@ func (handler *MenuCategoryHandler) FindMenuCategories(c *gin.Context) {
 
 func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 	id := c.Param("id")
-	permanent := c.Query("permanent")
-
-	forceDelete, _ := strconv.ParseBool(permanent)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id, forceDelete)
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -98,9 +95,9 @@ func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 // Menu
 
 func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
-	var reqResp domain.MenuCreateRequestResponse
+	var request domain.MenuCreateRequest
 
-	err := c.BindJSON(&reqResp)
+	err := c.BindJSON(&request)
 	if err != nil {
 		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
@@ -109,7 +106,7 @@ func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	menuCategoryId := c.Param("menuCategoryId")
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenu(ctx, menuCategoryId, &reqResp)
+	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenu(ctx, menuCategoryId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -136,12 +133,9 @@ func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
 
 func (handler *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
 	id := c.Param("id")
-	permanent := c.Query("permanent")
-
-	forceDelete, _ := strconv.ParseBool(permanent)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id, forceDelete)
+	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
