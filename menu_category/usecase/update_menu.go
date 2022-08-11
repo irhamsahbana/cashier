@@ -37,6 +37,10 @@ func (u *menuCategoryUsecase) UpdateMenu (c context.Context, id string, req *dom
 		return nil, code, err
 	}
 
+	if code == http.StatusNotFound {
+		return &domain.MenuResponse{}, http.StatusOK, nil
+	}
+
 	menu := result.Menus[0]
 
 	var resp domain.MenuResponse
