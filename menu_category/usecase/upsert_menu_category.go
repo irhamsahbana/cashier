@@ -9,7 +9,7 @@ import (
 	"lucy/cashier/lib/validator"
 )
 
-func (u *menuCategoryUsecase) UpsertMenuCategory(c context.Context, req *domain.MenuCategoryUpsertRequest) (*domain.MenuCategoryUpsertResponse, int, error) {
+func (u *menuCategoryUsecase) UpsertMenuCategory(c context.Context, req *domain.MenuCategoryUpsertRequest) (*domain.MenuCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -33,7 +33,7 @@ func (u *menuCategoryUsecase) UpsertMenuCategory(c context.Context, req *domain.
 		return nil, code, err
 	}
 
-	var resp domain.MenuCategoryUpsertResponse
+	var resp domain.MenuCategoryResponse
 	resp.UUID = result.UUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt)

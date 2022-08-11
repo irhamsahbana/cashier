@@ -8,7 +8,7 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (*domain.MenuCategoryDeleteResponse, int, error) {
+func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (*domain.MenuCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -17,7 +17,7 @@ func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (
 		return nil, code, err
 	}
 
-	var resp domain.MenuCategoryDeleteResponse
+	var resp domain.MenuCategoryResponse
 	resp.UUID = result.UUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt)
@@ -27,7 +27,7 @@ func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (
 	}
 	if result.DeletedAt != nil {
 		respDeletedAt := time.UnixMicro(*result.DeletedAt)
-		resp.DeletedAt = respDeletedAt
+		resp.DeletedAt = &respDeletedAt
 	}
 
 	return &resp, http.StatusOK, nil

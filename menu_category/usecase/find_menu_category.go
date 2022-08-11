@@ -8,7 +8,7 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *menuCategoryUsecase) FindMenuCategory(c context.Context, id string, withTrashed bool) (*domain.MenuCategoryFindResponse, int, error) {
+func (u *menuCategoryUsecase) FindMenuCategory(c context.Context, id string, withTrashed bool) (*domain.MenuCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -17,7 +17,7 @@ func (u *menuCategoryUsecase) FindMenuCategory(c context.Context, id string, wit
 		return nil, code, err
 	}
 
-	var resp domain.MenuCategoryFindResponse
+	var resp domain.MenuCategoryResponse
 	resp.UUID = result.UUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt)

@@ -9,7 +9,7 @@ import (
 	"lucy/cashier/lib/validator"
 )
 
-func (u *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, req *domain.MenuCreateRequest) (*domain.MenuCreateResponse, int, error) {
+func (u *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId string, req *domain.MenuCreateRequest) (*domain.MenuResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -39,7 +39,7 @@ func (u *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId strin
 
 	menu := result.Menus[0]
 
-	var resp domain.MenuCreateResponse
+	var resp domain.MenuResponse
 	resp.UUID = menu.UUID
 	resp.Name = menu.Name
 	resp.Price = menu.Price

@@ -44,12 +44,12 @@
     "method": "POST",
     "sortNum": 50000,
     "created": "2022-08-01T04:07:55.254Z",
-    "modified": "2022-08-09T07:26:23.724Z",
+    "modified": "2022-08-11T07:45:40.752Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"uuid\": \"d5c164c8-6887-4ab9-ae90-26eff07b7889\",\n    \"name\": \"Cappucino\",\n    \"price\": 90000.25,\n    \"description\": \"A cappuccino is an espresso-based coffee drink that originated in Austria with later development taking place in Italy, and is prepared with steamed milk foam.\",\n    \"label\": \"coffee\",\n    \"public\": false,\n    \"created_at\": \"2022-07-30T08:09:00.554671Z\"\n}",
+      "raw": "{\n    \"uuid\": \"d5c164c8-6887-4ab9-ae90-26eff07b7887\",\n    \"name\": \"Vietnamese drip\",\n    \"price\": 850000.25,\n    \"description\": \"Vietnamese drip or “Phin coffee” is named according to the way of brewing. Within the processing, ground coffee is filtered through a filter called Phin in Vietnamese.\",\n    \"label\": \"coffee\",\n    \"public\": true,\n    \"created_at\": \"2022-07-30T08:10:15.554671Z\"\n}",
       "form": []
     },
     "tests": [],
@@ -64,7 +64,7 @@
     "method": "GET",
     "sortNum": 60000,
     "created": "2022-08-02T06:21:35.815Z",
-    "modified": "2022-08-09T09:54:21.285Z",
+    "modified": "2022-08-11T02:48:29.854Z",
     "headers": [],
     "params": [
       {
@@ -82,11 +82,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "delete menu",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884",
+    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7885",
     "method": "DELETE",
     "sortNum": 70000,
     "created": "2022-08-02T06:50:43.933Z",
-    "modified": "2022-08-09T08:48:31.391Z",
+    "modified": "2022-08-11T04:18:20.749Z",
     "headers": [],
     "params": [],
     "tests": [],
@@ -101,7 +101,7 @@
     "method": "GET",
     "sortNum": 15000,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-08-09T06:31:00.833Z",
+    "modified": "2022-08-11T08:25:20.227Z",
     "headers": [],
     "params": [
       {
@@ -128,6 +128,25 @@
     "body": {
       "type": "json",
       "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n    \"name\": \"Coffee Base\",\n    \"created_at\": \"2022-07-29T08:12:19.654321Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "c9d10cad-05f6-4de2-92c1-df1220e2444e",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
+    "name": "update menu",
+    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7880",
+    "method": "PATCH",
+    "sortNum": 80000,
+    "created": "2022-08-11T07:30:17.479Z",
+    "modified": "2022-08-11T10:02:05.663Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"name\": \"Malware\",\n    \"price\": 1000.25,\n    \"description\": \"x\",\n    \"label\": \"x\",\n    \"public\": true\n}",
       "form": []
     },
     "tests": []

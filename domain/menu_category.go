@@ -29,14 +29,15 @@ type Menu struct {
 }
 
 type MenuCategoryUsecaseContract interface {
-	UpsertMenuCategory(ctx context.Context, payload *MenuCategoryUpsertRequest) (*MenuCategoryUpsertResponse, int, error)
+	UpsertMenuCategory(ctx context.Context, payload *MenuCategoryUpsertRequest) (*MenuCategoryResponse, int, error)
 	FindMenuCategories(ctx context.Context, withTrashed bool) ([]MenuCategoryFindAllResponse, int, error)
-	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategoryFindResponse, int, error)
-	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategoryDeleteResponse, int, error)
+	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategoryResponse, int, error)
+	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategoryResponse, int, error)
 
-	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequest) (*MenuCreateResponse, int, error)
-	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuFindResponse, int, error)
-	DeleteMenu(ctx context.Context, id string) (*MenuDeleteResponse, int, error)
+	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequest) (*MenuResponse, int, error)
+	UpdateMenu(ctx context.Context, id string, payload *MenuUpdateRequest) (*MenuResponse, int, error)
+	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuResponse, int, error)
+	DeleteMenu(ctx context.Context, id string) (*MenuResponse, int, error)
 }
 
 type MenuCategoryRepositoryContract interface {
@@ -46,6 +47,7 @@ type MenuCategoryRepositoryContract interface {
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, int, error)
 
 	InsertMenu(ctx context.Context, menuCategoryId string, data *Menu) (*MenuCategory, int, error)
+	UpdateMenu(ctx context.Context, id string, data *Menu) (*MenuCategory, int, error)
 	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuCategory, error)
 	DeleteMenu(ctx context.Context, id string) (*MenuCategory, int, error)
 }

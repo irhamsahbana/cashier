@@ -19,8 +19,10 @@ func (u *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed 
 
 	var resp []domain.MenuCategoryFindAllResponse
 
+	// mc -> menu category, m -> menu
 	for _, mc := range result {
 		var data domain.MenuCategoryFindAllResponse
+		var menus []domain.MenuFindAllResponse
 
 		data.UUID = mc.UUID
 		data.Name = mc.Name
@@ -33,6 +35,34 @@ func (u *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed 
 			dataDeletedAt := time.UnixMicro(*mc.DeletedAt)
 			data.DeletedAt = &dataDeletedAt
 		}
+
+		if len(mc.Menus) > 0 {
+			for _, m := range mc.Menus {
+				var dataMenu domain.MenuFindAllResponse
+
+				dataMenu.UUID = m.UUID
+				dataMenu.MainUUID = m.MainUUID
+				dataMenu.Name = m.Name
+				dataMenu.Price = m.Price
+				dataMenu.Description = m.Description
+				dataMenu.Label = m.Label
+				dataMenu.Public = m.Public
+				dataMenu.ImageUrl = m.ImageUrl
+				dataMenu.CreatedAt = time.UnixMicro(m.CreatedAt)
+				if m.UpdatedAt != nil {
+					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt)
+					dataMenu.UpdatedAt = &dataUpdatedAt
+				}
+				if m.DeletedAt != nil {
+					dataDeletedAt := time.UnixMicro(*m.DeletedAt)
+					dataMenu.DeletedAt = &dataDeletedAt
+				}
+
+				menus = append(menus, dataMenu)
+			}
+		}
+
+		data.Menus = menus
 
 		resp = append(resp, data)
 	}

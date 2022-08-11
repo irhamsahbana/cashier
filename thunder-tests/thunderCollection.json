@@ -7,7 +7,7 @@
     "folders": [
       {
         "_id": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-        "name": "Menu Category",
+        "name": "menu category",
         "containerId": "",
         "created": "2022-07-29T08:05:30.373Z",
         "sortNum": 10000
@@ -19,6 +19,15 @@
         "created": "2022-08-01T04:07:42.908Z",
         "sortNum": 20000
       }
-    ]
+    ],
+    "settings": {
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": []
+    }
   }
 ]

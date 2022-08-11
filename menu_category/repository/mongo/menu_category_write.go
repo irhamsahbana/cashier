@@ -164,46 +164,80 @@ func (repo *menuCategoryMongoRepository) InsertMenu(ctx context.Context, menuCat
 	return &menucategory, http.StatusOK, nil
 }
 
-func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
-	var menucategory domain.MenuCategory
-
+func (repo *menuCategoryMongoRepository) UpdateMenu(ctx context.Context, id string, data *domain.Menu) (*domain.MenuCategory, int, error) {
 	filter := bson.M{"menus.uuid": id}
+
+	arrayFilters :=  options.ArrayFilters{
+		Filters: bson.A{
+			bson.M{"elem.uuid": id},
+		},
+	}
+
 	update := bson.M{
 				"$set": bson.M{
-					"menus.$[elem].deleted_at": bson.M{
-						"$ifNull": bson.A{
-							"$menus.$[elem].deleted_at",
-							time.Now().UnixMicro(),
-						},
-					},
+					"menus.$[elem].name": data.Name,
+					"menus.$[elem].price": data.Price,
+					"menus.$[elem].description": data.Description,
+					"menus.$[elem].label": data.Label,
+					"menus.$[elem].public": data.Public,
+					"menus.$[elem].updated_at": time.Now().UnixMicro(),
 				},
 			}
 
-	arrayFilter :=  options.ArrayFilters{
-						Filters: bson.A{
-							bson.M{
-								"elem.uuid": id,
-								"elem.deleted_at": bson.M{"$exists": false},
-							},
-						},
-					}
-
 	var updateOptions options.UpdateOptions
-	updateOptions.ArrayFilters = &arrayFilter
+	updateOptions.ArrayFilters = &arrayFilters
 
-	result, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
+	_, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	if result.ModifiedCount > 0 {
-		menu, err :=  repo.FindMenu(ctx, id, true)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
+	menu, err :=  repo.FindMenu(ctx, id, true)
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			return nil, http.StatusNotFound, nil
 		}
 
-		return menu, http.StatusOK, nil
+		return nil, http.StatusInternalServerError, err
 	}
 
-	return &menucategory, http.StatusOK, nil
+	return menu, http.StatusOK, nil
+}
+
+func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
+	filter := bson.M{"menus.uuid": id}
+
+	arrayFilters :=  options.ArrayFilters{
+		Filters: bson.A{
+			bson.M{
+				"elem.uuid": id,
+				"elem.deleted_at": bson.M{"$exists": false},
+			},
+		},
+	}
+
+	update := bson.M{
+				"$set": bson.M{
+					"menus.$[elem].deleted_at": time.Now().UnixMicro(),
+				},
+			}
+
+	var updateOptions options.UpdateOptions
+	updateOptions.ArrayFilters = &arrayFilters
+
+	_, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	menu, err :=  repo.FindMenu(ctx, id, true)
+	if err != nil {
+		if err.Error() == "mongo: no documents in result" {
+			return nil, http.StatusNotFound, nil
+		}
+
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return menu, http.StatusOK, nil
 }

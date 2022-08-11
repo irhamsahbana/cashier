@@ -148,13 +148,14 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 	var menucategory domain.MenuCategory
 
 	var filter bson.M
+	var elemMatch bson.M
 
 	println("pake trashed:", withTrashed)
 
 	if withTrashed == true {
-		filter = bson.M{
-			"menus.uuid": id,
-		}
+		filter = bson.M{"menus.uuid": id}
+
+		elemMatch = bson.M{"uuid": id}
 	} else {
 		filter = bson.M{
 			"$and": bson.A{
@@ -162,6 +163,13 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 				bson.M{"menus.deleted_at": bson.M{"$exists": false}},
 			},
 		}
+
+		elemMatch = bson.M{
+						"$and": bson.A{
+							bson.M{"uuid": id},
+							bson.M{"deleted_at": bson.M{"$exists": false}},
+						},
+					}
 	}
 
 	err := repo.Collection.FindOne(
@@ -176,7 +184,7 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 															"created_at": 1,
 															"updated_at": 1,
 															"menus": bson.M{
-																"$elemMatch": filter,
+																"$elemMatch": elemMatch,
 															},
 														},
 													),
