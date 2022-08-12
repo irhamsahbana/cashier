@@ -18,7 +18,7 @@ func (u *menuCategoryUsecase) DeleteMenu(c context.Context, id string) (*domain.
 	}
 
 	if code == http.StatusNotFound {
-		return &domain.MenuResponse{}, http.StatusOK, nil
+		return nil, http.StatusOK, nil
 	}
 
 	menu := result.Menus[0]

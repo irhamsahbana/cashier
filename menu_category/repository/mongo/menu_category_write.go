@@ -46,7 +46,6 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 		contents = insert
 	}
 
-
 	opts := options.Update().SetUpsert(true)
 
 	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts);  err != nil {
@@ -83,12 +82,14 @@ func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context,
 		return nil, http.StatusInternalServerError, err
 	}
 
-	if result.ModifiedCount > 0 {
-		findOne := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
+	if result.MatchedCount == 0 {
+		return nil, http.StatusNotFound, nil
+	}
 
-		if err = findOne.Decode(&menucategory);  err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
+	findOne := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
+
+	if err = findOne.Decode(&menucategory);  err != nil {
+		return nil, http.StatusInternalServerError, err
 	}
 
 	return &menucategory, http.StatusOK, nil
@@ -187,17 +188,17 @@ func (repo *menuCategoryMongoRepository) UpdateMenu(ctx context.Context, id stri
 	var updateOptions options.UpdateOptions
 	updateOptions.ArrayFilters = &arrayFilters
 
-	_, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
+	result, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
+	if result.MatchedCount == 0 {
+		return nil, http.StatusNotFound, nil
+	}
+
 	menu, err :=  repo.FindMenu(ctx, id, true)
 	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			return nil, http.StatusNotFound, nil
-		}
-
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -225,17 +226,17 @@ func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id stri
 	var updateOptions options.UpdateOptions
 	updateOptions.ArrayFilters = &arrayFilters
 
-	_, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
+	result, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
+	if result.MatchedCount == 0 {
+		return nil, http.StatusNotFound, nil
+	}
+
 	menu, err :=  repo.FindMenu(ctx, id, true)
 	if err != nil {
-		if err.Error() == "mongo: no documents in result" {
-			return nil, http.StatusNotFound, nil
-		}
-
 		return nil, http.StatusInternalServerError, err
 	}
 

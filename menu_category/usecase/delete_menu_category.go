@@ -17,6 +17,10 @@ func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (
 		return nil, code, err
 	}
 
+	if code == http.StatusNotFound {
+		return nil, http.StatusOK, nil
+	}
+
 	var resp domain.MenuCategoryResponse
 	resp.UUID = result.UUID
 	resp.Name = result.Name
