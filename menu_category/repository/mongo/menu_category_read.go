@@ -144,7 +144,7 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 
 // Menu
 
-func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string, withTrashed bool) (*domain.MenuCategory, error) {
+func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string, withTrashed bool) (*domain.MenuCategory, int, error) {
 	var menucategory domain.MenuCategory
 
 	var filter bson.M
@@ -191,8 +191,8 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 								).Decode(&menucategory)
 
 		if err != nil {
-			return &menucategory, err
+			return nil, http.StatusInternalServerError, err
 		}
 
-	return &menucategory, nil
+	return &menucategory, http.StatusOK, nil
 }

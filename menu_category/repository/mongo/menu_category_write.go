@@ -197,7 +197,7 @@ func (repo *menuCategoryMongoRepository) UpdateMenu(ctx context.Context, id stri
 		return nil, http.StatusNotFound, nil
 	}
 
-	menu, err :=  repo.FindMenu(ctx, id, true)
+	menu, _, err :=  repo.FindMenu(ctx, id, true)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -235,7 +235,7 @@ func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id stri
 		return nil, http.StatusNotFound, nil
 	}
 
-	menu, err :=  repo.FindMenu(ctx, id, true)
+	menu, _, err :=  repo.FindMenu(ctx, id, true)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

@@ -12,7 +12,7 @@ func (u *menuCategoryUsecase) FindMenu(c context.Context, id string, withTrashed
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, err := u.menuCategoryRepo.FindMenu(ctx, id, withTrashed)
+	result, code, err := u.menuCategoryRepo.FindMenu(ctx, id, withTrashed)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -35,5 +35,5 @@ func (u *menuCategoryUsecase) FindMenu(c context.Context, id string, withTrashed
 		resp.DeletedAt = &menuDeletedAt
 	}
 
-	return &resp, http.StatusOK, nil
+	return &resp, code, nil
 }

@@ -48,6 +48,6 @@ type MenuCategoryRepositoryContract interface {
 
 	InsertMenu(ctx context.Context, menuCategoryId string, data *Menu) (*MenuCategory, int, error)
 	UpdateMenu(ctx context.Context, id string, data *Menu) (*MenuCategory, int, error)
-	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuCategory, error)
+	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuCategory, int, error)
 	DeleteMenu(ctx context.Context, id string) (*MenuCategory, int, error)
 }
