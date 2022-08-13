@@ -30,7 +30,16 @@ func(mock *MockMenuCategoryRepository) FindMenuCategory(ctx context.Context, id 
 }
 
 func(mock *MockMenuCategoryRepository) DeleteMenuCategory(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
-	return &domain.MenuCategory{}, http.StatusOK, nil
+	args := mock.Called(context.Background(), id)
+
+	entityArg := args.Get(0)
+	codeArg := args.Get(1)
+
+	if entityArg == nil {
+		return nil, codeArg.(int), nil
+	}
+
+	return entityArg.(*domain.MenuCategory), codeArg.(int), args.Error(2)
 }
 
 func(mock *MockMenuCategoryRepository) InsertMenu(ctx context.Context, menuCategoryId string, data *domain.Menu) (*domain.MenuCategory, int, error) {

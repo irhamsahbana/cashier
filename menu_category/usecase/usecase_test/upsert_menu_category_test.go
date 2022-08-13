@@ -2,7 +2,6 @@ package usecase_test
 
 import (
 	"context"
-	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/menu_category/mocks"
 	"lucy/cashier/menu_category/usecase"
@@ -15,7 +14,7 @@ import (
 )
 
 var MockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
-var testUsecase = usecase.NewMenuCategoryUsecase(MockMenuCategoryRepository, time.Duration(5) * time.Second)
+var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(MockMenuCategoryRepository, time.Duration(5) * time.Second)
 var ctx =  context.Background()
 
 var normalUpsertRequest = domain.MenuCategoryUpsertRequest{
@@ -40,7 +39,7 @@ func TestUpsertMenuCategory_normalCase(t *testing.T) {
 	// -- prepare for mocking
 
 	// testing usecase with fake request
-	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &normalUpsertRequest)
+	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &normalUpsertRequest)
 	// -- testing usecase with fake request
 
 	// assertion section
@@ -57,7 +56,7 @@ func TestUpsertMenuCategory_errorWhenUuidIsEmptyString(t *testing.T) {
 	request := normalUpsertRequest
 	request.UUID = ""
 
-	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &request)
+	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
 
 	assert.Nil(t, resp)
 	assert.Equal(t, http.StatusUnprocessableEntity, code)
@@ -70,11 +69,9 @@ func TestUpsertMenuCategory_errorWhenCreatedAtNotValidRFC3999(t *testing.T) {
 	request := normalUpsertRequest
 	request.CreatedAt = "2022-08-13T04:06:13.dsadaZ"
 
-	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &request)
+	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
 
 	assert.Nil(t, resp)
 	assert.Equal(t, http.StatusUnprocessableEntity, code)
 	assert.NotNil(t, err)
-
-	fmt.Println(err.Error())
 }

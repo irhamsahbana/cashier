@@ -48,13 +48,13 @@ func (u *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed 
 				dataMenu.Label = m.Label
 				dataMenu.Public = m.Public
 				dataMenu.ImageUrl = m.ImageUrl
-				dataMenu.CreatedAt = time.UnixMicro(m.CreatedAt)
+				dataMenu.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
 				if m.UpdatedAt != nil {
-					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt)
+					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
 					dataMenu.UpdatedAt = &dataUpdatedAt
 				}
 				if m.DeletedAt != nil {
-					dataDeletedAt := time.UnixMicro(*m.DeletedAt)
+					dataDeletedAt := time.UnixMicro(*m.DeletedAt).UTC()
 					dataMenu.DeletedAt = &dataDeletedAt
 				}
 

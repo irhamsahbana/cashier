@@ -46,7 +46,7 @@ func (u *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId strin
 	resp.Description = menu.Description
 	resp.Label = menu.Label
 	resp.Public = menu.Public
-	resp.CreatedAt = time.UnixMicro(menu.CreatedAt)
+	resp.CreatedAt = time.UnixMicro(menu.CreatedAt).UTC()
 
 	return &resp, http.StatusCreated, nil
 }

@@ -50,13 +50,13 @@ func (u *menuCategoryUsecase) UpdateMenu (c context.Context, id string, req *dom
 	resp.Description = menu.Description
 	resp.Label = menu.Label
 	resp.Public = menu.Public
-	resp.CreatedAt =time.UnixMicro(menu.CreatedAt)
+	resp.CreatedAt =time.UnixMicro(menu.CreatedAt).UTC()
 	if menu.UpdatedAt != nil {
-		menuUpdatedAt := time.UnixMicro(*menu.UpdatedAt)
+		menuUpdatedAt := time.UnixMicro(*menu.UpdatedAt).UTC()
 		resp.UpdatedAt = &menuUpdatedAt
 	}
 	if menu.DeletedAt != nil {
-		menuDeletedAt := time.UnixMicro(*menu.DeletedAt)
+		menuDeletedAt := time.UnixMicro(*menu.DeletedAt).UTC()
 		resp.DeletedAt = &menuDeletedAt
 	}
 

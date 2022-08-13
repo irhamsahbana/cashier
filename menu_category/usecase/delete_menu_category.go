@@ -24,13 +24,13 @@ func (u *menuCategoryUsecase) DeleteMenuCategory(c context.Context, id string) (
 	var resp domain.MenuCategoryResponse
 	resp.UUID = result.UUID
 	resp.Name = result.Name
-	resp.CreatedAt = time.UnixMicro(result.CreatedAt)
+	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.UpdatedAt != nil {
-		respUpdatedAt := time.UnixMicro(*result.UpdatedAt)
+		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
 	}
 	if result.DeletedAt != nil {
-		respDeletedAt := time.UnixMicro(*result.DeletedAt)
+		respDeletedAt := time.UnixMicro(*result.DeletedAt).UTC()
 		resp.DeletedAt = &respDeletedAt
 	}
 
