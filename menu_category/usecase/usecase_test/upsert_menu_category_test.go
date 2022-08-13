@@ -2,6 +2,7 @@ package usecase_test
 
 import (
 	"context"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/menu_category/mocks"
 	"lucy/cashier/menu_category/usecase"
@@ -13,30 +14,67 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-var mockRepo = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
-var testUsecase = usecase.NewMenuCategoryUsecase(mockRepo, time.Duration(5) * time.Second)
-func TestUpsertMenuCategoryValidateUUID(t *testing.T) {
-	// begin preparation
-	ctx := context.Background()
+var MockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+var testUsecase = usecase.NewMenuCategoryUsecase(MockMenuCategoryRepository, time.Duration(5) * time.Second)
+var ctx =  context.Background()
 
-	request := domain.MenuCategoryUpsertRequest{
-		UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
-		Name: "",
-		CreatedAt: "2014-06-18T15:00:00.000000Z",
-	}
-
-	var menucategory domain.MenuCategory
-	menucategory.UUID = "something"
-
-	mockRepo.On("UpsertMenuCategory").Return(&menucategory, http.StatusOK, nil)
-
-	resp, _, _ := testUsecase.UpsertMenuCategory(ctx, &request)
-
-	mockRepo.AssertExpectations(t)
-
-	assert.Equal(t, resp.Name, "")
+var normalUpsertRequest = domain.MenuCategoryUpsertRequest{
+	UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+	Name: "Coffee Base",
+	CreatedAt: "2022-08-13T04:06:16.312789Z",
 }
 
-func TestValidateCode(t *testing.T) {
+func TestUpsertMenuCategory_normalCase(t *testing.T) {
+	createdAtString :=  normalUpsertRequest.CreatedAt
+	createdAt, _ := time.Parse(time.RFC3339, createdAtString)
+	createdAtUnix := createdAt.UnixMicro()
 
+	// prepare for mocking
+	menuCategory := domain.MenuCategory{
+		UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+		Name: "Coffee Base",
+		CreatedAt: createdAtUnix,
+	}
+
+	MockMenuCategoryRepository.On("UpsertMenuCategory", ctx, &menuCategory).Return(&menuCategory, http.StatusOK, nil)
+	// -- prepare for mocking
+
+	// testing usecase with fake request
+	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &normalUpsertRequest)
+	// -- testing usecase with fake request
+
+	// assertion section
+	assert.NotNil(t, resp)
+	assert.Equal(t, code, http.StatusOK)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "74c4a96b-b19c-4c32-9b94-d13f533144fe", resp.UUID)
+	assert.Equal(t, "Coffee Base", resp.Name)
+	assert.Equal(t, createdAt, resp.CreatedAt)
+}
+
+func TestUpsertMenuCategory_errorWhenUuidIsEmptyString(t *testing.T) {
+	request := normalUpsertRequest
+	request.UUID = ""
+
+	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &request)
+
+	assert.Nil(t, resp)
+	assert.Equal(t, http.StatusUnprocessableEntity, code)
+	assert.NotNil(t, err)
+
+	assert.EqualError(t, err, "invalid UUID length: 0")
+}
+
+func TestUpsertMenuCategory_errorWhenCreatedAtNotValidRFC3999(t *testing.T) {
+	request := normalUpsertRequest
+	request.CreatedAt = "2022-08-13T04:06:13.dsadaZ"
+
+	resp, code, err := testUsecase.UpsertMenuCategory(ctx, &request)
+
+	assert.Nil(t, resp)
+	assert.Equal(t, http.StatusUnprocessableEntity, code)
+	assert.NotNil(t, err)
+
+	fmt.Println(err.Error())
 }

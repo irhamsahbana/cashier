@@ -13,11 +13,12 @@ type MockMenuCategoryRepository struct {
 }
 
 func(mock *MockMenuCategoryRepository) UpsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
-	args := mock.Called(ctx, data)
+	args := mock.Called(context.Background(), data)
 
-	dataArg := args.Get(1)
+	entityArg := args.Get(0)
+	codeArg := args.Get(1)
 
-	return dataArg.(*domain.MenuCategory), http.StatusOK, args.Error(0)
+	return entityArg.(*domain.MenuCategory), codeArg.(int), args.Error(2)
 }
 
 func(mock *MockMenuCategoryRepository) FindMenuCategories(ctx context.Context, withTrashed bool) ([]domain.MenuCategory, int, error) {
