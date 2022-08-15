@@ -26,13 +26,13 @@ func (u *menuCategoryUsecase) FindMenuCategories(c context.Context, withTrashed 
 
 		data.UUID = mc.UUID
 		data.Name = mc.Name
-		data.CreatedAt = time.UnixMicro(mc.CreatedAt)
+		data.CreatedAt = time.UnixMicro(mc.CreatedAt).UTC()
 		if mc.UpdatedAt != nil {
-			dataUpdatedAt := time.UnixMicro(*mc.UpdatedAt)
+			dataUpdatedAt := time.UnixMicro(*mc.UpdatedAt).UTC()
 			data.UpdatedAt = &dataUpdatedAt
 		}
 		if mc.DeletedAt != nil {
-			dataDeletedAt := time.UnixMicro(*mc.DeletedAt)
+			dataDeletedAt := time.UnixMicro(*mc.DeletedAt).UTC()
 			data.DeletedAt = &dataDeletedAt
 		}
 

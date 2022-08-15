@@ -132,11 +132,11 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 
 	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindMenusStage, filterMenusBaseOnExistanceOfDeletedAtStage, groupByUuidStage})
 	if err != nil {
-		return menucategories, http.StatusInternalServerError, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	if err = cursor.All(ctx, &menucategories); err != nil {
-		return menucategories, http.StatusInternalServerError, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	return menucategories, http.StatusOK, nil
