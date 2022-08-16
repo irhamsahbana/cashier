@@ -57,38 +57,6 @@ func TestCreateMenu(t *testing.T) {
 	assert.Equal(t, "Cappucino", resp.Name)
 	assert.Equal(t, createdAt, resp.CreatedAt)
 
-// 	t.Run("should convert unix time in database to date.Time", func(t *testing.T) {
-// 		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
-// 		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
-
-// 		var request = domain.MenuCategoryUpsertRequest{
-// 			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
-// 			Name: "Coffee Base",
-// 			CreatedAt: createdAtString,
-// 		}
-
-// 		menuCategoryInput := domain.MenuCategory{
-// 			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
-// 			Name: "Coffee Base",
-// 			CreatedAt: createdAtUnix,
-// 		}
-
-// 		menuCategoryOutput := domain.MenuCategory{
-// 			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
-// 			Name: "Coffee Base",
-// 			CreatedAt: createdAtUnix,
-// 			UpdatedAt: &updatedAtUnix,
-// 		}
-
-// 		mockMenuCategoryRepository.On("UpsertMenuCategory", ctx, &menuCategoryInput).Return(&menuCategoryOutput, http.StatusOK, nil)
-
-// 		resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
-
-// 		assert.Equal(t, &updatedAt, resp.UpdatedAt)
-// 		assert.Equal(t, http.StatusOK, code)
-// 		assert.Nil(t, err)
-// 	})
-
 	t.Run("should return error when uuid is empty string", func(t *testing.T) {
 		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
