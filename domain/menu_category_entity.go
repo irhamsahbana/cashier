@@ -16,7 +16,7 @@ type MenuCategory struct {
 
 type Menu struct {
 	UUID			string		`json:"uuid" bson:"uuid"`
-	MainUUID		string		`json:"main_uuid,omitempty" bson:"main_uuid"`
+	MainUUID		*string		`json:"main_uuid,omitempty" bson:"main_uuid"`
 	Name			string		`json:"name" bson:"name"`
 	Price			float32		`json:"price" bson:"price"`
 	Description		*string		`json:"description" bson:"description"`

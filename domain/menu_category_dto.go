@@ -29,7 +29,7 @@ type MenuCategoryFindAllResponse struct {
 
 type MenuFindAllResponse struct {
 	UUID			string		`json:"uuid"`
-	MainUUID		string		`json:"main_uuid,omitempty"`
+	MainUUID		*string		`json:"main_uuid,omitempty"`
 	Name			string		`json:"name" bson:"name"`
 	Price			float32		`json:"price" bson:"price"`
 	Description		*string		`json:"description"`
@@ -45,7 +45,7 @@ type MenuFindAllResponse struct {
 
 type MenuCreateRequest struct {
 	UUID			string		`json:"uuid" bson:"uuid"`
-	MainUUID		string		`json:"main_uuid,omitempty" bson:"main_uuid"`
+	MainUUID		*string		`json:"main_uuid,omitempty" bson:"main_uuid"`
 	Name			string		`json:"name" bson:"name"`
 	Price			float32		`json:"price" bson:"price"`
 	Description		*string		`json:"description" bson:"description"`

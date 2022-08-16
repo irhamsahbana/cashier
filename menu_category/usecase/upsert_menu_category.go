@@ -25,7 +25,7 @@ func (u *menuCategoryUsecase) UpsertMenuCategory(c context.Context, req *domain.
 	var menucategory domain.MenuCategory
 	menucategory.UUID = req.UUID
 	menucategory.Name = req.Name
-	menucategory.CreatedAt = createdAt.UnixMicro()
+	menucategory.CreatedAt = createdAt.UTC().UnixMicro()
 
 	result, code, err := u.menuCategoryRepo.UpsertMenuCategory(ctx, &menucategory)
 	if err != nil {

@@ -24,6 +24,7 @@ func (u *menuCategoryUsecase) CreateMenu(c context.Context, menuCategoryId strin
 
 	data := domain.Menu{
 		UUID: req.UUID,
+		MainUUID: req.MainUUID,
 		Name: req.Name,
 		Price: req.Price,
 		Description: req.Description,

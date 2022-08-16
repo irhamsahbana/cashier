@@ -24,7 +24,7 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 	}
 
 	if countMenuCategory > 0 {
-		updatedAt := time.Now().UnixMicro()
+		updatedAt := time.Now().UTC().UnixMicro()
 
 		update := bson.M{
 			"$set": bson.M{
@@ -71,7 +71,7 @@ func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context,
 													"deleted_at": bson.M{
 														"$ifNull": bson.A{
 															"$deleted_at",
-															time.Now().UnixMicro(),
+															time.Now().UTC().UnixMicro(),
 														},
 													},
 												},
@@ -181,7 +181,7 @@ func (repo *menuCategoryMongoRepository) UpdateMenu(ctx context.Context, id stri
 					"menus.$[elem].description": data.Description,
 					"menus.$[elem].label": data.Label,
 					"menus.$[elem].public": data.Public,
-					"menus.$[elem].updated_at": time.Now().UnixMicro(),
+					"menus.$[elem].updated_at": time.Now().UTC().UnixMicro(),
 				},
 			}
 
@@ -219,7 +219,7 @@ func (repo *menuCategoryMongoRepository) DeleteMenu(ctx context.Context, id stri
 
 	update := bson.M{
 				"$set": bson.M{
-					"menus.$[elem].deleted_at": time.Now().UnixMicro(),
+					"menus.$[elem].deleted_at": time.Now().UTC().UnixMicro(),
 				},
 			}
 

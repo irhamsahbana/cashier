@@ -1,6 +1,7 @@
 package usecase_test
 
 import (
+	"errors"
 	"lucy/cashier/domain"
 	"lucy/cashier/menu_category/mocks"
 	"lucy/cashier/menu_category/usecase"
@@ -12,13 +13,21 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestUpsertMenuCategory_normalCase(t *testing.T) {
+func TestUpsertMenuCategory(t *testing.T) {
 	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
 
-	createdAtString :=  normalUpsertRequest.CreatedAt
+	var request = domain.MenuCategoryUpsertRequest{
+		UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+		Name: "Coffee Base",
+		CreatedAt: createdAtString,
+	}
+
 	createdAt, _ := time.Parse(time.RFC3339, createdAtString)
-	createdAtUnix := createdAt.UnixMicro()
+	createdAtUnix := createdAt.UTC().UnixMicro()
+
+	updatedAt, _ := time.Parse(time.RFC3339, updatedAtString)
+	updatedAtUnix := updatedAt.UTC().UnixMicro()
 
 	menuCategory := domain.MenuCategory{
 		UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
@@ -28,7 +37,7 @@ func TestUpsertMenuCategory_normalCase(t *testing.T) {
 
 	mockMenuCategoryRepository.On("UpsertMenuCategory", ctx, &menuCategory).Return(&menuCategory, http.StatusOK, nil)
 
-	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &normalUpsertRequest)
+	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
 
 	assert.NotNil(t, resp)
 	assert.Equal(t, code, http.StatusOK)
@@ -37,34 +46,90 @@ func TestUpsertMenuCategory_normalCase(t *testing.T) {
 	assert.Equal(t, "74c4a96b-b19c-4c32-9b94-d13f533144fe", resp.UUID)
 	assert.Equal(t, "Coffee Base", resp.Name)
 	assert.Equal(t, createdAt, resp.CreatedAt)
-}
 
-func TestUpsertMenuCategory_errorWhenUuidIsEmptyString(t *testing.T) {
-	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
-	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
+	t.Run("should convert unix time in database to date.Time", func(t *testing.T) {
+		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
 
-	request := normalUpsertRequest
-	request.UUID = ""
+		var request = domain.MenuCategoryUpsertRequest{
+			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+			Name: "Coffee Base",
+			CreatedAt: createdAtString,
+		}
 
-	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+		menuCategoryInput := domain.MenuCategory{
+			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+			Name: "Coffee Base",
+			CreatedAt: createdAtUnix,
+		}
 
-	assert.Nil(t, resp)
-	assert.Equal(t, http.StatusUnprocessableEntity, code)
-	assert.NotNil(t, err)
+		menuCategoryOutput := domain.MenuCategory{
+			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+			Name: "Coffee Base",
+			CreatedAt: createdAtUnix,
+			UpdatedAt: &updatedAtUnix,
+		}
 
-	assert.EqualError(t, err, "invalid UUID length: 0")
-}
+		mockMenuCategoryRepository.On("UpsertMenuCategory", ctx, &menuCategoryInput).Return(&menuCategoryOutput, http.StatusOK, nil)
 
-func TestUpsertMenuCategory_errorWhenCreatedAtNotValidRFC3999(t *testing.T) {
-	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
-	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
+		resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
 
-	request := normalUpsertRequest
-	request.CreatedAt = "2022-08-13T04:06:13.dsadaZ"
+		assert.Equal(t, &updatedAt, resp.UpdatedAt)
+		assert.Equal(t, http.StatusOK, code)
+		assert.Nil(t, err)
+	})
 
-	resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+	t.Run("should return error when uuid is empty string", func(t *testing.T) {
+		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
 
-	assert.Nil(t, resp)
-	assert.Equal(t, http.StatusUnprocessableEntity, code)
-	assert.NotNil(t, err)
+		var request = domain.MenuCategoryUpsertRequest{
+			Name: "Coffee Base",
+			CreatedAt: createdAtString,
+		}
+
+		resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+
+		assert.Nil(t, resp)
+		assert.Equal(t, http.StatusUnprocessableEntity, code)
+		assert.NotNil(t, err)
+
+		assert.EqualError(t, err, "invalid UUID length: 0")
+	})
+
+	t.Run("should return error when created_at field not a valid RFC3999", func(t *testing.T) {
+		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
+
+		var request = domain.MenuCategoryUpsertRequest{
+			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+			Name: "Coffee Base",
+			CreatedAt: "2022-08-13T04:06:13.dsadaZ",
+		}
+
+		resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+
+		assert.Nil(t, resp)
+		assert.Equal(t, http.StatusUnprocessableEntity, code)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("should return error if something wrong with repository", func(t *testing.T) {
+		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository,timeoutContext)
+
+		var request = domain.MenuCategoryUpsertRequest{
+			UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
+			Name: "Coffee Base",
+			CreatedAt: createdAtString,
+		}
+
+		mockMenuCategoryRepository.On("UpsertMenuCategory", ctx, &menuCategory).Return(nil, http.StatusInternalServerError, errors.New("something wrong"))
+
+		resp, code, err := testMenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+
+		assert.Nil(t, resp)
+		assert.Equal(t, http.StatusInternalServerError, code)
+		assert.NotNil(t, err)
+	})
 }

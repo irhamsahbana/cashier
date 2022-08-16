@@ -18,9 +18,8 @@ func TestFindMenuCategory_normalCase(t *testing.T) {
 	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
 
-	createdAtString :=  normalUpsertRequest.CreatedAt
 	createdAt, _ := time.Parse(time.RFC3339, createdAtString)
-	createdAtUnix := createdAt.UnixMicro()
+	createdAtUnix := createdAt.UTC().UnixMicro()
 
 	menuCategory := domain.MenuCategory{
 		UUID: "74c4a96b-b19c-4c32-9b94-d13f533144fe",
@@ -28,9 +27,9 @@ func TestFindMenuCategory_normalCase(t *testing.T) {
 		CreatedAt: createdAtUnix,
 	}
 
-	mockMenuCategoryRepository.On("FindMenuCategory", ctx, normalUpsertRequest.UUID, false).Return(&menuCategory, http.StatusOK, nil)
+	mockMenuCategoryRepository.On("FindMenuCategory", ctx, "74c4a96b-b19c-4c32-9b94-d13f533144fe", false).Return(&menuCategory, http.StatusOK, nil)
 
-	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx, normalUpsertRequest.UUID, false)
+	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx, "74c4a96b-b19c-4c32-9b94-d13f533144fe", false)
 
 	assert.NotNil(t, resp)
 	assert.Equal(t, code, http.StatusOK)
@@ -41,9 +40,9 @@ func TestFindMenuCategory_ErrorWhenMenuCategoryDoesntExists(t *testing.T) {
 	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
 
-	mockMenuCategoryRepository.On("FindMenuCategory", ctx, normalUpsertRequest.UUID, false).Return(nil, http.StatusNotFound, errors.New("Menu category not found"))
+	mockMenuCategoryRepository.On("FindMenuCategory", ctx, "74c4a96b-b19c-4c32-9b94-d13f533144fe", false).Return(nil, http.StatusNotFound, errors.New("Menu category not found"))
 
-	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx, normalUpsertRequest.UUID, false)
+	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx, "74c4a96b-b19c-4c32-9b94-d13f533144fe", false)
 
 	assert.Nil(t, resp)
 	assert.Equal(t, http.StatusNotFound, code)
@@ -56,9 +55,9 @@ func TestFindMenuCategory_ErrorWhenSomethingWrongWithMarshalingOrDatabase(t *tes
 	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
 
-	mockMenuCategoryRepository.On("FindMenuCategory", ctx, normalUpsertRequest.UUID, false).Return(nil, http.StatusInternalServerError, errors.New("mongo: request timeout"))
+	mockMenuCategoryRepository.On("FindMenuCategory", ctx, "74c4a96b-b19c-4c32-9b94-d13f533144fe", false).Return(nil, http.StatusInternalServerError, errors.New("mongo: request timeout"))
 
-	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx, normalUpsertRequest.UUID, false)
+	resp, code, err := testMenuCategoryUsecase.FindMenuCategory(ctx,"74c4a96b-b19c-4c32-9b94-d13f533144fe", false)
 
 	assert.Nil(t, resp)
 	assert.Equal(t, http.StatusInternalServerError, code)

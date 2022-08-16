@@ -150,8 +150,6 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 	var filter bson.M
 	var elemMatch bson.M
 
-	println("pake trashed:", withTrashed)
-
 	if withTrashed == true {
 		filter = bson.M{"menus.uuid": id}
 
