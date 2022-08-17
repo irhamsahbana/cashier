@@ -62,7 +62,6 @@ type MenuUpdateRequest struct {
 	Description		*string		`json:"description" bson:"description"`
 	Label			string		`json:"label" bson:"label"`
 	Public			bool		`json:"public" bson:"public"`
-	ImageUrl		*string		`json:"image_url" bson:"image_url"`
 }
 
 type MenuResponse struct {
@@ -72,6 +71,7 @@ type MenuResponse struct {
 	Description	*string		`json:"description,omitempty"`
 	Label		string		`json:"Label"`
 	Public		bool		`json:"public"`
+	ImageUrl	*string		`json:"image_url,omitempty"`
 	CreatedAt	time.Time	`json:"created_at"`
 	UpdatedAt	*time.Time	`json:"updated_at,omitempty"`
 	DeletedAt	*time.Time	`json:"deleted_at,omitempty"`

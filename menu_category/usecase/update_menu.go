@@ -16,10 +16,6 @@ func (u *menuCategoryUsecase) UpdateMenu (c context.Context, id string, req *dom
 		return nil, http.StatusUnprocessableEntity, errors.New("name is required")
 	}
 
-	if req.Price == 0 {
-		return nil, http.StatusUnprocessableEntity, errors.New("price is required")
-	}
-
 	if req.Label == "" {
 		return nil, http.StatusUnprocessableEntity, errors.New("label is required")
 	}
@@ -50,6 +46,7 @@ func (u *menuCategoryUsecase) UpdateMenu (c context.Context, id string, req *dom
 	resp.Description = menu.Description
 	resp.Label = menu.Label
 	resp.Public = menu.Public
+	resp.ImageUrl = menu.ImageUrl
 	resp.CreatedAt =time.UnixMicro(menu.CreatedAt).UTC()
 	if menu.UpdatedAt != nil {
 		menuUpdatedAt := time.UnixMicro(*menu.UpdatedAt).UTC()
