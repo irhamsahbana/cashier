@@ -5,13 +5,13 @@ import (
 )
 
 type MenuCategory struct {
-	UUID		string			`json:"uuid" bson:"uuid"`
-	BranchUUID	string			`json:"branch_uuid" bson:"branch_uuid"`
-	Name		string			`json:"name" bson:"name"`
-	Menus		[]Menu			`json:"menus" bson:"menus"`
-	CreatedAt	int64			`json:"created_at" bson:"created_at"`
-	UpdatedAt	*int64			`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
-	DeletedAt	*int64			`json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
+	UUID		string		`json:"uuid" bson:"uuid"`
+	BranchUUID	string		`json:"branch_uuid" bson:"branch_uuid"`
+	Name		string		`json:"name" bson:"name"`
+	Menus		[]Menu		`json:"menus" bson:"menus"`
+	CreatedAt	int64		`json:"created_at" bson:"created_at"`
+	UpdatedAt	*int64		`json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+	DeletedAt	*int64		`json:"deleted_at,omitempty" bson:"deleted_at,omitempty"`
 }
 
 type Menu struct {
@@ -29,19 +29,19 @@ type Menu struct {
 }
 
 type MenuCategoryUsecaseContract interface {
-	UpsertMenuCategory(ctx context.Context, payload *MenuCategoryUpsertRequest) (*MenuCategoryResponse, int, error)
+	UpsertMenuCategory(ctx context.Context, data *MenuCategoryUpsertRequest) (*MenuCategoryResponse, int, error)
 	FindMenuCategories(ctx context.Context, withTrashed bool) ([]MenuCategoryFindAllResponse, int, error)
 	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategoryResponse, int, error)
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategoryResponse, int, error)
 
-	CreateMenu(ctx context.Context, menuCategoryId string, payload *MenuCreateRequest) (*MenuResponse, int, error)
+	CreateMenu(ctx context.Context, menuCategoryId string, data *MenuCreateRequest) (*MenuResponse, int, error)
 	UpdateMenu(ctx context.Context, id string, payload *MenuUpdateRequest) (*MenuResponse, int, error)
 	FindMenu(ctx context.Context, id string, withTrashed bool) (*MenuResponse, int, error)
 	DeleteMenu(ctx context.Context, id string) (*MenuResponse, int, error)
 }
 
 type MenuCategoryRepositoryContract interface {
-	UpsertMenuCategory(ctx context.Context, payload *MenuCategory) (*MenuCategory, int, error)
+	UpsertMenuCategory(ctx context.Context, data *MenuCategory) (*MenuCategory, int, error)
 	FindMenuCategories(ctx context.Context, withTrashed bool) ([]MenuCategory, int, error)
 	FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*MenuCategory, int, error)
 	DeleteMenuCategory(ctx context.Context, id string) (*MenuCategory, int, error)

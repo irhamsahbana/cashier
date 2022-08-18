@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"lucy/cashier/menu_category/mocks"
-	"lucy/cashier/menu_category/usecase"
+	"lucy/cashier/domain/menu_category/mocks"
+	"lucy/cashier/domain/menu_category/usecase"
 	"net/http"
 	"time"
 

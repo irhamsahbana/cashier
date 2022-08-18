@@ -31,7 +31,7 @@ func NewMenuCategoryHandler(router *gin.Engine, usecase domain.MenuCategoryUseca
 	router.DELETE("menus/:id", handler.DeleteMenu)
 }
 
-func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
+func (h *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
 	var request domain.MenuCategoryUpsertRequest
 
 	err := c.BindJSON(&request)
@@ -41,7 +41,7 @@ func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
+	result, httpCode, err := h.MenuCategoryUsecase.UpsertMenuCategory(ctx, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -50,14 +50,14 @@ func (handler *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, 200, "Menu category upsert successfully", result)
 }
 
-func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
+func (h *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 	id := c.Param("id")
 	trashed := c.Query("with_trashed")
 
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategory(ctx, id, withTrashed)
+	result, httpCode, err := h.MenuCategoryUsecase.FindMenuCategory(ctx, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -66,12 +66,12 @@ func (handler *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "OK", result)
 }
 
-func (handler *MenuCategoryHandler) FindMenuCategories(c *gin.Context) {
+func (h *MenuCategoryHandler) FindMenuCategories(c *gin.Context) {
 	trashed := c.Query("with_trashed")
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx:= context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.FindMenuCategories(ctx, withTrashed)
+	result, httpCode, err := h.MenuCategoryUsecase.FindMenuCategories(ctx, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -80,11 +80,11 @@ func (handler *MenuCategoryHandler) FindMenuCategories(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "OK", result)
 }
 
-func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
+func (h *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenuCategory(ctx, id)
+	result, httpCode, err := h.MenuCategoryUsecase.DeleteMenuCategory(ctx, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -95,7 +95,7 @@ func (handler *MenuCategoryHandler) DeleteMenuCategory(c *gin.Context) {
 
 // Menu
 
-func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
+func (h *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	var request domain.MenuCreateRequest
 
 	err := c.BindJSON(&request)
@@ -107,7 +107,7 @@ func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	menuCategoryId := c.Param("menuCategoryId")
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.CreateMenu(ctx, menuCategoryId, &request)
+	result, httpCode, err := h.MenuCategoryUsecase.CreateMenu(ctx, menuCategoryId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -116,7 +116,7 @@ func (handler *MenuCategoryHandler) CreateMenu(c *gin.Context) {
 	http_response.ReturnResponse(c, 200, "Menu created successfully", result)
 }
 
-func (handler *MenuCategoryHandler) UpdateMenu(c *gin.Context) {
+func (h *MenuCategoryHandler) UpdateMenu(c *gin.Context) {
 	var request domain.MenuUpdateRequest
 
 	err := c.BindJSON(&request)
@@ -128,7 +128,7 @@ func (handler *MenuCategoryHandler) UpdateMenu(c *gin.Context) {
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.UpdateMenu(ctx, id, &request)
+	result, httpCode, err := h.MenuCategoryUsecase.UpdateMenu(ctx, id, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -137,14 +137,14 @@ func (handler *MenuCategoryHandler) UpdateMenu(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "Menu updated successfully", result)
 }
 
-func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
+func (h *MenuCategoryHandler) FindMenu( c *gin.Context) {
 	id := c.Param("id")
 	trashed := c.Query("with_trashed")
 
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.FindMenu(ctx, id, withTrashed)
+	result, httpCode, err := h.MenuCategoryUsecase.FindMenu(ctx, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -153,11 +153,11 @@ func (handler *MenuCategoryHandler) FindMenu( c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "OK", result)
 }
 
-func (handler *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
+func (h *MenuCategoryHandler) DeleteMenu(c *gin.Context) {
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := handler.MenuCategoryUsecase.DeleteMenu(ctx, id)
+	result, httpCode, err := h.MenuCategoryUsecase.DeleteMenu(ctx, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return

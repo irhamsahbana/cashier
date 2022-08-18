@@ -3,8 +3,8 @@ package usecase_test
 import (
 	"errors"
 	"lucy/cashier/domain"
-	"lucy/cashier/menu_category/mocks"
-	"lucy/cashier/menu_category/usecase"
+	"lucy/cashier/domain/menu_category/mocks"
+	"lucy/cashier/domain/menu_category/usecase"
 	"net/http"
 	"testing"
 	"time"

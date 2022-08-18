@@ -9,9 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"lucy/cashier/bootstrap"
-	_menuCategoryHttp "lucy/cashier/menu_category/delivery/http"
-	_menuCategoryRepo "lucy/cashier/menu_category/repository/mongo"
-	_menuCategoryUsecase "lucy/cashier/menu_category/usecase"
+	_menuCategoryHttp "lucy/cashier/domain/menu_category/delivery/http"
+	_menuCategoryRepo "lucy/cashier/domain/menu_category/repository/mongo"
+	_menuCategoryUsecase "lucy/cashier/domain/menu_category/usecase"
+
+	_waiterHttp "lucy/cashier/domain/waiter/delivery/http"
+	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
+	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
 )
 
 func main() {
@@ -32,6 +36,9 @@ func main() {
 	menuCategoryUsecase := _menuCategoryUsecase.NewMenuCategoryUsecase(menuCategoryRepo, timeoutContext)
 	_menuCategoryHttp.NewMenuCategoryHandler(router, menuCategoryUsecase)
 
+	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
+	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)
+	_waiterHttp.NewWaiterHandler(router, waiterUsecase)
 
 	appPort := fmt.Sprintf(":%v", bootstrap.App.Config.GetString("server.address"))
 	log.Fatal(router.Run(appPort))

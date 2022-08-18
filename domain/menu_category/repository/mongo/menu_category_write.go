@@ -49,11 +49,11 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 	opts := options.Update().SetUpsert(true)
 
 	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts);  err != nil {
-		return &menucategory, http.StatusInternalServerError, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&menucategory); err != nil {
-		return &menucategory, http.StatusInternalServerError, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	return &menucategory, http.StatusOK, nil
@@ -62,22 +62,21 @@ func (repo *menuCategoryMongoRepository) UpsertMenuCategory(ctx context.Context,
 func (repo *menuCategoryMongoRepository) DeleteMenuCategory(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
 	var menucategory domain.MenuCategory
 
-	result, err := repo.Collection.UpdateOne(
-										ctx,
-										bson.M{"uuid": id},
-										bson.A{
-											bson.M{
-												"$set": bson.M{
-													"deleted_at": bson.M{
-														"$ifNull": bson.A{
-															"$deleted_at",
-															time.Now().UTC().UnixMicro(),
-														},
-													},
-												},
-											},
-										},
-									)
+	filter := bson.M{"uuid": id}
+	update := 	bson.A{
+					bson.M{
+						"$set": bson.M{
+							"deleted_at": bson.M{
+								"$ifNull": bson.A{
+									"$deleted_at",
+									time.Now().UTC().UnixMicro(),
+								},
+							},
+						},
+					},
+				}
+
+	result, err := repo.Collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

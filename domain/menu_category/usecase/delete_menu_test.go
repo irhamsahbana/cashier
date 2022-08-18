@@ -3,8 +3,8 @@ package usecase_test
 import (
 	"errors"
 	"lucy/cashier/domain"
-	"lucy/cashier/menu_category/mocks"
-	"lucy/cashier/menu_category/usecase"
+	"lucy/cashier/domain/menu_category/mocks"
+	"lucy/cashier/domain/menu_category/usecase"
 	"net/http"
 	"testing"
 	"time"
@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestFindMenu(t *testing.T) {
+func TestDeleteMenu(t *testing.T) {
 	var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 	var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
 
@@ -43,9 +43,9 @@ func TestFindMenu(t *testing.T) {
 		Menus: []domain.Menu{menu},
 	}
 
-	mockMenuCategoryRepository.Mock.On("FindMenu", ctx, menu.UUID, true).Return(&menuCategory, http.StatusOK, nil)
+	mockMenuCategoryRepository.Mock.On("DeleteMenu", ctx, menu.UUID).Return(&menuCategory, http.StatusOK, nil)
 
-	resp, code, err := testMenuCategoryUsecase.FindMenu(ctx, menu.UUID, true)
+	resp, code, err := testMenuCategoryUsecase.DeleteMenu(ctx, menu.UUID)
 
 	assert.NotNil(t, resp)
 	assert.Equal(t, http.StatusOK, code)
@@ -55,12 +55,26 @@ func TestFindMenu(t *testing.T) {
 		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
 		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
 
-		mockMenuCategoryRepository.Mock.On("FindMenu", ctx, menu.UUID, true).Return(nil, http.StatusInternalServerError, errors.New("something wrong"))
+		mockMenuCategoryRepository.Mock.On("DeleteMenu", ctx, menu.UUID).Return(nil, http.StatusInternalServerError, errors.New("something wrong"))
 
-		resp, code, err := testMenuCategoryUsecase.FindMenu(ctx, menu.UUID, true)
+		resp, code, err := testMenuCategoryUsecase.DeleteMenu(ctx, menu.UUID)
 
 		assert.Nil(t, resp)
 		assert.Equal(t, http.StatusInternalServerError, code)
 		assert.NotNil(t, err)
+	})
+
+	t.Run("should return nothing when nothing to delete and response code must be 200", func(t *testing.T) {
+		var mockMenuCategoryRepository = &mocks.MockMenuCategoryRepository{Mock: mock.Mock{}}
+		var testMenuCategoryUsecase = usecase.NewMenuCategoryUsecase(mockMenuCategoryRepository, timeoutContext)
+
+		mockMenuCategoryRepository.Mock.On("DeleteMenu", ctx, menu.UUID).Return(nil, http.StatusNotFound, nil)
+
+		resp, code, err := testMenuCategoryUsecase.DeleteMenu(ctx, menu.UUID)
+
+		assert.Nil(t, resp)
+		assert.Equal(t, http.StatusOK, code)
+		assert.Nil(t, err)
+
 	})
 }
