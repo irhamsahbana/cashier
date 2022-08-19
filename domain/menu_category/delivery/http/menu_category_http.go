@@ -47,7 +47,7 @@ func (h *MenuCategoryHandler) UpsertMenuCategory(c *gin.Context) {
 		return
 	}
 
-	http_response.ReturnResponse(c, 200, "Menu category upsert successfully", result)
+	http_response.ReturnResponse(c, httpCode, "Menu category upsert successfully", result)
 }
 
 func (h *MenuCategoryHandler) FindMenuCategory(c *gin.Context) {

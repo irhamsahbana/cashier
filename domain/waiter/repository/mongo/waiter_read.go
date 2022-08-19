@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"lucy/cashier/domain"
 	"net/http"
 
@@ -37,14 +38,19 @@ func (repo *waiterMongoRepository) FindWaiter(ctx context.Context, id string, wi
 		}
 	}
 
-	result := repo.Collection.FindOne(ctx, filter)
-
-	if result == nil {
-		return nil, http.StatusNotFound, errors.New("waiter not found")
+	countWaiter, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
 	}
 
-	err := result.Decode(waiter)
+	if countWaiter < 1 {
+		return nil, http.StatusNotFound, errors.New("Waiter not found")
+	}
 
+	result := repo.Collection.FindOne(ctx, filter)
+	fmt.Println(result)
+
+	err = result.Decode(&waiter)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type WaiterUpsertrequest struct {
 	UUID		string	`json:"uuid"`
 	Name		string	`json:"name"`
@@ -7,10 +9,10 @@ type WaiterUpsertrequest struct {
 }
 
 type WaiterResponse struct {
-	BranchUUID		string	`json:"branch_uuid"`
-	Name			string	`json:"name"`
-	LastActive		*int64	`json:"last_active,omitempty"`
-	CreatedAt		int64	`json:"created_at"`
-	UpdatedAt		*int64	`json:"updated_at,omitempty"`
-	DeletedAt		*int64	`json:"deleted_at,omitempty"`
+	UUID			string		`json:"uuid"`
+	Name			string		`json:"name"`
+	LastActive		*time.Time	`json:"last_active,omitempty"`
+	CreatedAt		time.Time	`json:"created_at"`
+	UpdatedAt		*time.Time	`json:"updated_at,omitempty"`
+	DeletedAt		*time.Time	`json:"deleted_at,omitempty"`
 }

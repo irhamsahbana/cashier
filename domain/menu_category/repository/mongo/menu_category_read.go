@@ -170,7 +170,16 @@ func (repo *menuCategoryMongoRepository) FindMenu(ctx context.Context, id string
 					}
 	}
 
-	err := repo.Collection.FindOne(
+	countMenu, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	if countMenu < 1 {
+		return nil, http.StatusNotFound, errors.New("Menu not found")
+	}
+
+	err = repo.Collection.FindOne(
 									ctx,
 									filter,
 									options.FindOne().

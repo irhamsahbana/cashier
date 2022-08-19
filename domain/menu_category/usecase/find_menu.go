@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"lucy/cashier/domain"
@@ -14,7 +13,7 @@ func (u *menuCategoryUsecase) FindMenu(c context.Context, id string, withTrashed
 
 	result, code, err := u.menuCategoryRepo.FindMenu(ctx, id, withTrashed)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		return nil, code, err
 	}
 
 	menu := result.Menus[0]

@@ -16,7 +16,7 @@ type Waiter struct {
 
 type WaiterUsecaseContract interface {
 	UpsertWaiter(ctx context.Context, data *WaiterUpsertrequest) (*WaiterResponse, int, error)
-	FindWaiter(ctx context.Context, id string) (*WaiterResponse, int, error)
+	FindWaiter(ctx context.Context, id string, withTrashed bool) (*WaiterResponse, int, error)
 	DeleteWaiter(ctx context.Context, id string) (*WaiterResponse, int, error)
 }
 

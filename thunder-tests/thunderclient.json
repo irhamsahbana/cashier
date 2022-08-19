@@ -8,7 +8,7 @@
     "method": "GET",
     "sortNum": 20000,
     "created": "2022-07-29T08:10:46.436Z",
-    "modified": "2022-08-09T04:41:50.928Z",
+    "modified": "2022-08-19T07:19:37.692Z",
     "headers": [],
     "params": [
       {
@@ -60,20 +60,13 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "get menu",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884",
+    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884x",
     "method": "GET",
     "sortNum": 60000,
     "created": "2022-08-02T06:21:35.815Z",
-    "modified": "2022-08-11T02:48:29.854Z",
+    "modified": "2022-08-19T05:51:45.138Z",
     "headers": [],
-    "params": [
-      {
-        "name": "with_trashed",
-        "value": "1",
-        "isDisabled": true,
-        "isPath": false
-      }
-    ],
+    "params": [],
     "tests": [],
     "docs": "/menus/:id"
   },
@@ -149,6 +142,59 @@
       "raw": "{\n    \"name\": \"Malware\",\n    \"price\": 1000.25,\n    \"description\": \"x\",\n    \"label\": \"x\",\n    \"public\": true\n}",
       "form": []
     },
+    "tests": []
+  },
+  {
+    "_id": "8b64abfe-94b0-4bb5-b7f8-ecb25964f776",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "87c02b19-5666-4ae9-8d91-9b5e9900b3f1",
+    "name": "upsert waiter",
+    "url": "{{base_url}}/waiters",
+    "method": "PUT",
+    "sortNum": 90000,
+    "created": "2022-08-19T01:37:18.674Z",
+    "modified": "2022-08-19T02:33:50.049Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"a2e6be3c-8511-43c1-97e7-dbc562146c88\",\n  \"name\": \"Farhan\",\n  \"created_at\": \"2019-10-12T07:20:50.523789Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "890116fb-1954-4595-b1e5-714c0269453e",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "87c02b19-5666-4ae9-8d91-9b5e9900b3f1",
+    "name": "delete waiter",
+    "url": "{{base_url}}/waiters/a2e6be3c-8511-43c1-97e7-dbc562146c87",
+    "method": "DELETE",
+    "sortNum": 100000,
+    "created": "2022-08-19T02:29:30.451Z",
+    "modified": "2022-08-19T06:54:17.475Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "d3309415-4d1b-4c32-81c0-a3d83c0ebba1",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "87c02b19-5666-4ae9-8d91-9b5e9900b3f1",
+    "name": "find waiter",
+    "url": "{{base_url}}/waiters/a2e6be3c-8511-43c1-97e7-dbc562146c87x?with_trashed=1",
+    "method": "GET",
+    "sortNum": 110000,
+    "created": "2022-08-19T03:24:33.246Z",
+    "modified": "2022-08-19T07:57:14.214Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "with_trashed",
+        "value": "1",
+        "isPath": false
+      }
+    ],
     "tests": []
   }
 ]

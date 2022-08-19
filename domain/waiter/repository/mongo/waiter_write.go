@@ -26,6 +26,8 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 
 		update := bson.M{
 			"$set": bson.M{
+				"branch_uuid": data.BranchUUID,
+				"name": data.Name,
 				"updated_at": updatedAt,
 			},
 		}
@@ -34,6 +36,8 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 	} else {
 		insert := bson.M{
 			"$set": bson.M{
+				"branch_uuid": data.BranchUUID,
+				"name": data.Name,
 				"created_at": data.CreatedAt,
 			},
 		}
@@ -47,7 +51,7 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 		return nil, http.StatusInternalServerError, err
 	}
 
-	if err := repo.Collection.FindOne(ctx, filter).Decode(waiter); err != nil {
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&waiter); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -82,7 +86,7 @@ func (repo *waiterMongoRepository) DeleteWaiter(ctx context.Context, id string) 
 
 	singleResult := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
 
-	if err = singleResult.Decode(waiter); err != nil {
+	if err = singleResult.Decode(&waiter); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
