@@ -3,16 +3,10 @@ package mocks
 import (
 	"context"
 	"lucy/cashier/domain"
-
-	"github.com/stretchr/testify/mock"
 )
 
-type MockWaiterRepository struct {
-	mock.Mock
-}
-
-func (mock *MockWaiterRepository) FindWaiter(ctx context.Context, id string, withTrashed bool) (*domain.Waiter, int, error) {
-	args := mock.Called(context.Background(), id, withTrashed)
+func (mock *MockWaiterRepository) UpsertWaiter(ctx context.Context, data *domain.Waiter) (*domain.Waiter, int, error) {
+	args := mock.Called(context.Background(), data)
 
 	var entity *domain.Waiter
 	var code int

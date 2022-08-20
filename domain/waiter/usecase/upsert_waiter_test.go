@@ -1,7 +1,6 @@
 package usecase_test
 
 import (
-	"errors"
 	"lucy/cashier/domain"
 	"lucy/cashier/domain/waiter/mocks"
 	"lucy/cashier/domain/waiter/usecase"
@@ -9,11 +8,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func TestDeleteWaiter(t *testing.T) {
+func TestUpsertWaiter(t *testing.T) {
 	var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 	var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
@@ -32,72 +32,90 @@ func TestDeleteWaiter(t *testing.T) {
 		CreatedAt: createdAtString,
 	}
 
-	var mockRepoOutput = domain.Waiter{
+	var mockRepoInputOutput = domain.Waiter{
 		UUID: request.UUID,
 		Name: request.Name,
 		CreatedAt: createdAtUnix,
 	}
 
-	mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutput, http.StatusOK, nil)
-	result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+	mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoInputOutput, http.StatusOK, nil)
+	result, code, err := testUsecase.UpsertWaiter(ctx, &request)
 
 	assert.NotNil(t, result)
 	assert.Equal(t, http.StatusOK, code)
 	assert.Nil(t, err)
 
-	t.Run("should return error when something wrong in repository layer", func(t *testing.T) {
+	t.Run("should return error if uuid is not valid uuid", func(t *testing.T) {
+		requestWithInvalidUUID := request
+		requestWithInvalidUUID.UUID = ""
+
+		_, code, err := testUsecase.UpsertWaiter(ctx, &requestWithInvalidUUID)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, code)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error if created_at is not valid RFC3999", func(t *testing.T) {
+		requestWithInvalidCreatedAt := request
+		requestWithInvalidCreatedAt.CreatedAt = "2022-08-13T04:06:16.312xzyZ"
+
+		result, code, err := testUsecase.UpsertWaiter(ctx, &requestWithInvalidCreatedAt)
+
+		assert.Nil(t, result)
+		assert.Equal(t, http.StatusUnprocessableEntity, code)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error if name of waiter is empty", func(t *testing.T) {
+		requestWithEmptyName := request
+		requestWithEmptyName.Name = ""
+
+		result, code, err := testUsecase.UpsertWaiter(ctx, &requestWithEmptyName)
+
+		assert.Nil(t, result)
+		assert.Equal(t, http.StatusUnprocessableEntity, code)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error if got something wrong with repository layer", func(t *testing.T) {
 		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(nil, http.StatusInternalServerError, errors.New("something wrong with database"))
-
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(nil, http.StatusInternalServerError, errors.New("something wrong"))
+		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
 
 		assert.Nil(t, result)
 		assert.Equal(t, http.StatusInternalServerError, code)
 		assert.Error(t, err)
 	})
 
-	t.Run("should return deleted success (status ok) when no resource was deleted", func(t *testing.T) {
-		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
-		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
-
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(nil, http.StatusNotFound, nil)
-
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
-
-		assert.Nil(t, result)
-		assert.Equal(t, http.StatusOK, code)
-		assert.Nil(t, err)
-	})
-
 	t.Run("should convert last active of waiter from unix time to time.Time if exists", func(t *testing.T) {
 		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
-		mockRepoOutputWithLastActiveExists := mockRepoOutput
+		mockRepoOutputWithLastActiveExists := mockRepoInputOutput
 		mockRepoOutputWithLastActiveExists.LastActive = &createdAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithLastActiveExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithLastActiveExists, http.StatusOK, nil)
+		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
 		assert.Nil(t, err)
 
-		lastActive := result.LastActive
-		assert.Equal(t, createdAt, *lastActive)
+		lastActiveResult := result.LastActive
+		assert.Equal(t, createdAt, *lastActiveResult)
 	})
 
 	t.Run("should convert updated at of waiter from unix time to time.Time if exists", func(t *testing.T) {
 		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
-		mockRepoOutputWithUpdatedAtExists := mockRepoOutput
+		mockRepoOutputWithUpdatedAtExists := mockRepoInputOutput
 		mockRepoOutputWithUpdatedAtExists.UpdatedAt = &updatedAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithUpdatedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithUpdatedAtExists, http.StatusOK, nil)
+		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
@@ -111,17 +129,14 @@ func TestDeleteWaiter(t *testing.T) {
 		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
-		mockRepoOutputWithDeletedAtExists := mockRepoOutput
+		mockRepoOutputWithDeletedAtExists := mockRepoInputOutput
 		mockRepoOutputWithDeletedAtExists.DeletedAt = &deletedAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithDeletedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithDeletedAtExists, http.StatusOK, nil)
+		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
 		assert.Nil(t, err)
-
-		deletedAtResult := result.DeletedAt
-		assert.Equal(t, deletedAt, *deletedAtResult)
 	})
 }

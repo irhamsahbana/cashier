@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestDeleteWaiter(t *testing.T) {
+func TestFindWaiter(t *testing.T) {
 	var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 	var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
@@ -38,37 +38,23 @@ func TestDeleteWaiter(t *testing.T) {
 		CreatedAt: createdAtUnix,
 	}
 
-	mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutput, http.StatusOK, nil)
-	result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+	mockRepo.On("FindWaiter", ctx, request.UUID, true).Return(&mockRepoOutput, http.StatusOK, nil)
+	result, code, err := testUsecase.FindWaiter(ctx, request.UUID, true)
 
 	assert.NotNil(t, result)
 	assert.Equal(t, http.StatusOK, code)
 	assert.Nil(t, err)
 
-	t.Run("should return error when something wrong in repository layer", func(t *testing.T) {
+	t.Run("should return error if something wrong with repository or waiter not found", func(t *testing.T) {
 		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(nil, http.StatusInternalServerError, errors.New("something wrong with database"))
-
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("FindWaiter", ctx, request.UUID, true).Return(nil, http.StatusNotFound, errors.New("Waiter not found"))
+		result, code, err := testUsecase.FindWaiter(ctx, request.UUID, true)
 
 		assert.Nil(t, result)
-		assert.Equal(t, http.StatusInternalServerError, code)
+		assert.Equal(t, http.StatusNotFound, code)
 		assert.Error(t, err)
-	})
-
-	t.Run("should return deleted success (status ok) when no resource was deleted", func(t *testing.T) {
-		var mockRepo = &mocks.MockWaiterRepository{Mock: mock.Mock{}}
-		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
-
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(nil, http.StatusNotFound, nil)
-
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
-
-		assert.Nil(t, result)
-		assert.Equal(t, http.StatusOK, code)
-		assert.Nil(t, err)
 	})
 
 	t.Run("should convert last active of waiter from unix time to time.Time if exists", func(t *testing.T) {
@@ -78,15 +64,15 @@ func TestDeleteWaiter(t *testing.T) {
 		mockRepoOutputWithLastActiveExists := mockRepoOutput
 		mockRepoOutputWithLastActiveExists.LastActive = &createdAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithLastActiveExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("FindWaiter", ctx, request.UUID, true).Return(&mockRepoOutputWithLastActiveExists, http.StatusOK, nil)
+		result, code, err := testUsecase.FindWaiter(ctx, request.UUID, true)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
 		assert.Nil(t, err)
 
-		lastActive := result.LastActive
-		assert.Equal(t, createdAt, *lastActive)
+		lastActiveResult := result.LastActive
+		assert.Equal(t, createdAt, *lastActiveResult)
 	})
 
 	t.Run("should convert updated at of waiter from unix time to time.Time if exists", func(t *testing.T) {
@@ -96,8 +82,8 @@ func TestDeleteWaiter(t *testing.T) {
 		mockRepoOutputWithUpdatedAtExists := mockRepoOutput
 		mockRepoOutputWithUpdatedAtExists.UpdatedAt = &updatedAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithUpdatedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("FindWaiter", ctx, request.UUID, true).Return(&mockRepoOutputWithUpdatedAtExists, http.StatusOK, nil)
+		result, code, err := testUsecase.FindWaiter(ctx, request.UUID, true)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
@@ -114,8 +100,8 @@ func TestDeleteWaiter(t *testing.T) {
 		mockRepoOutputWithDeletedAtExists := mockRepoOutput
 		mockRepoOutputWithDeletedAtExists.DeletedAt = &deletedAtUnix
 
-		mockRepo.On("DeleteWaiter", ctx, request.UUID).Return(&mockRepoOutputWithDeletedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.DeleteWaiter(ctx, request.UUID)
+		mockRepo.On("FindWaiter", ctx, request.UUID, true).Return(&mockRepoOutputWithDeletedAtExists, http.StatusOK, nil)
+		result, code, err := testUsecase.FindWaiter(ctx, request.UUID, true)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
