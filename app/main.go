@@ -26,6 +26,10 @@ func main() {
 		}
 	}()
 
+	if !bootstrap.App.Config.GetBool("app.debug") {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	router := gin.Default()
 	router.Use(cors.Default())
 

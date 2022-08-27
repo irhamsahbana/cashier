@@ -66,21 +66,30 @@ func InitMongoDatabase() *mongo.Client {
 		mongodbURI = fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
 	}
 
-	cmdMonitor := &event.CommandMonitor{
-		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-			color.Yellow(evt.Command.String())
-		},
+	var client *mongo.Client
+	var err error
+	var debugMode bool = App.Config.GetBool("mongodb.monitor_query")
+
+	if debugMode {
+		cmdMonitor := &event.CommandMonitor{
+			Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+				color.Yellow(evt.Command.String())
+			},
+		}
+
+		client, err = mongo.NewClient(options.Client().ApplyURI(mongodbURI).SetMonitor(cmdMonitor))
+	} else {
+		client, err = mongo.NewClient(options.Client().ApplyURI(mongodbURI))
 	}
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(mongodbURI).SetMonitor(cmdMonitor))
 	if err != nil {
-		color.Red("MariaDB: " + err.Error())
+		color.Red("MongoDB: " + err.Error())
 		log.Fatal(err)
 	}
 
 	err = client.Connect(ctx)
 	if err != nil {
-		color.Red("MariaDB: " + err.Error())
+		color.Red("MongoDB: " + err.Error())
 		log.Fatal(err)
 	}
 

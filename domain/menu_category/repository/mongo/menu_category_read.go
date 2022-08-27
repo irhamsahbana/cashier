@@ -50,16 +50,16 @@ func (repo *menuCategoryMongoRepository) FindMenuCategory(ctx context.Context, i
 		}
 	}
 
-	matchStage := bson.D{{"$match", filterMenuCategory}}
+	matchStage := bson.D{{Key: "$match", Value: filterMenuCategory}}
 	unwindMenusStage := bson.D{{
-							"$unwind", bson.M{
+							Key: "$unwind", Value: bson.M{
 								"path": "$menus",
 								"preserveNullAndEmptyArrays": true,
 							},
 						}}
-	filterMenusWithExistanceOfDeletedAtStage := bson.D{{"$match", filterMenu}}
+	filterMenusWithExistanceOfDeletedAtStage := bson.D{{Key: "$match", Value: filterMenu}}
 	groupByUuidStage := bson.D{{
-							"$group", bson.M{
+							Key: "$group", Value: bson.M{
 								"_id": "$uuid",
 								"uuid": bson.M{"$first": "$uuid"},
 								"branch_uuid": bson.M{"$first": "$branch_uuid"},
@@ -109,16 +109,16 @@ func (repo *menuCategoryMongoRepository) FindMenuCategories(ctx context.Context,
 		filterMenu = filterMenuWithoutTrashed
 	}
 
-	matchStage := bson.D{{"$match", filterMenuCategory}}
+	matchStage := bson.D{{Key: "$match", Value: filterMenuCategory}}
 	unwindMenusStage := bson.D{{
-							"$unwind", bson.M{
+							Key: "$unwind", Value: bson.M{
 								"path": "$menus",
 								"preserveNullAndEmptyArrays": true,
 							},
 						}}
-	filterMenusBaseOnExistanceOfDeletedAtStage := bson.D{{"$match", filterMenu}}
+	filterMenusBaseOnExistanceOfDeletedAtStage := bson.D{{Key: "$match", Value: filterMenu}}
 	groupByUuidStage := bson.D{{
-						"$group", bson.M{
+						Key: "$group", Value: bson.M{
 							"_id": "$uuid",
 							"uuid": bson.M{"$first": "$uuid"},
 							"branch_uuid": bson.M{"$first": "$branch_uuid"},

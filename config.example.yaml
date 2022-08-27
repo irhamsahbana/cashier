@@ -21,6 +21,7 @@ mongo:
   user:
   pass:
   name: lucy_local
+  monitor_query: false
 
 jwt:
   secret: JwtSecretBroh
