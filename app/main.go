@@ -9,13 +9,21 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"lucy/cashier/bootstrap"
+	"lucy/cashier/domain"
+
 	_menuCategoryHttp "lucy/cashier/domain/menu_category/delivery/http"
 	_menuCategoryRepo "lucy/cashier/domain/menu_category/repository/mongo"
 	_menuCategoryUsecase "lucy/cashier/domain/menu_category/usecase"
 
+	_userHttp "lucy/cashier/domain/user/delivery/http"
+	_userRepo "lucy/cashier/domain/user/repository/mongo"
+	_userUsecase "lucy/cashier/domain/user/usecase"
+
 	_waiterHttp "lucy/cashier/domain/waiter/delivery/http"
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
+
+	_tokenRepo "lucy/cashier/domain/token/repository/mongo"
 )
 
 func main() {
@@ -35,6 +43,11 @@ func main() {
 
 	timeoutContext := time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second
 	mongoDatabase := bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))
+
+	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.UserTokenableType)
+	userRepo := _userRepo.NewUserMongoRepository(*mongoDatabase)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, tokenRepo, timeoutContext)
+	_userHttp.NewUserHandler(router, userUsecase)
 
 	menuCategoryRepo := _menuCategoryRepo.NewMenuCategoryMongoRepository(*mongoDatabase)
 	menuCategoryUsecase := _menuCategoryUsecase.NewMenuCategoryUsecase(menuCategoryRepo, timeoutContext)

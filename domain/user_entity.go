@@ -2,26 +2,45 @@ package domain
 
 import (
 	"context"
+	"time"
 )
 
 type User struct {
-	UUID				string		`bson:"uuid"`
-	Name				string		`bson:"name"`
-	Role				string		`bson:"role"`
-	Email				string		`bson:"email"`
-	Password			string		`bson:"password"`
-	Phone				*string		`bson:"phone,omitempty"`
-	WA					*string		`bson:"wa,omitempty"`
-	ProfileUrl			*string		`bson:"profile_url,omitempty"`
-	Tokens				[]Token		`bson:"tokens,omitempty"`
-	CreatedAt			int64	 	`bson:"created_at"`
-	UpdatedAt			*int64		`bson:"updated_at,omitempty"`
-	DeletedAt			*int64		`bson:"deleted_at,omitempty"`
+	UUID                   string   `bson:"uuid"`
+	BranchUUID             string   `bson:"branch_uuid"`
+	RoleUUID               string   `bson:"role_uuid"`
+	Name                   string   `bson:"name"`
+	Role                   string   `bson:"role"`
+	Email                  string   `bson:"email"`
+	EmailVerifiedAt        *int64   `bson:"email_verified_at,omitempty"`
+	EmailVerificationCodes []string `bson:"email_verification_code,omitempty"`
+	Password               string   `bson:"password"`
+	Phone                  *string  `bson:"phone,omitempty"`
+	Whatsapp               *string  `bson:"whatsapp,omitempty"`
+	ProfileUrl             *string  `bson:"profile_url,omitempty"`
+	Tokens                 []string `bson:"tokens,omitempty"`
+	CreatedAt              int64    `bson:"created_at"`
+	UpdatedAt              *int64   `bson:"updated_at,omitempty"`
+	DeletedAt              *int64   `bson:"deleted_at,omitempty"`
 }
 
-type Token struct {
-	AccessToken		string	`bson:"access_token"`
-	RefreshToken	string	`bson:"refresh_token"`
+type UserModel struct {
+	UUID                   string                  `bson:"uuid"`
+	BranchUUID             string                  `bson:"branch_uuid"`
+	RoleUUID               string                  `bson:"role_uuid"`
+	Name                   string                  `bson:"name"`
+	Role                   string                  `bson:"role"`
+	Email                  string                  `bson:"email"`
+	EmailVerifiedAt        *int64                  `bson:"email_verified_at,omitempty"`
+	EmailVerificationCodes []EmailVerificationCode `bson:"email_verification_code,omitempty"`
+	Password               string                  `bson:"password"`
+	Phone                  *string                 `bson:"phone,omitempty"`
+	Whatsapp               *string                 `bson:"whatsapp,omitempty"`
+	ProfileUrl             *string                 `bson:"profile_url,omitempty"`
+	Tokens                 []Token                 `bson:"tokens,omitempty"`
+	CreatedAt              time.Time               `bson:"created_at"`
+	UpdatedAt              *time.Time              `bson:"updated_at,omitempty"`
+	DeletedAt              *time.Time              `bson:"deleted_at,omitempty"`
 }
 
 type UserUsecaseContract interface {

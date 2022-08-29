@@ -10,13 +10,13 @@ import (
 )
 
 type userRepository struct {
-	DB			mongo.Database
-	Collection	mongo.Collection
+	DB         mongo.Database
+	Collection mongo.Collection
 }
 
 func NewUserMongoRepository(DB mongo.Database) domain.UserRepositoryContract {
 	return &userRepository{
-		DB: DB,
+		DB:         DB,
 		Collection: *DB.Collection("users"),
 	}
 }

@@ -6,13 +6,15 @@ import (
 )
 
 type userUsecase struct {
-	userRepo domain.UserRepositoryContract
+	userRepo       domain.UserRepositoryContract
+	tokenRepo      domain.TokenRepositoryContract
 	contextTimeout time.Duration
 }
 
-func NewUserUsecase(repo domain.UserRepositoryContract, timeout time.Duration) domain.UserUsecaseContract {
+func NewUserUsecase(u domain.UserRepositoryContract, t domain.TokenRepositoryContract, timeout time.Duration) domain.UserUsecaseContract {
 	return &userUsecase{
-		userRepo: repo,
+		userRepo:       u,
+		tokenRepo:      t,
 		contextTimeout: timeout,
 	}
 }
