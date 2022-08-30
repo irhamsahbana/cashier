@@ -16,32 +16,41 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 	if err != nil {
 		return nil, code, err
 	}
-
 	if code == http.StatusNotFound {
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
+	token, code, err := u.tokenRepo.FindTokenWithATandRT(ctx, oldAT, oldRT)
+	if err != nil {
+		return nil, code, err
+	}
+	if code == http.StatusNotFound {
+		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
+	}
 
-	newAT, newRT, err := jwthandler.GenerateAllTokens(user.UUID)
+	if token.AccessToken != oldAT || token.RefreshToken != oldRT {
+		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
+	}
+
+	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(user.UUID)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	aToken, rToken, code, err := u.userRepo.RefreshToken(ctx, oldAT, oldRT, newAT, newRT, userId)
+	tokenUUID, code, err := u.tokenRepo.RefreshTokens(ctx, user.UUID, oldAT, oldRT, accesstoken, refreshtoken)
 	if err != nil {
 		return nil, code, err
 	}
 
-	if code == http.StatusNotFound {
-		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
-	}
+	user, code, err = u.userRepo.RemoveToken(ctx, user.UUID, token.UUID)
+	user, code, err = u.userRepo.InsertToken(ctx, user.UUID, tokenUUID)
 
 	var resp domain.UserResponse
 	resp.UUID = user.UUID
 	resp.Name = user.Name
 	resp.Role = user.Role
-	resp.Token = &aToken
-	resp.RefreshToken = &rToken
+	resp.Token = &accesstoken
+	resp.RefreshToken = &refreshtoken
 
 	return &resp, http.StatusOK, nil
 }

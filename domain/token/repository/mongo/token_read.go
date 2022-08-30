@@ -3,7 +3,9 @@ package mongo
 import (
 	"context"
 	"lucy/cashier/domain"
+	"net/http"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,10 +23,26 @@ func NewTokenMongoRepository(DB mongo.Database, t domain.TokenableType) domain.T
 	}
 }
 
-func (repo *tokenRepository) refreshToken(ctx context.Context, userId, oldAT, oldRT, newAT, newRT string) (aToken, rToken string, code int, err error) {
-	return "", "", 200, nil
-}
+func (repo *tokenRepository) FindTokenWithATandRT(ctx context.Context, accessToken, refreshToken string) (token *domain.Token, code int, err error) {
+	filter := bson.D{
+		{Key: "access_token", Value: accessToken},
+		{Key: "refresh_token", Value: refreshToken},
+	}
 
-func (repo *tokenRepository) RevokeToken(ctx context.Context, accessToken string) (code int, err error) {
-	return 200, err
+	doc := domain.Token{}
+
+	countToken, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	if countToken == 0 {
+		return nil, http.StatusNotFound, nil
+	}
+
+	err = repo.Collection.FindOne(ctx, filter).Decode(&doc)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return &doc, http.StatusOK, nil
 }

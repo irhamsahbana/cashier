@@ -82,7 +82,7 @@ func (h *UserHandler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Token Refreshed", result)
+	http_response.ReturnResponse(c, httpCode, "Token refreshed", result)
 }
 
 func (h *UserHandler) Logout(c *gin.Context) {
@@ -90,7 +90,7 @@ func (h *UserHandler) Logout(c *gin.Context) {
 	userId := c.GetString("user_uuid")
 
 	ctx := context.Background()
-	_, httpcode, err := h.UserUsecase.Logout(ctx, AT, userId)
+	_, httpcode, err := h.UserUsecase.Logout(ctx, userId, AT)
 	if err != nil {
 		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
 		return

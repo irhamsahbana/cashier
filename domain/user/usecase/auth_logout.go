@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (u *userUsecase) Logout(c context.Context, accessToken string, userId string) (*domain.UserResponse, int, error) {
+func (u *userUsecase) Logout(c context.Context, userId, accessToken string) (*domain.UserResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -20,14 +20,12 @@ func (u *userUsecase) Logout(c context.Context, accessToken string, userId strin
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
-	code, err = u.userRepo.RevokeToken(ctx, accessToken)
+	tokenUUID, code, err := u.tokenRepo.RevokeTokens(ctx, userId, accessToken)
 	if err != nil {
 		return nil, code, err
 	}
 
-	if code != http.StatusOK {
-		return nil, code, nil
-	}
+	u.userRepo.RemoveToken(ctx, userId, tokenUUID)
 
 	return nil, code, nil
 }

@@ -1,10 +1,15 @@
 package domain
 
+import (
+	"context"
+	"time"
+)
+
 type VerifiedableType string
 
 const (
-	UserVerifiedableType    VerifiedableType = "user"
-	EmployeVerifiedableType VerifiedableType = "employee"
+	VerifiedableType_USER     VerifiedableType = "user"
+	VerifiedableType_EMPLOYEE VerifiedableType = "employee"
 )
 
 type EmailVerificationCode struct {
@@ -14,4 +19,17 @@ type EmailVerificationCode struct {
 	Code             string           `bson:"code"`
 	UsedAt           *int64           `bson:"used_at,omitempty"`
 	CreatedAt        int64            `bson:"created_at"`
+}
+
+type EmailVerificationCodeModel struct {
+	UUID             string           `bson:"uuid"`
+	VerfiedableUUID  string           `bson:"verifiedable_uuid"`
+	VerifiedableType VerifiedableType `bson:"verifiedable_type"`
+	Code             string           `bson:"code"`
+	UsedAt           *time.Time       `bson:"used_at,omitempty"`
+	CreatedAt        time.Time        `bson:"created_at"`
+}
+
+type EmailVerificationCodeRepositoryContract interface {
+	FindEmailVerificationCode(ctx context.Context, id string, withTrashed bool) (*EmailVerificationCode, int, error)
 }

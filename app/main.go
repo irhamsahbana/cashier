@@ -11,9 +11,13 @@ import (
 	"lucy/cashier/bootstrap"
 	"lucy/cashier/domain"
 
-	_menuCategoryHttp "lucy/cashier/domain/menu_category/delivery/http"
-	_menuCategoryRepo "lucy/cashier/domain/menu_category/repository/mongo"
-	_menuCategoryUsecase "lucy/cashier/domain/menu_category/usecase"
+	_itemCategoryHttp "lucy/cashier/domain/item_category/delivery/http"
+	_itemCategoryRepo "lucy/cashier/domain/item_category/repository/mongo"
+	_itemCategoryUsecase "lucy/cashier/domain/item_category/usecase"
+
+	_userRoleHttp "lucy/cashier/domain/user_role/delivery/http"
+	_userRoleRepo "lucy/cashier/domain/user_role/repository/mongo"
+	_userRoleUsecase "lucy/cashier/domain/user_role/usecase"
 
 	_userHttp "lucy/cashier/domain/user/delivery/http"
 	_userRepo "lucy/cashier/domain/user/repository/mongo"
@@ -44,14 +48,18 @@ func main() {
 	timeoutContext := time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second
 	mongoDatabase := bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))
 
-	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.UserTokenableType)
+	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.TokenableType_USER)
 	userRepo := _userRepo.NewUserMongoRepository(*mongoDatabase)
 	userUsecase := _userUsecase.NewUserUsecase(userRepo, tokenRepo, timeoutContext)
 	_userHttp.NewUserHandler(router, userUsecase)
 
-	menuCategoryRepo := _menuCategoryRepo.NewMenuCategoryMongoRepository(*mongoDatabase)
-	menuCategoryUsecase := _menuCategoryUsecase.NewMenuCategoryUsecase(menuCategoryRepo, timeoutContext)
-	_menuCategoryHttp.NewMenuCategoryHandler(router, menuCategoryUsecase)
+	userRoleRepo := _userRoleRepo.NewUserRoleMongoRepository(*mongoDatabase)
+	userRoleUsecase := _userRoleUsecase.NewUserRoleUsecase(userRoleRepo, timeoutContext)
+	_userRoleHttp.NewUserRoleHandler(router, userRoleUsecase)
+
+	itemCategoryRepo := _itemCategoryRepo.NewItemCategoryMongoRepository(*mongoDatabase)
+	itemCategoryUsecase := _itemCategoryUsecase.NewItemCategoryUsecase(itemCategoryRepo, timeoutContext)
+	_itemCategoryHttp.NewItemCategoryHandler(router, itemCategoryUsecase)
 
 	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
 	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)

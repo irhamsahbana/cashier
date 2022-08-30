@@ -32,6 +32,20 @@
         "containerId": "",
         "created": "2022-08-19T08:03:35.421Z",
         "sortNum": 40000
+      },
+      {
+        "_id": "840a75af-8f83-4d5e-9a0a-928c5e1e1670",
+        "name": "authentication",
+        "containerId": "",
+        "created": "2022-08-30T03:57:45.777Z",
+        "sortNum": 50000
+      },
+      {
+        "_id": "1e6cf1b8-d672-483e-b034-1c6016de8ae5",
+        "name": "user role",
+        "containerId": "",
+        "created": "2022-08-30T08:09:59.520Z",
+        "sortNum": 60000
       }
     ],
     "settings": {
@@ -41,6 +55,10 @@
           "value": "application/json"
         }
       ],
+      "auth": {
+        "type": "bearer",
+        "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYxODUyNTc2LCJuYmYiOjE2NjE4NDg5NzYsImlhdCI6MTY2MTg0ODk3Nn0.cfw-VIer1fNY-ZkHwwQwmPckLDy2CTMiG4pFZmM5Pys"
+      },
       "tests": []
     }
   }
