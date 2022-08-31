@@ -23,6 +23,12 @@ mongo:
   name: lucy_local
   monitor_query: false
 
+redis:
+  host: localhost
+  port: 6379
+  pass: xxxx
+  name: lucy
+
 jwt:
   secret: JwtSecretBroh
   lifetime: 60

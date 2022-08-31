@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/go-redis/redis/v9"
 	_ "github.com/go-sql-driver/mysql"
 	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -100,5 +101,30 @@ func InitMongoDatabase() *mongo.Client {
 	}
 
 	color.Green(fmt.Sprintf("connected to MongoDB from %s:%s", dbHost, dbPort))
+	return client
+}
+
+func InitRedis() *redis.Client {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	dbHost := App.Config.GetString(`redis.host`)
+	dbPort := App.Config.GetString(`redis.port`)
+	dbPass := App.Config.GetString(`redis.pass`)
+	dbName := App.Config.GetInt(`redis.name`)
+
+	client := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", dbHost, dbPort),
+		Password: dbPass,
+		DB:       dbName,
+	})
+
+	_, err := client.Ping(ctx).Result()
+	if err != nil {
+		color.Red("Redis: " + err.Error())
+		log.Fatal(err)
+	}
+
+	color.Green(fmt.Sprintf("connected to Redis from %s:%s", dbHost, dbPort))
 	return client
 }
