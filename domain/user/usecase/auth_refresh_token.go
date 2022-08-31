@@ -20,6 +20,14 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
+	userRole, code, err := u.userRoleRepo.FindUserRole(ctx, user.RoleUUID, false)
+	if err != nil {
+		return nil, code, err
+	}
+	if code == http.StatusNotFound {
+		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
+	}
+
 	token, code, err := u.tokenRepo.FindTokenWithATandRT(ctx, oldAT, oldRT)
 	if err != nil {
 		return nil, code, err
@@ -32,7 +40,7 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
-	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(user.UUID)
+	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(user.UUID, userRole.Name)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -43,7 +51,14 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 	}
 
 	user, code, err = u.userRepo.RemoveToken(ctx, user.UUID, token.UUID)
+	if err != nil {
+		return nil, code, err
+	}
+
 	user, code, err = u.userRepo.InsertToken(ctx, user.UUID, tokenUUID)
+	if err != nil {
+		return nil, code, err
+	}
 
 	var resp domain.UserResponse
 	resp.UUID = user.UUID

@@ -4,6 +4,7 @@ import (
 	"context"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/http_response"
+	"lucy/cashier/lib/middleware"
 	"net/http"
 	"strconv"
 
@@ -11,7 +12,7 @@ import (
 )
 
 type WaiterHandler struct {
-	WaiterUsecase	domain.WaiterUsecaseContract
+	WaiterUsecase domain.WaiterUsecaseContract
 }
 
 func NewWaiterHandler(router *gin.Engine, usecase domain.WaiterUsecaseContract) {
@@ -19,9 +20,17 @@ func NewWaiterHandler(router *gin.Engine, usecase domain.WaiterUsecaseContract) 
 		WaiterUsecase: usecase,
 	}
 
-	router.PUT("waiters", handler.UpsertWaiter)
-	router.GET("waiters/:id", handler.FindWaiter)
-	router.DELETE("waiters/:id", handler.DeleteWaiter)
+	permitted := []middleware.UserRole{
+		middleware.UserRole_OWNER,
+		middleware.UserRole_BRANCH_OWNER,
+	}
+
+	r := router.Group("/", middleware.Auth)
+	r.Use(middleware.Authorization(permitted))
+
+	r.PUT("waiters", handler.UpsertWaiter)
+	r.GET("waiters/:id", handler.FindWaiter)
+	r.DELETE("waiters/:id", handler.DeleteWaiter)
 }
 
 func (h *WaiterHandler) UpsertWaiter(c *gin.Context) {

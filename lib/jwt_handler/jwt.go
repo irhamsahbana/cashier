@@ -9,19 +9,21 @@ import (
 )
 
 type MyCustomClaims struct {
-	UserUUID			string		`json:"user_uuid"`
+	UserUUID string `json:"user_uuid"`
+	Role     string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 var mySigningKey = []byte(bootstrap.App.Config.GetString("jwt.secret"))
 var lifetime = bootstrap.App.Config.GetInt("jwt.lifetime")
 
-func GenerateAllTokens(userId string) (string, string, error){
+func GenerateAllTokens(userId, role string) (accessT, refreshT string, err error) {
 	tokenLifetime := time.Duration(lifetime)
 
 	// Create the claims
 	claims := &MyCustomClaims{
 		UserUUID: userId,
+		Role:     role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// A usual scenario is to set the expiration time relative to the current time
 			Issuer:    "Authenticator",
@@ -34,6 +36,7 @@ func GenerateAllTokens(userId string) (string, string, error){
 	// create refresh token
 	refreshClaims := &MyCustomClaims{
 		UserUUID: userId,
+		Role:     role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "Authenticator",
 			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
@@ -42,7 +45,7 @@ func GenerateAllTokens(userId string) (string, string, error){
 		},
 	}
 
-	token, err  := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(mySigningKey)
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(mySigningKey)
 	if err != nil {
 		return "", "", err
 	}
@@ -70,7 +73,7 @@ func ValidateToken(signedToken string) (*MyCustomClaims, error) {
 
 	claims, ok := token.Claims.(*MyCustomClaims)
 	if !ok {
-		return nil, errors.New("Token is invalid")
+		return nil, errors.New("token is invalid")
 	}
 
 	return claims, nil

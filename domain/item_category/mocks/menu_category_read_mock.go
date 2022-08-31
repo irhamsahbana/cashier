@@ -7,21 +7,21 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type MockMenuCategoryRepository struct {
+type MockItemCategoryRepository struct {
 	mock.Mock
 }
 
-func(mock *MockMenuCategoryRepository) FindMenuCategories(ctx context.Context, withTrashed bool) ([]domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) FindItemCategories(ctx context.Context, withTrashed bool) ([]domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), withTrashed)
 
-	var entities []domain.MenuCategory
+	var entities []domain.ItemCategory
 	var code int
 
 	entitiesArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entitiesArg != nil {
-		assertion, _ := entitiesArg.([]domain.MenuCategory)
+		assertion, _ := entitiesArg.([]domain.ItemCategory)
 		entities = assertion
 	}
 
@@ -33,17 +33,17 @@ func(mock *MockMenuCategoryRepository) FindMenuCategories(ctx context.Context, w
 	return entities, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) FindMenuCategory(ctx context.Context, id string, withTrashed bool) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) FindItemCategory(ctx context.Context, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), id, withTrashed)
 
-	var entity *domain.MenuCategory
+	var entity *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entity = assertion
 	}
 
@@ -55,17 +55,17 @@ func(mock *MockMenuCategoryRepository) FindMenuCategory(ctx context.Context, id 
 	return entity, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) FindMenu(ctx context.Context, id string, withTrashed bool) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) FindItem(ctx context.Context, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), id, withTrashed)
 
-	var entity *domain.MenuCategory
+	var entity *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entity = assertion
 	}
 

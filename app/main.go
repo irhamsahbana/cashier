@@ -50,10 +50,10 @@ func main() {
 
 	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.TokenableType_USER)
 	userRepo := _userRepo.NewUserMongoRepository(*mongoDatabase)
-	userUsecase := _userUsecase.NewUserUsecase(userRepo, tokenRepo, timeoutContext)
+	userRoleRepo := _userRoleRepo.NewUserRoleMongoRepository(*mongoDatabase)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, userRoleRepo, tokenRepo, timeoutContext)
 	_userHttp.NewUserHandler(router, userUsecase)
 
-	userRoleRepo := _userRoleRepo.NewUserRoleMongoRepository(*mongoDatabase)
 	userRoleUsecase := _userRoleUsecase.NewUserRoleUsecase(userRoleRepo, timeoutContext)
 	_userRoleHttp.NewUserRoleHandler(router, userRoleUsecase)
 

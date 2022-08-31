@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"lucy/cashier/lib/http_response"
 	jwthandler "lucy/cashier/lib/jwt_handler"
 	"net/http"
@@ -15,13 +14,11 @@ func Auth(c *gin.Context) {
 	authHeader := c.GetHeader("Authorization")
 
 	if authHeader == "" || authHeader[:len(BEARER_SCHEMA)] != BEARER_SCHEMA {
-		http_response.ReturnResponse(c, http.StatusUnauthorized, http.StatusText(401), nil)
+		http_response.ReturnResponse(c, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized), nil)
 		c.Abort()
 		return
 	}
 	tokenString := authHeader[len(BEARER_SCHEMA):]
-
-	fmt.Println(tokenString)
 
 	claims, err := jwthandler.ValidateToken(tokenString)
 	if err != nil {
@@ -30,9 +27,9 @@ func Auth(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(claims)
-
 	c.Set("access_token", tokenString)
 	c.Set("user_uuid", claims.UserUUID)
+	c.Set("user_role", claims.Role)
+
 	c.Next()
 }

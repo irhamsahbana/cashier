@@ -5,18 +5,17 @@ import (
 	"lucy/cashier/domain"
 )
 
-
-func(mock *MockMenuCategoryRepository) UpsertMenuCategory(ctx context.Context, data *domain.MenuCategory) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) UpsertItemCategory(ctx context.Context, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), data)
 
-	var entitiy *domain.MenuCategory
+	var entitiy *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entitiy = assertion
 	}
 	if codeArg != nil {
@@ -27,17 +26,17 @@ func(mock *MockMenuCategoryRepository) UpsertMenuCategory(ctx context.Context, d
 	return entitiy, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) DeleteMenuCategory(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) DeleteItemCategory(ctx context.Context, id string) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), id)
 
-	var entity *domain.MenuCategory
+	var entity *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entity = assertion
 	}
 
@@ -49,19 +48,19 @@ func(mock *MockMenuCategoryRepository) DeleteMenuCategory(ctx context.Context, i
 	return entity, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) InsertMenu(ctx context.Context, menuCategoryId string, data *domain.Menu) (*domain.MenuCategory, int, error) {
-	// return &domain.MenuCategory{}, http.StatusOK, nil
+func (mock *MockItemCategoryRepository) InsertItem(ctx context.Context, ItemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
+	// return &domain.ItemCategory{}, http.StatusOK, nil
 
-	args := mock.Called(context.Background(), menuCategoryId, data)
+	args := mock.Called(context.Background(), ItemCategoryId, data)
 
-	var entity *domain.MenuCategory
+	var entity *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entity = assertion
 	}
 
@@ -73,17 +72,17 @@ func(mock *MockMenuCategoryRepository) InsertMenu(ctx context.Context, menuCateg
 	return entity, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) UpdateMenu(ctx context.Context, id string, data *domain.Menu) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) UpdateItem(ctx context.Context, id string, data *domain.Item) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), id, data)
 
-	var entitiy *domain.MenuCategory
+	var entitiy *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entitiy = assertion
 	}
 	if codeArg != nil {
@@ -94,17 +93,17 @@ func(mock *MockMenuCategoryRepository) UpdateMenu(ctx context.Context, id string
 	return entitiy, code, args.Error(2)
 }
 
-func(mock *MockMenuCategoryRepository) DeleteMenu(ctx context.Context, id string) (*domain.MenuCategory, int, error) {
+func (mock *MockItemCategoryRepository) DeleteItem(ctx context.Context, id string) (*domain.ItemCategory, int, error) {
 	args := mock.Called(context.Background(), id)
 
-	var entity *domain.MenuCategory
+	var entity *domain.ItemCategory
 	var code int
 
 	entityArg := args.Get(0)
 	codeArg := args.Get(1)
 
 	if entityArg != nil {
-		assertion, _ := entityArg.(*domain.MenuCategory)
+		assertion, _ := entityArg.(*domain.ItemCategory)
 		entity = assertion
 	}
 

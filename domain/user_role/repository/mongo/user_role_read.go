@@ -45,3 +45,16 @@ func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, wit
 
 	return &userRole, http.StatusOK, nil
 }
+
+func (repo *userRoleReposiotry) FindUserRoleBy(ctx context.Context, key string, val interface{}) (*domain.UserRole, int, error) {
+	var userRole domain.UserRole
+
+	filter := bson.M{key: val}
+	result := repo.Collection.FindOne(ctx, filter)
+	err := result.Decode(&userRole)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return &userRole, http.StatusOK, nil
+}

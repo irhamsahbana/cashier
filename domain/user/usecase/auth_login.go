@@ -17,7 +17,14 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 	if err != nil {
 		return nil, code, err
 	}
+	if code == http.StatusNotFound {
+		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
+	}
 
+	userRoleResult, code, err := u.userRoleRepo.FindUserRole(ctx, userResult.RoleUUID, false)
+	if err != nil {
+		return nil, code, err
+	}
 	if code == http.StatusNotFound {
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
@@ -26,7 +33,7 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
-	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(userResult.UUID)
+	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(userResult.UUID, userRoleResult.Name)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -37,6 +44,9 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 	}
 
 	userResult, code, err = u.userRepo.InsertToken(ctx, userResult.UUID, tokenUUID)
+	if err != nil {
+		return nil, code, err
+	}
 
 	var resp domain.UserResponse
 	resp.UUID = userResult.UUID
