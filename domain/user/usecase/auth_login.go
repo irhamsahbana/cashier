@@ -33,7 +33,7 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
-	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(userResult.UUID, userRoleResult.Name)
+	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(userResult.UUID, userRoleResult.Name, userResult.BranchUUID)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

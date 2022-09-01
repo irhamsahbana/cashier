@@ -17,7 +17,7 @@ type MyCustomClaims struct {
 var mySigningKey = []byte(bootstrap.App.Config.GetString("jwt.secret"))
 var lifetime = bootstrap.App.Config.GetInt("jwt.lifetime")
 
-func GenerateAllTokens(userId, role string) (accessT, refreshT string, err error) {
+func GenerateAllTokens(userId, role, branchId string) (accessT, refreshT string, err error) {
 	tokenLifetime := time.Duration(lifetime)
 
 	// Create the claims

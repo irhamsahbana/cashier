@@ -27,19 +27,19 @@ func TestUpsertWaiter(t *testing.T) {
 	deletedAtUnix := deletedAt.UTC().UnixMicro()
 
 	var request = domain.WaiterUpsertrequest{
-		UUID: "a7b53fe3-8eca-4520-811c-beb641809eaf",
-		Name: "Rem",
+		UUID:      "a7b53fe3-8eca-4520-811c-beb641809eaf",
+		Name:      "Rem",
 		CreatedAt: createdAtString,
 	}
 
 	var mockRepoInputOutput = domain.Waiter{
-		UUID: request.UUID,
-		Name: request.Name,
+		UUID:      request.UUID,
+		Name:      request.Name,
 		CreatedAt: createdAtUnix,
 	}
 
 	mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoInputOutput, http.StatusOK, nil)
-	result, code, err := testUsecase.UpsertWaiter(ctx, &request)
+	result, code, err := testUsecase.UpsertWaiter(ctx, "", &request)
 
 	assert.NotNil(t, result)
 	assert.Equal(t, http.StatusOK, code)
@@ -49,7 +49,7 @@ func TestUpsertWaiter(t *testing.T) {
 		requestWithInvalidUUID := request
 		requestWithInvalidUUID.UUID = ""
 
-		_, code, err := testUsecase.UpsertWaiter(ctx, &requestWithInvalidUUID)
+		_, code, err := testUsecase.UpsertWaiter(ctx, "", &requestWithInvalidUUID)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, code)
 		assert.Error(t, err)
@@ -59,7 +59,7 @@ func TestUpsertWaiter(t *testing.T) {
 		requestWithInvalidCreatedAt := request
 		requestWithInvalidCreatedAt.CreatedAt = "2022-08-13T04:06:16.312xzyZ"
 
-		result, code, err := testUsecase.UpsertWaiter(ctx, &requestWithInvalidCreatedAt)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &requestWithInvalidCreatedAt)
 
 		assert.Nil(t, result)
 		assert.Equal(t, http.StatusUnprocessableEntity, code)
@@ -70,7 +70,7 @@ func TestUpsertWaiter(t *testing.T) {
 		requestWithEmptyName := request
 		requestWithEmptyName.Name = ""
 
-		result, code, err := testUsecase.UpsertWaiter(ctx, &requestWithEmptyName)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &requestWithEmptyName)
 
 		assert.Nil(t, result)
 		assert.Equal(t, http.StatusUnprocessableEntity, code)
@@ -82,7 +82,7 @@ func TestUpsertWaiter(t *testing.T) {
 		var testUsecase = usecase.NewWaiterUsecase(mockRepo, timeoutContext)
 
 		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(nil, http.StatusInternalServerError, errors.New("something wrong"))
-		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &request)
 
 		assert.Nil(t, result)
 		assert.Equal(t, http.StatusInternalServerError, code)
@@ -97,7 +97,7 @@ func TestUpsertWaiter(t *testing.T) {
 		mockRepoOutputWithLastActiveExists.LastActive = &createdAtUnix
 
 		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithLastActiveExists, http.StatusOK, nil)
-		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
@@ -115,7 +115,7 @@ func TestUpsertWaiter(t *testing.T) {
 		mockRepoOutputWithUpdatedAtExists.UpdatedAt = &updatedAtUnix
 
 		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithUpdatedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)
@@ -133,7 +133,7 @@ func TestUpsertWaiter(t *testing.T) {
 		mockRepoOutputWithDeletedAtExists.DeletedAt = &deletedAtUnix
 
 		mockRepo.On("UpsertWaiter", ctx, &mockRepoInputOutput).Return(&mockRepoOutputWithDeletedAtExists, http.StatusOK, nil)
-		result, code, err := testUsecase.UpsertWaiter(ctx, &request)
+		result, code, err := testUsecase.UpsertWaiter(ctx, "", &request)
 
 		assert.NotNil(t, result)
 		assert.Equal(t, http.StatusOK, code)

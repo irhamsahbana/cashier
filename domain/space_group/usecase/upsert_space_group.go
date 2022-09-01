@@ -2,14 +2,14 @@ package usecase
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/validator"
 	"net/http"
 	"time"
 )
 
-func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *domain.WaiterUpsertrequest) (*domain.WaiterResponse, int, error) {
+func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string, req *domain.SpaceGroupUpsertRequest) (*domain.SpaceGroupResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -22,30 +22,31 @@ func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *do
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
-	if req.Name == "" {
-		return nil, http.StatusUnprocessableEntity, errors.New("Name field is required")
-	}
-
-	var data domain.Waiter
+	fmt.Println(branchId)
+	var data domain.SpaceGroup
 	data.UUID = req.UUID
 	data.BranchUUID = branchId
-	data.Name = req.Name
+	data.Code = req.Code
+	data.Pax = req.Pax
+	data.Floor = req.Floor
+	data.Smooking = req.Smooking
+	data.Shape = req.Shape
 	data.CreatedAt = createdAt.UTC().UnixMicro()
 
-	result, code, err := u.waiterRepo.UpsertWaiter(ctx, &data)
+	result, code, err := u.spaceGroupRepo.UpsertSpaceGroup(ctx, &data)
 	if err != nil {
 		return nil, code, err
 	}
 
-	var resp domain.WaiterResponse
+	var resp domain.SpaceGroupResponse
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
-	resp.Name = result.Name
+	resp.Code = result.Code
+	resp.Shape = result.Shape
+	resp.Pax = result.Pax
+	resp.Floor = result.Floor
+	resp.Smooking = result.Smooking
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
-	if result.LastActive != nil {
-		respLastActive := time.UnixMicro(*result.LastActive).UTC()
-		resp.LastActive = &respLastActive
-	}
 	if result.UpdatedAt != nil {
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
@@ -57,3 +58,14 @@ func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *do
 
 	return &resp, http.StatusOK, nil
 }
+
+// func validateSpaceGroupShape(shape string) (domain.SpaceGroupShape, error) {
+// 	switch shape {
+// 	case "circle":
+// 		return domain.SpaceGroupShape_CIRCLE, nil
+// 	case "square":
+// 		return domain.SpaceGroupShape_SQUARE, nil
+// 	default:
+// 		return "", domain.ErrSpaceGroupShapeInvalid
+// 	}
+// }

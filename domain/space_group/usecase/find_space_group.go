@@ -7,24 +7,24 @@ import (
 	"time"
 )
 
-func (u *waiterUsecase) FindWaiter(c context.Context, id string, withTrashed bool) (*domain.WaiterResponse, int, error) {
+func (u *spaceGroupUsecase) FindSpaceGroup(c context.Context, branchId, id string, withTrashed bool) (*domain.SpaceGroupResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.waiterRepo.FindWaiter(ctx, id, withTrashed)
+	result, code, err := u.spaceGroupRepo.FindSpaceGroup(ctx, branchId, id, withTrashed)
 	if err != nil {
 		return nil, code, err
 	}
 
-	var resp domain.WaiterResponse
+	var resp domain.SpaceGroupResponse
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
-	resp.Name = result.Name
+	resp.Code = result.Code
+	resp.Shape = result.Shape
+	resp.Pax = result.Pax
+	resp.Floor = result.Floor
+	resp.Smooking = result.Smooking
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
-	if result.LastActive != nil {
-		respLastActive := time.UnixMicro(*result.LastActive).UTC()
-		resp.LastActive = &respLastActive
-	}
 	if result.UpdatedAt != nil {
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt

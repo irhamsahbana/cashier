@@ -23,6 +23,10 @@ import (
 	_userRepo "lucy/cashier/domain/user/repository/mongo"
 	_userUsecase "lucy/cashier/domain/user/usecase"
 
+	_spaceGroupHttp "lucy/cashier/domain/space_group/delivery/http"
+	_spaceGroupRepo "lucy/cashier/domain/space_group/repository/mongo"
+	_spaceGroupUsecase "lucy/cashier/domain/space_group/usecase"
+
 	_waiterHttp "lucy/cashier/domain/waiter/delivery/http"
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
@@ -64,6 +68,10 @@ func main() {
 	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
 	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)
 	_waiterHttp.NewWaiterHandler(router, waiterUsecase)
+
+	spaceGroupRepo := _spaceGroupRepo.NewSpaceGroupMongoRepository(*mongoDatabase)
+	spaceGroupUsecase := _spaceGroupUsecase.NewSpaceGroupUsecase(spaceGroupRepo, timeoutContext)
+	_spaceGroupHttp.NewSpaceGroupHandler(router, spaceGroupUsecase)
 
 	appPort := fmt.Sprintf(":%v", bootstrap.App.Config.GetString("server.address"))
 	log.Fatal(router.Run(appPort))

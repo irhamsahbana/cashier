@@ -8,6 +8,7 @@ type UserLoginRequest struct {
 }
 type UserResponse struct {
 	UUID         string     `json:"uuid"`
+	BranchUUID   string     `json:"branch_uuid"`
 	Name         string     `json:"name"`
 	Role         string     `json:"role"`
 	Email        *string    `json:"email,omitempty"`

@@ -25,8 +25,7 @@ func NewWaiterHandler(router *gin.Engine, usecase domain.WaiterUsecaseContract) 
 		middleware.UserRole_BRANCH_OWNER,
 	}
 
-	r := router.Group("/", middleware.Auth)
-	r.Use(middleware.Authorization(permitted))
+	r := router.Group("/", middleware.Auth, middleware.Authorization(permitted))
 
 	r.PUT("waiters", handler.UpsertWaiter)
 	r.GET("waiters/:id", handler.FindWaiter)
@@ -42,7 +41,7 @@ func (h *WaiterHandler) UpsertWaiter(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	result, httpcode, err := h.WaiterUsecase.UpsertWaiter(ctx, &request)
+	result, httpcode, err := h.WaiterUsecase.UpsertWaiter(ctx, c.GetString("branch_uuid"), &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
 		return
@@ -54,7 +53,6 @@ func (h *WaiterHandler) UpsertWaiter(c *gin.Context) {
 func (h *WaiterHandler) FindWaiter(c *gin.Context) {
 	id := c.Param("id")
 	trashed := c.Query("with_trashed")
-
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()

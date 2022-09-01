@@ -3,19 +3,18 @@ package domain
 import "time"
 
 // Response and Request
-
-type ItemCategoryUpsertRequest struct {
-	UUID      string `json:"uuid" bson:"uuid"`
-	Name      string `json:"name" bson:"name"`
-	CreatedAt string `json:"created_at" bson:"created_at"`
-}
-
 type ItemCategoryResponse struct {
 	UUID      string     `json:"uuid"`
 	Name      string     `json:"name"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+}
+
+type ItemCategoryUpsertRequest struct {
+	UUID      string `json:"uuid" bson:"uuid"`
+	Name      string `json:"name" bson:"name"`
+	CreatedAt string `json:"created_at" bson:"created_at"`
 }
 
 type ItemCategoryFindAllResponse struct {

@@ -22,12 +22,12 @@ type EmailVerificationCode struct {
 }
 
 type EmailVerificationCodeModel struct {
-	UUID             string           `bson:"uuid"`
-	VerfiedableUUID  string           `bson:"verifiedable_uuid"`
-	VerifiedableType VerifiedableType `bson:"verifiedable_type"`
-	Code             string           `bson:"code"`
-	UsedAt           *time.Time       `bson:"used_at,omitempty"`
-	CreatedAt        time.Time        `bson:"created_at"`
+	UUID             string           `bson:"uuid" json:"uuid"`
+	VerfiedableUUID  string           `bson:"verifiedable_uuid" json:"verifiedable_uuid"`
+	VerifiedableType VerifiedableType `bson:"verifiedable_type" json:"verifiedable_type"`
+	Code             string           `bson:"code" json:"code" json:"code"`
+	UsedAt           *time.Time       `bson:"used_at,omitempty" json:"used_at,omitempty"`
+	CreatedAt        time.Time        `bson:"created_at" json:"created_at"`
 }
 
 type EmailVerificationCodeRepositoryContract interface {

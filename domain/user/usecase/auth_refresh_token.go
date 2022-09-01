@@ -40,7 +40,7 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
-	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(user.UUID, userRole.Name)
+	accesstoken, refreshtoken, err := jwthandler.GenerateAllTokens(user.UUID, userRole.Name, user.BranchUUID)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

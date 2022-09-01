@@ -22,6 +22,7 @@ func (u *waiterUsecase) DeleteWaiter(c context.Context, id string) (*domain.Wait
 
 	var resp domain.WaiterResponse
 	resp.UUID = result.UUID
+	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.LastActive != nil {
