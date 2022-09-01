@@ -63,7 +63,6 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, withTrashed 
 		}
 
 		data.Items = items
-
 		resp = append(resp, data)
 	}
 

@@ -40,14 +40,14 @@ type Space struct {
 
 type SpaceGroupUsecaseContract interface {
 	UpsertSpaceGroup(ctx context.Context, branchId string, req *SpaceGroupUpsertRequest) (*SpaceGroupResponse, int, error)
-	FindSpaceGroups(ctx context.Context, withTrashed bool) ([]SpaceGroupResponse, int, error)
+	FindSpaceGroups(ctx context.Context, branchId string, withTrashed bool) ([]SpaceGroupResponse, int, error)
 	FindSpaceGroup(ctx context.Context, branchId, id string, withTrashed bool) (*SpaceGroupResponse, int, error)
 	DeleteSpaceGroup(ctx context.Context, branchId, id string) (*SpaceGroupResponse, int, error)
 }
 
 type SpaceGroupRepositoryContract interface {
 	UpsertSpaceGroup(ctx context.Context, data *SpaceGroup) (*SpaceGroup, int, error)
-	// FindSpaceGroups(ctx context.Context, withTrashed bool) ([]SpaceGroup, int, error)
+	FindSpaceGroups(ctx context.Context, branchId string, withTrashed bool) ([]SpaceGroup, int, error)
 	FindSpaceGroup(ctx context.Context, branchId, id string, withTrashed bool) (*SpaceGroup, int, error)
 	DeleteSpaceGroup(ctx context.Context, branchId, id string) (*SpaceGroup, int, error)
 }

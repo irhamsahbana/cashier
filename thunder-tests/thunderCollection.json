@@ -57,7 +57,7 @@
       ],
       "auth": {
         "type": "bearer",
-        "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMDI2Mzc3LCJuYmYiOjE2NjIwMjI3NzcsImlhdCI6MTY2MjAyMjc3N30.yyWzOW4ywQBzyplMwDWuO7qeS63mNApJUNxvGzXNaxE"
+        "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiJjNWIxYTBjYS01MGViLTQ2NDQtOWNhNy1lNWUzZTM4MWUyYjIiLCJyb2xlIjoiQmFidSIsImlzcyI6IkF1dGhlbnRpY2F0b3IiLCJleHAiOjE2NjIwNTQ3MzgsIm5iZiI6MTY2MjA1MTEzOCwiaWF0IjoxNjYyMDUxMTM4fQ.EqKn4-GykwyRQgavzi1-LDWJ9MuCemMbyW34g9bgT0Q"
       },
       "tests": []
     }

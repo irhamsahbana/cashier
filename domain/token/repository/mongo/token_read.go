@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"lucy/cashier/domain"
 	"net/http"
 
@@ -31,16 +32,12 @@ func (repo *tokenRepository) FindTokenWithATandRT(ctx context.Context, accessTok
 
 	doc := domain.Token{}
 
-	countToken, err := repo.Collection.CountDocuments(ctx, filter)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	if countToken == 0 {
-		return nil, http.StatusNotFound, nil
-	}
-
 	err = repo.Collection.FindOne(ctx, filter).Decode(&doc)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("token not found")
+		}
+
 		return nil, http.StatusInternalServerError, err
 	}
 

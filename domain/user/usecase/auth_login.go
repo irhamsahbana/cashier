@@ -17,16 +17,10 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 	if err != nil {
 		return nil, code, err
 	}
-	if code == http.StatusNotFound {
-		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
-	}
 
 	userRoleResult, code, err := u.userRoleRepo.FindUserRole(ctx, userResult.RoleUUID, false)
 	if err != nil {
 		return nil, code, err
-	}
-	if code == http.StatusNotFound {
-		return nil, http.StatusUnauthorized, errors.New("Unauthorized")
 	}
 
 	if ok := passwordhandler.VerifyPassword(userResult.Password, req.Password); !ok {
@@ -51,7 +45,7 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 	var resp domain.UserResponse
 	resp.UUID = userResult.UUID
 	resp.Name = userResult.Name
-	resp.Role = userResult.Role
+	resp.Role = userRoleResult.Name
 	resp.Token = &accesstoken
 	resp.RefreshToken = &refreshtoken
 

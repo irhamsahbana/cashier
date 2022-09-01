@@ -100,7 +100,7 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 	filterWithoutTrashed := bson.M{"deleted_at": bson.M{"$exists": false}}
 	filterItemWithoutTrashed := bson.M{"items.deleted_at": bson.M{"$exists": false}}
 
-	if withTrashed == true {
+	if withTrashed {
 		filterItemCategory = filterWithTrashed
 		filterItem = filterWithTrashed
 	} else {
@@ -115,7 +115,7 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 			"preserveNullAndEmptyArrays": true,
 		},
 	}}
-	filterItemsBaseOnExistanceOfDeletedAtStage := bson.D{{Key: "$match", Value: filterItem}}
+	filterDeletedItems := bson.D{{Key: "$match", Value: filterItem}}
 	groupByUuidStage := bson.D{{
 		Key: "$group", Value: bson.M{
 			"_id":         "$uuid",
@@ -129,7 +129,7 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 		},
 	}}
 
-	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindItemsStage, filterItemsBaseOnExistanceOfDeletedAtStage, groupByUuidStage})
+	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindItemsStage, filterDeletedItems, groupByUuidStage})
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

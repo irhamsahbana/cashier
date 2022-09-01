@@ -9,7 +9,6 @@ type User struct {
 	BranchUUID             string   `bson:"branch_uuid"`
 	RoleUUID               string   `bson:"role_uuid"`
 	Name                   string   `bson:"name"`
-	Role                   string   `bson:"role"`
 	Email                  string   `bson:"email"`
 	EmailVerifiedAt        *int64   `bson:"email_verified_at,omitempty"`
 	EmailVerificationCodes []string `bson:"email_verification_code,omitempty"`

@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"lucy/cashier/domain"
 	"net/http"
 
@@ -36,19 +37,12 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 		}
 	}
 
-	countUser, err := repo.Collection.CountDocuments(ctx, filter)
+	err := repo.Collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("user not found")
+		}
 
-	if countUser < 1 {
-		return nil, http.StatusNotFound, nil
-	}
-
-	result := repo.Collection.FindOne(ctx, filter)
-
-	err = result.Decode(&user)
-	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 

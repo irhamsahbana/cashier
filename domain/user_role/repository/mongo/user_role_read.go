@@ -24,8 +24,6 @@ func NewUserRoleMongoRepository(DB mongo.Database) domain.UserRoleRepositoryCont
 func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, withTrashed bool) (*domain.UserRole, int, error) {
 	var userRole domain.UserRole
 	var filter bson.M
-	var result *mongo.SingleResult
-	var err error
 
 	if withTrashed {
 		filter = bson.M{"uuid": id}
@@ -37,9 +35,13 @@ func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, wit
 			},
 		}
 	}
-	result = repo.Collection.FindOne(ctx, filter)
-	err = result.Decode(&userRole)
+
+	err := repo.Collection.FindOne(ctx, filter).Decode(&userRole)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, err
+		}
+
 		return nil, http.StatusInternalServerError, err
 	}
 
