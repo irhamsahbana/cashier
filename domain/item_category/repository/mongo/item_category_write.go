@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"time"
 
@@ -99,15 +98,9 @@ func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context,
 func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, itemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 
-	_, code, err := repo.FindItemCategory(ctx, itemCategoryId, true)
+	_, code, err := repo.FindItemCategory(ctx, itemCategoryId, false)
 	if err != nil {
 		return nil, code, err
-	}
-
-	// validate if uuid for item exists
-	countItem, err := repo.Collection.CountDocuments(ctx, bson.M{"items.uuid": data.UUID})
-	if countItem > 0 {
-		return nil, http.StatusConflict, errors.New("uuid of item is exists in item category collection")
 	}
 
 	// create a item inside a collection (in 'items' field)

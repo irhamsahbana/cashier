@@ -2,7 +2,6 @@ package authuser
 
 import (
 	"context"
-	"log"
 	"lucy/cashier/bootstrap"
 	"lucy/cashier/domain"
 	"net/http"
@@ -37,7 +36,6 @@ func FindUser(id string) (*domain.UserResponse, int, error) {
 	}
 
 	var user domain.User
-	log.Println(resultUser.Decode(&user))
 	err := resultUser.Decode(&user)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err

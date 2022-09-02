@@ -3,7 +3,7 @@
     "_id": "0a61bc37-0c27-4c1e-89b5-0c936677739c",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "get menu category",
+    "name": "get item category",
     "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa?with_trashed=1",
     "method": "GET",
     "sortNum": 20000,
@@ -24,7 +24,7 @@
     "_id": "e89e28fc-bc94-4f85-903f-fd8ef83d7eb5",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "delete menu category",
+    "name": "delete item category",
     "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
     "method": "DELETE",
     "sortNum": 30000,
@@ -39,7 +39,7 @@
     "_id": "654be3bc-6f58-4393-b994-6891c6a8241c",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "create menu",
+    "name": "create item",
     "url": "{{base_url}}/menus/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
     "method": "POST",
     "sortNum": 50000,
@@ -59,7 +59,7 @@
     "_id": "cbf9c720-9adc-4079-905f-90e6d5126a3d",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "get menu",
+    "name": "get item",
     "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884x",
     "method": "GET",
     "sortNum": 60000,
@@ -74,7 +74,7 @@
     "_id": "f9020249-da9f-4b99-9472-c1f560fc3b6a",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "delete menu",
+    "name": "delete item",
     "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884",
     "method": "DELETE",
     "sortNum": 70000,
@@ -89,7 +89,7 @@
     "_id": "bbf3ecf2-fac3-4300-8236-d68856b4facb",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "get all menu category (restaurant menus)",
+    "name": "get all item category",
     "url": "{{base_url}}/menu-categories",
     "method": "GET",
     "sortNum": 15000,
@@ -110,7 +110,7 @@
     "_id": "4f987a7a-fdd3-40f2-9c71-a40b51e0a5ce",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "upsert menu category",
+    "name": "upsert item category",
     "url": "{{base_url}}/menu-categories",
     "method": "PUT",
     "sortNum": 7500,
@@ -129,7 +129,7 @@
     "_id": "c9d10cad-05f6-4de2-92c1-df1220e2444e",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "update menu",
+    "name": "update item",
     "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b788x",
     "method": "PATCH",
     "sortNum": 80000,
@@ -225,15 +225,15 @@
     "method": "GET",
     "sortNum": 130000,
     "created": "2022-08-30T04:14:42.651Z",
-    "modified": "2022-09-01T17:29:30.529Z",
+    "modified": "2022-09-02T08:18:02.328Z",
     "headers": [
       {
         "name": "X-ACCESS-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiJjNWIxYTBjYS01MGViLTQ2NDQtOWNhNy1lNWUzZTM4MWUyYjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMDU2OTE1LCJuYmYiOjE2NjIwNTMzMTUsImlhdCI6MTY2MjA1MzMxNX0.mgWN7w6J0e_TALUre1Wi2VXOVzFfR8moHTK_nfCraXA"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMTA2NjE1LCJuYmYiOjE2NjIxMDMwMTUsImlhdCI6MTY2MjEwMzAxNX0.RpblEnT9DANk9RjsuRgB-INhXM5uvAgVBrlvI57cS_Y"
       },
       {
         "name": "X-REFRESH-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiJjNWIxYTBjYS01MGViLTQ2NDQtOWNhNy1lNWUzZTM4MWUyYjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjkzNTg5MzE1LCJuYmYiOjE2NjIwNTMzMTUsImlhdCI6MTY2MjA1MzMxNX0.ZAcJzFkYZ3C0OLwQItyBPgzu5dtHBrvkTzR4Evf8fVw"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjkzNjM5MDE1LCJuYmYiOjE2NjIxMDMwMTUsImlhdCI6MTY2MjEwMzAxNX0.gxDux7CMEssFhaMApZgyA-79lC9MRlbN3dXe31PcIaM"
       }
     ],
     "params": [],
@@ -285,17 +285,13 @@
     "method": "PUT",
     "sortNum": 160000,
     "created": "2022-09-01T03:25:13.500Z",
-    "modified": "2022-09-01T08:08:32.479Z",
+    "modified": "2022-09-02T09:03:07.473Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07719\",\n  \"code\": \"GURENLAGAN\",\n  \"shape\": \"circle\",\n  \"pax\": 20,\n  \"floor\": 1,\n  \"smoking\": false,\n  \"created_at\": \"2022-07-29T08:12:19.123456Z\"\n}",
+      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07716\",\n  \"code\": \"MOODY\",\n  \"shape\": \"circle\",\n  \"pax\": 5,\n  \"floor\": 1,\n  \"smoking\": false,\n  \"created_at\": \"2022-07-29T08:12:19.123456Z\"\n}",
       "form": []
-    },
-    "auth": {
-      "type": "bearer",
-      "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMDIxMTkxLCJuYmYiOjE2NjIwMTc1OTEsImlhdCI6MTY2MjAxNzU5MX0.R7X35oi5OiUavgrO5o16o2fxif2uraZFINThSlWLOdQ"
     },
     "tests": []
   },
@@ -304,11 +300,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "delete space group",
-    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07719",
+    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07718",
     "method": "DELETE",
     "sortNum": 170000,
     "created": "2022-09-01T08:11:31.128Z",
-    "modified": "2022-09-01T09:01:31.573Z",
+    "modified": "2022-09-02T06:57:59.346Z",
     "headers": [],
     "params": [],
     "tests": []
@@ -318,11 +314,97 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "find space group",
-    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07719",
+    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07718?with_trashed=1",
     "method": "GET",
     "sortNum": 180000,
     "created": "2022-09-01T09:12:28.628Z",
-    "modified": "2022-09-01T09:52:54.250Z",
+    "modified": "2022-09-02T06:59:07.545Z",
+    "headers": [],
+    "params": [
+      {
+        "name": "with_trashed",
+        "value": "1",
+        "isPath": false
+      }
+    ],
+    "tests": []
+  },
+  {
+    "_id": "0c3299e5-e6ba-4965-8f13-ec2bff0b4559",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "db2297a1-274f-4612-b0dd-42b8b11d1d6c",
+    "name": "create space",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07718",
+    "method": "POST",
+    "sortNum": 200000,
+    "created": "2022-09-02T03:07:29.456Z",
+    "modified": "2022-09-02T08:45:20.173Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07714\",\n  \"number\": 2,\n  \"occupied\": true,\n  \"description\": \"Lorem ipsum dolor sit amet.\",\n  \"created_at\": \"2022-07-30T08:10:15.554671Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "ffcdddce-4ac7-4442-81c5-0c4af52c0c92",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "db2297a1-274f-4612-b0dd-42b8b11d1d6c",
+    "name": "find space",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07713",
+    "method": "GET",
+    "sortNum": 210000,
+    "created": "2022-09-02T06:06:38.824Z",
+    "modified": "2022-09-02T06:07:02.422Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "54e79260-3ee5-4b4f-84db-dc701fdba165",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "db2297a1-274f-4612-b0dd-42b8b11d1d6c",
+    "name": "delete space",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07714",
+    "method": "DELETE",
+    "sortNum": 220000,
+    "created": "2022-09-02T07:07:36.697Z",
+    "modified": "2022-09-02T08:51:06.672Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "60515b90-fb28-449a-8b6f-ed17e84b212e",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "db2297a1-274f-4612-b0dd-42b8b11d1d6c",
+    "name": "update space",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07713",
+    "method": "PATCH",
+    "sortNum": 230000,
+    "created": "2022-09-02T07:18:31.114Z",
+    "modified": "2022-09-02T08:22:57.560Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"number\": 4,\n  \"occupied\": false,\n  \"description\": \"Lorem ipsum dolar sit amet.\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "22ccd92a-5576-4d1e-9aad-0b966a468473",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
+    "name": "get all spaces",
+    "url": "{{base_url}}/space-groups",
+    "method": "GET",
+    "sortNum": 250000,
+    "created": "2022-09-02T08:26:28.703Z",
+    "modified": "2022-09-02T08:49:47.343Z",
     "headers": [],
     "params": [
       {

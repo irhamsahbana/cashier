@@ -22,6 +22,10 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
+	if err := validateSpaceGroupShape(req.Shape); err != nil {
+		return nil, http.StatusUnprocessableEntity, err
+	}
+
 	fmt.Println(branchId)
 	var data domain.SpaceGroup
 	data.UUID = req.UUID
@@ -59,13 +63,13 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 	return &resp, http.StatusOK, nil
 }
 
-// func validateSpaceGroupShape(shape string) (domain.SpaceGroupShape, error) {
-// 	switch shape {
-// 	case "circle":
-// 		return domain.SpaceGroupShape_CIRCLE, nil
-// 	case "square":
-// 		return domain.SpaceGroupShape_SQUARE, nil
-// 	default:
-// 		return "", domain.ErrSpaceGroupShapeInvalid
-// 	}
-// }
+func validateSpaceGroupShape(shape domain.SpaceGroupShape) error {
+	switch shape {
+	case "circle":
+		return nil
+	case "square":
+		return nil
+	default:
+		return domain.ErrSpaceGroupShapeInvalid
+	}
+}

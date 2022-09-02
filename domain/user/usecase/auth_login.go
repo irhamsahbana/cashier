@@ -44,6 +44,7 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 
 	var resp domain.UserResponse
 	resp.UUID = userResult.UUID
+	resp.BranchUUID = userResult.BranchUUID
 	resp.Name = userResult.Name
 	resp.Role = userRoleResult.Name
 	resp.Token = &accesstoken
