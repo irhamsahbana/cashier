@@ -7,6 +7,7 @@ import (
 
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/http_response"
+	"lucy/cashier/lib/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,15 +21,22 @@ func NewItemCategoryHandler(router *gin.Engine, usecase domain.ItemCategoryUseca
 		ItemCategoryUsecase: usecase,
 	}
 
-	router.PUT("/item-categories", handler.UpsertItemCategory)
-	router.GET("/item-categories", handler.FindItemCategories)
-	router.GET("/item-categories/:id", handler.FindItemCategory)
-	router.DELETE("/item-categories/:id", handler.DeleteItemCategory)
+	permitted := []middleware.UserRole{
+		middleware.UserRole_OWNER,
+		middleware.UserRole_BRANCH_OWNER,
+	}
 
-	router.POST("items/:itemCategoryId", handler.CreateItem)
-	router.PATCH("items/:id", handler.UpdateItem)
-	router.GET("items/:id", handler.FindItem)
-	router.DELETE("items/:id", handler.DeleteItem)
+	r := router.Group("/", middleware.Auth, middleware.Authorization(permitted))
+
+	r.PUT("/item-categories", handler.UpsertItemCategory)
+	r.GET("/item-categories", handler.FindItemCategories)
+	r.GET("/item-categories/:id", handler.FindItemCategory)
+	r.DELETE("/item-categories/:id", handler.DeleteItemCategory)
+
+	r.POST("items/:itemCategoryId", handler.CreateItem)
+	r.PATCH("items/:id", handler.UpdateItem)
+	r.GET("items/:id", handler.FindItem)
+	r.DELETE("items/:id", handler.DeleteItem)
 }
 
 func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
@@ -40,8 +48,10 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 		return
 	}
 
+	branchId := c.GetString("branch_uuid")
+
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemCategory(ctx, &request)
+	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemCategory(ctx, branchId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -51,13 +61,13 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 }
 
 func (h *ItemCategoryHandler) FindItemCategory(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 	trashed := c.Query("with_trashed")
-
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategory(ctx, id, withTrashed)
+	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategory(ctx, branchId, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -67,11 +77,12 @@ func (h *ItemCategoryHandler) FindItemCategory(c *gin.Context) {
 }
 
 func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
 	trashed := c.Query("with_trashed")
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategories(ctx, withTrashed)
+	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategories(ctx, branchId, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -81,10 +92,11 @@ func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
 }
 
 func (h *ItemCategoryHandler) DeleteItemCategory(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.DeleteItemCategory(ctx, id)
+	result, httpCode, err := h.ItemCategoryUsecase.DeleteItemCategory(ctx, branchId, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -104,10 +116,11 @@ func (h *ItemCategoryHandler) CreateItem(c *gin.Context) {
 		return
 	}
 
+	branchId := c.GetString("branch_uuid")
 	itemCategoryId := c.Param("itemCategoryId")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.CreateItem(ctx, itemCategoryId, &request)
+	result, httpCode, err := h.ItemCategoryUsecase.CreateItem(ctx, branchId, itemCategoryId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -125,10 +138,11 @@ func (h *ItemCategoryHandler) UpdateItem(c *gin.Context) {
 		return
 	}
 
+	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.UpdateItem(ctx, id, &request)
+	result, httpCode, err := h.ItemCategoryUsecase.UpdateItem(ctx, branchId, id, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -138,13 +152,13 @@ func (h *ItemCategoryHandler) UpdateItem(c *gin.Context) {
 }
 
 func (h *ItemCategoryHandler) FindItem(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 	trashed := c.Query("with_trashed")
-
 	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItem(ctx, id, withTrashed)
+	result, httpCode, err := h.ItemCategoryUsecase.FindItem(ctx, branchId, id, withTrashed)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -154,10 +168,11 @@ func (h *ItemCategoryHandler) FindItem(c *gin.Context) {
 }
 
 func (h *ItemCategoryHandler) DeleteItem(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.DeleteItem(ctx, id)
+	result, httpCode, err := h.ItemCategoryUsecase.DeleteItem(ctx, branchId, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return

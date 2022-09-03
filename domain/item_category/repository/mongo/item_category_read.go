@@ -24,72 +24,98 @@ func NewItemCategoryMongoRepository(DB mongo.Database) domain.ItemCategoryReposi
 	}
 }
 
-func (repo *itemCategoryMongoRepository) FindItemCategory(ctx context.Context, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
-	var itemcategories []domain.ItemCategory
-	var itemcategory domain.ItemCategory
+// func (repo *itemCategoryMongoRepository) FindItemCategory(ctx context.Context, branchId, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
+// 	var itemcategories []domain.ItemCategory
+// 	var itemcategory domain.ItemCategory
 
-	var filterItemCategory bson.M
-	var filterItem bson.M
+// 	var filterItemCategory bson.M
+// 	var filterItem bson.M
 
-	if withTrashed == true {
-		filterItemCategory = bson.M{"uuid": id}
-		filterItem = bson.M{"uuid": id}
-	} else {
-		filterItemCategory = bson.M{
-			"$and": bson.A{
-				bson.M{"uuid": id},
-				bson.M{"deleted_at": bson.M{"$exists": false}},
-			},
-		}
+// 	if withTrashed {
+// 		filterItemCategory = bson.M{"uuid": id}
+// 		filterItem = bson.M{"uuid": id}
+// 	} else {
+// 		filterItemCategory = bson.M{
+// 			"$and": bson.A{
+// 				bson.M{"uuid": id},
+// 				bson.M{"deleted_at": bson.M{"$exists": false}},
+// 			},
+// 		}
 
-		filterItem = bson.M{
-			"$or": bson.A{
-				bson.M{"uuid": id},
-				bson.M{"items.deleted_at": bson.M{"$exists": false}},
-			},
-		}
+// 		filterItem = bson.M{
+// 			"$or": bson.A{
+// 				bson.M{"uuid": id},
+// 				bson.M{"items.deleted_at": bson.M{"$exists": false}},
+// 			},
+// 		}
+// 	}
+
+// 	matchStage := bson.D{{Key: "$match", Value: filterItemCategory}}
+// 	unwindItemsStage := bson.D{{
+// 		Key: "$unwind", Value: bson.M{
+// 			"path":                       "$items",
+// 			"preserveNullAndEmptyArrays": true,
+// 		},
+// 	}}
+// 	filterItemsWithExistanceOfDeletedAtStage := bson.D{{Key: "$match", Value: filterItem}}
+// 	groupByUuidStage := bson.D{{
+// 		Key: "$group", Value: bson.M{
+// 			"_id":         "$uuid",
+// 			"uuid":        bson.M{"$first": "$uuid"},
+// 			"branch_uuid": bson.M{"$first": "$branch_uuid"},
+// 			"name":        bson.M{"$first": "$name"},
+// 			"items":       bson.M{"$push": "$items"},
+// 			"created_at":  bson.M{"$first": "$created_at"},
+// 			"updated_at":  bson.M{"$first": "$updated_at"},
+// 			"deleted_at":  bson.M{"$first": "$deleted_at"},
+// 		},
+// 	}}
+
+// 	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindItemsStage, filterItemsWithExistanceOfDeletedAtStage, groupByUuidStage})
+// 	if err != nil {
+// 		return nil, http.StatusInternalServerError, err
+// 	}
+
+// 	if err = cursor.All(ctx, &itemcategories); err != nil {
+// 		return nil, http.StatusInternalServerError, err
+// 	}
+
+// 	if len(itemcategories) > 0 {
+// 		itemcategory = itemcategories[0]
+// 	} else {
+// 		return nil, http.StatusNotFound, errors.New("item category not found")
+// 	}
+
+// 	return &itemcategory, http.StatusOK, nil
+// }
+
+func (repo *itemCategoryMongoRepository) FindItemCategory(ctx context.Context, branchId, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
+	var itemCategory domain.ItemCategory
+	filter := bson.M{
+		"$and": []bson.M{
+			{"branch_uuid": branchId},
+			{"uuid": id},
+			{"deleted_at": bson.M{"$exists": false}},
+		},
 	}
 
-	matchStage := bson.D{{Key: "$match", Value: filterItemCategory}}
-	unwindItemsStage := bson.D{{
-		Key: "$unwind", Value: bson.M{
-			"path":                       "$items",
-			"preserveNullAndEmptyArrays": true,
-		},
-	}}
-	filterItemsWithExistanceOfDeletedAtStage := bson.D{{Key: "$match", Value: filterItem}}
-	groupByUuidStage := bson.D{{
-		Key: "$group", Value: bson.M{
-			"_id":         "$uuid",
-			"uuid":        bson.M{"$first": "$uuid"},
-			"branch_uuid": bson.M{"$first": "$branch_uuid"},
-			"name":        bson.M{"$first": "$name"},
-			"items":       bson.M{"$push": "$items"},
-			"created_at":  bson.M{"$first": "$created_at"},
-			"updated_at":  bson.M{"$first": "$updated_at"},
-			"deleted_at":  bson.M{"$first": "$deleted_at"},
-		},
-	}}
+	if withTrashed {
+		delete(filter["$and"].([]bson.M)[2], "deleted_at")
+	}
 
-	cursor, err := repo.Collection.Aggregate(ctx, mongo.Pipeline{matchStage, unwindItemsStage, filterItemsWithExistanceOfDeletedAtStage, groupByUuidStage})
+	err := repo.Collection.FindOne(ctx, filter).Decode(&itemCategory)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("item category not found")
+		}
+
 		return nil, http.StatusInternalServerError, err
 	}
 
-	if err = cursor.All(ctx, &itemcategories); err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-
-	if len(itemcategories) > 0 {
-		itemcategory = itemcategories[0]
-	} else {
-		return nil, http.StatusNotFound, errors.New("Item category not found")
-	}
-
-	return &itemcategory, http.StatusOK, nil
+	return &itemCategory, http.StatusOK, nil
 }
 
-func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context, withTrashed bool) ([]domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context, branchId string, withTrashed bool) ([]domain.ItemCategory, int, error) {
 	var itemcategories []domain.ItemCategory
 
 	var filterItemCategory bson.M
@@ -143,7 +169,7 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 
 // Item
 
-func (repo *itemCategoryMongoRepository) FindItem(ctx context.Context, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) FindItem(ctx context.Context, branchId, id string, withTrashed bool) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 
 	var filter bson.M

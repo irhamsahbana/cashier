@@ -8,21 +8,21 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *itemCategoryUsecase) FindItemCategories(c context.Context, withTrashed bool) ([]domain.ItemCategoryFindAllResponse, int, error) {
+func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId string, withTrashed bool) ([]domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.itemCategoryRepo.FindItemCategories(ctx, withTrashed)
+	result, code, err := u.itemCategoryRepo.FindItemCategories(ctx, branchId, withTrashed)
 	if err != nil {
 		return nil, code, err
 	}
 
-	var resp []domain.ItemCategoryFindAllResponse
+	var resp []domain.ItemCategoryResponse
 
 	// mc -> item category, m -> item
 	for _, mc := range result {
-		var data domain.ItemCategoryFindAllResponse
-		var items []domain.ItemFindAllResponse
+		var data domain.ItemCategoryResponse
+		var items []domain.ItemResponse
 
 		data.UUID = mc.UUID
 		data.Name = mc.Name
@@ -38,7 +38,7 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, withTrashed 
 
 		if len(mc.Items) > 0 {
 			for _, m := range mc.Items {
-				var dataItem domain.ItemFindAllResponse
+				var dataItem domain.ItemResponse
 
 				dataItem.UUID = m.UUID
 				dataItem.MainUUID = m.MainUUID

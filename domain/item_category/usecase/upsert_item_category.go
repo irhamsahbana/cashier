@@ -9,7 +9,7 @@ import (
 	"lucy/cashier/lib/validator"
 )
 
-func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, req *domain.ItemCategoryUpsertRequest) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, branchId string, req *domain.ItemCategoryUpsertRequest) (*domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -27,7 +27,7 @@ func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, req *domain.
 	itemcategory.Name = req.Name
 	itemcategory.CreatedAt = createdAt.UTC().UnixMicro()
 
-	result, code, err := u.itemCategoryRepo.UpsertItemCategory(ctx, &itemcategory)
+	result, code, err := u.itemCategoryRepo.UpsertItemCategory(ctx, branchId, &itemcategory)
 	if err != nil {
 		return nil, code, err
 	}

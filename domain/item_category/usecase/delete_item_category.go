@@ -8,11 +8,11 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, id string) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id string) (*domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.itemCategoryRepo.DeleteItemCategory(ctx, id)
+	result, code, err := u.itemCategoryRepo.DeleteItemCategory(ctx, branchId, id)
 	if err != nil {
 		return nil, code, err
 	}

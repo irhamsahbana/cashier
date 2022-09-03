@@ -8,11 +8,11 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *itemCategoryUsecase) FindItemCategory(c context.Context, id string, withTrashed bool) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) FindItemCategory(c context.Context, branchId, id string, withTrashed bool) (*domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.itemCategoryRepo.FindItemCategory(ctx, id, withTrashed)
+	result, code, err := u.itemCategoryRepo.FindItemCategory(ctx, branchId, id, withTrashed)
 	if err != nil {
 		return nil, code, err
 	}

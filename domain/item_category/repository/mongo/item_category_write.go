@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context, branchId string, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 	var contents bson.M
 
@@ -58,7 +58,7 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 	return &itemcategory, http.StatusOK, nil
 }
 
-func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context, id string) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context, branchId, id string) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 
 	filter := bson.M{"uuid": id}
@@ -95,10 +95,10 @@ func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context,
 
 // Item
 
-func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, itemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, branchId, itemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 
-	_, code, err := repo.FindItemCategory(ctx, itemCategoryId, false)
+	_, code, err := repo.FindItemCategory(ctx, branchId, itemCategoryId, false)
 	if err != nil {
 		return nil, code, err
 	}
@@ -157,7 +157,7 @@ func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, itemCat
 	return &itemcategory, http.StatusOK, nil
 }
 
-func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, id string, data *domain.Item) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, branchId, id string, data *domain.Item) (*domain.ItemCategory, int, error) {
 	filter := bson.M{"items.uuid": id}
 
 	arrayFilters := options.ArrayFilters{
@@ -189,7 +189,7 @@ func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, id stri
 		return nil, http.StatusNotFound, nil
 	}
 
-	item, _, err := repo.FindItem(ctx, id, true)
+	item, _, err := repo.FindItem(ctx, branchId, id, true)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -197,7 +197,7 @@ func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, id stri
 	return item, http.StatusOK, nil
 }
 
-func (repo *itemCategoryMongoRepository) DeleteItem(ctx context.Context, id string) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) DeleteItem(ctx context.Context, branchId, id string) (*domain.ItemCategory, int, error) {
 	filter := bson.M{"items.uuid": id}
 
 	arrayFilters := options.ArrayFilters{
@@ -227,7 +227,7 @@ func (repo *itemCategoryMongoRepository) DeleteItem(ctx context.Context, id stri
 		return nil, http.StatusNotFound, nil
 	}
 
-	item, _, err := repo.FindItem(ctx, id, true)
+	item, _, err := repo.FindItem(ctx, branchId, id, true)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

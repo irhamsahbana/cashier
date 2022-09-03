@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (u *itemCategoryUsecase) UpdateItem(c context.Context, id string, req *domain.ItemUpdateRequest) (*domain.ItemResponse, int, error) {
+func (u *itemCategoryUsecase) UpdateItem(c context.Context, branchId, id string, req *domain.ItemUpdateRequest) (*domain.ItemResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -28,7 +28,7 @@ func (u *itemCategoryUsecase) UpdateItem(c context.Context, id string, req *doma
 		Public:      req.Public,
 	}
 
-	result, code, err := u.itemCategoryRepo.UpdateItem(ctx, id, &data)
+	result, code, err := u.itemCategoryRepo.UpdateItem(ctx, branchId, id, &data)
 	if err != nil {
 		return nil, code, err
 	}

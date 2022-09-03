@@ -9,7 +9,7 @@ import (
 	"lucy/cashier/lib/validator"
 )
 
-func (u *itemCategoryUsecase) CreateItem(c context.Context, itemCategoryId string, req *domain.ItemCreateRequest) (*domain.ItemResponse, int, error) {
+func (u *itemCategoryUsecase) CreateItem(c context.Context, branchId, itemCategoryId string, req *domain.ItemCreateRequest) (*domain.ItemResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -33,7 +33,7 @@ func (u *itemCategoryUsecase) CreateItem(c context.Context, itemCategoryId strin
 		CreatedAt:   createdAt.UnixMicro(),
 	}
 
-	result, code, err := u.itemCategoryRepo.InsertItem(ctx, itemCategoryId, &data)
+	result, code, err := u.itemCategoryRepo.InsertItem(ctx, branchId, itemCategoryId, &data)
 	if err != nil {
 		return nil, code, err
 	}
