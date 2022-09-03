@@ -15,7 +15,12 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 	var spacegroup domain.SpaceGroup
 	var contents bson.D
 
-	filter := bson.M{"uuid": data.UUID}
+	filter := bson.M{
+		"$and": []bson.M{
+			{"uuid": data.UUID},
+			{"branch_uuid": data.BranchUUID},
+		},
+	}
 	opts := options.Update().SetUpsert(true)
 
 	countSpaceGroup, err := repo.Collection.CountDocuments(ctx, filter)
@@ -69,11 +74,12 @@ func (repo *spaceGroupMongoRepository) DeleteSpaceGroup(ctx context.Context, bra
 	var spacegroup domain.SpaceGroup
 
 	filter := bson.M{
-		"$and": bson.A{
-			bson.M{"branch_uuid": branchId},
-			bson.M{"uuid": id},
+		"$and": []bson.M{
+			{"uuid": id},
+			{"branch_uuid": branchId},
 		},
 	}
+
 	update := bson.A{
 		bson.M{
 			"$set": bson.M{
@@ -91,8 +97,7 @@ func (repo *spaceGroupMongoRepository) DeleteSpaceGroup(ctx context.Context, bra
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-
-	if result.ModifiedCount == 0 {
+	if result.MatchedCount == 0 {
 		return nil, http.StatusNotFound, nil
 	}
 
@@ -222,8 +227,8 @@ func (repo *spaceGroupMongoRepository) UpdateSpace(ctx context.Context, branchId
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	if result.ModifiedCount == 0 {
-		return nil, http.StatusNotFound, errors.New("space not found")
+	if result.MatchedCount == 0 {
+		return nil, http.StatusNotFound, nil
 	}
 
 	space, code, err := repo.FindSpace(ctx, branchId, id, false)

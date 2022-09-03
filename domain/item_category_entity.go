@@ -8,7 +8,7 @@ type ItemCategory struct {
 	UUID       string `bson:"uuid"`
 	BranchUUID string `bson:"branch_uuid"`
 	Name       string `bson:"name"`
-	Items      []Item `bson:"menus"`
+	Items      []Item `bson:"items"`
 	CreatedAt  int64  `bson:"created_at"`
 	UpdatedAt  *int64 `bson:"updated_at,omitempty"`
 	DeletedAt  *int64 `bson:"deleted_at,omitempty"`
@@ -16,13 +16,13 @@ type ItemCategory struct {
 
 type Item struct {
 	UUID        string  `bson:"uuid"`
-	MainUUID    *string `bson:"main_uuid"`
+	MainUUID    *string `bson:"main_uuid,omitempty"`
 	Name        string  `bson:"name"`
 	Price       float32 `bson:"price"`
-	Description *string `bson:"description"`
 	Label       string  `bson:"label"`
 	Public      bool    `bson:"public"`
 	ImageUrl    *string `bson:"image_url"`
+	Description *string `bson:"description"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at,omitempty"`
 	DeletedAt   *int64  `bson:"deleted_at,omitempty"`

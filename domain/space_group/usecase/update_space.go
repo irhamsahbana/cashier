@@ -26,29 +26,31 @@ func (u *spaceGroupUsecase) UpdateSpace(c context.Context, branchId, id string, 
 	if err != nil {
 		return nil, code, err
 	}
+	if code == http.StatusNotFound {
+		return nil, http.StatusOK, err
+	}
 
 	var resp domain.SpaceResponse
 	for _, space := range result.Spaces {
-		if space.UUID == id {
-			resp = domain.SpaceResponse{
-				UUID:        space.UUID,
-				Number:      space.Number,
-				Occupied:    space.Occupied,
-				Description: space.Description,
-				CreatedAt:   time.UnixMicro(space.CreatedAt).UTC(),
-			}
+		if space.UUID != id {
+			continue
+		}
 
-			if space.UpdatedAt != nil {
-				unixMicro := *space.UpdatedAt
-				updatedAt := time.UnixMicro(unixMicro).UTC()
-				resp.UpdatedAt = &updatedAt
-			}
+		resp.UUID = space.UUID
+		resp.Number = space.Number
+		resp.Occupied = space.Occupied
+		resp.Description = space.Description
+		resp.CreatedAt = time.UnixMicro(space.CreatedAt).UTC()
+		if space.UpdatedAt != nil {
+			unixMicro := *space.UpdatedAt
+			updatedAt := time.UnixMicro(unixMicro).UTC()
+			resp.UpdatedAt = &updatedAt
+		}
 
-			if space.DeletedAt != nil {
-				unixMicro := *space.DeletedAt
-				deletedAt := time.UnixMicro(unixMicro).UTC()
-				resp.DeletedAt = &deletedAt
-			}
+		if space.DeletedAt != nil {
+			unixMicro := *space.DeletedAt
+			deletedAt := time.UnixMicro(unixMicro).UTC()
+			resp.DeletedAt = &deletedAt
 		}
 	}
 

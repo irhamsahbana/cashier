@@ -41,26 +41,28 @@ func (u *spaceGroupUsecase) CreateSpace(c context.Context, branchId, SpaceGroupI
 
 	var resp domain.SpaceResponse
 	for _, space := range result.Spaces {
-		if space.UUID == req.UUID {
-			resp = domain.SpaceResponse{
-				UUID:        space.UUID,
-				Number:      space.Number,
-				Occupied:    space.Occupied,
-				Description: space.Description,
-				CreatedAt:   time.UnixMicro(space.CreatedAt).UTC(),
-			}
+		if space.UUID != req.UUID {
+			continue
+		}
 
-			if space.UpdatedAt != nil {
-				unixMicro := *space.UpdatedAt
-				updatedAt := time.UnixMicro(unixMicro).UTC()
-				resp.UpdatedAt = &updatedAt
-			}
+		resp = domain.SpaceResponse{
+			UUID:        space.UUID,
+			Number:      space.Number,
+			Occupied:    space.Occupied,
+			Description: space.Description,
+			CreatedAt:   time.UnixMicro(space.CreatedAt).UTC(),
+		}
 
-			if space.DeletedAt != nil {
-				unixMicro := *space.DeletedAt
-				deletedAt := time.UnixMicro(unixMicro).UTC()
-				resp.DeletedAt = &deletedAt
-			}
+		if space.UpdatedAt != nil {
+			unixMicro := *space.UpdatedAt
+			updatedAt := time.UnixMicro(unixMicro).UTC()
+			resp.UpdatedAt = &updatedAt
+		}
+
+		if space.DeletedAt != nil {
+			unixMicro := *space.DeletedAt
+			deletedAt := time.UnixMicro(unixMicro).UTC()
+			resp.DeletedAt = &deletedAt
 		}
 	}
 

@@ -13,9 +13,15 @@ import (
 
 func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context, branchId string, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
-	var contents bson.M
+	var contents bson.D
 
-	filter := bson.M{"uuid": data.UUID}
+	filter := bson.M{
+		"$and": []bson.M{
+			{"uuid": data.UUID},
+			{"branch_uuid": branchId},
+		},
+	}
+	opts := options.Update().SetUpsert(true)
 
 	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -23,29 +29,25 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 	}
 
 	if countItemCategory > 0 {
-		updatedAt := time.Now().UTC().UnixMicro()
-
-		update := bson.M{
-			"$set": bson.M{
-				"name":       data.Name,
-				"updated_at": updatedAt,
-			},
+		update := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "name", Value: data.Name},
+				{Key: "updated_at", Value: time.Now().UTC().UnixMicro()},
+			}},
 		}
 
 		contents = update
 	} else {
-		insert := bson.M{
-			"$set": bson.M{
-				"branch_uuid": data.BranchUUID,
-				"name":        data.Name,
-				"created_at":  data.CreatedAt,
-			},
+		insert := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "branch_uuid", Value: branchId},
+				{Key: "name", Value: data.Name},
+				{Key: "created_at", Value: data.CreatedAt},
+			}},
 		}
 
 		contents = insert
 	}
-
-	opts := options.Update().SetUpsert(true)
 
 	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts); err != nil {
 		return nil, http.StatusInternalServerError, err
@@ -61,7 +63,13 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context, branchId, id string) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 
-	filter := bson.M{"uuid": id}
+	filter := bson.M{
+		"$and": []bson.M{
+			{"uuid": id},
+			{"branch_uuid": branchId},
+		},
+	}
+
 	update := bson.A{
 		bson.M{
 			"$set": bson.M{
@@ -79,14 +87,11 @@ func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context,
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-
 	if result.MatchedCount == 0 {
 		return nil, http.StatusNotFound, nil
 	}
 
-	findOne := repo.Collection.FindOne(ctx, bson.M{"uuid": id})
-
-	if err = findOne.Decode(&itemcategory); err != nil {
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -103,62 +108,54 @@ func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, branchI
 		return nil, code, err
 	}
 
-	// create a item inside a collection (in 'items' field)
-	result, err := repo.Collection.UpdateOne(
-		ctx,
-		bson.M{"uuid": itemCategoryId},
-		bson.A{
-			bson.M{
-				"$set": bson.M{
-					"items": bson.M{
-						"$ifNull": bson.A{
-							bson.M{"$concatArrays": bson.A{"$items", bson.A{data}}},
-							bson.A{data},
-						},
-					},
-				},
-			},
+	filter := bson.M{
+		"$and": []bson.M{
+			{"branch_uuid": branchId},
+			{"uuid": itemCategoryId},
 		},
-	)
+	}
 
-	// check if when update error
+	insert := bson.D{
+		{Key: "$push", Value: bson.D{
+			{Key: "items", Value: bson.D{
+				{Key: "uuid", Value: data.UUID},
+				{Key: "main_uuid", Value: data.MainUUID},
+				{Key: "name", Value: data.Name},
+				{Key: "price", Value: data.Price},
+				{Key: "public", Value: data.Public},
+				{Key: "label", Value: data.Label},
+				{Key: "image_url", Value: data.ImageUrl},
+				{Key: "description", Value: data.Description},
+				{Key: "created_at", Value: data.CreatedAt},
+			}},
+		}},
+	}
+
+	_, err = repo.Collection.UpdateOne(ctx, filter, insert)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	// if there is document effected by update query then ..
-	if result.MatchedCount == 1 {
-		// search effected document
-		err = repo.Collection.FindOne(
-			ctx,
-			bson.M{"items.uuid": data.UUID},
-			options.FindOne().
-				SetProjection(
-					bson.M{
-						"uuid":        1,
-						"branch_uuid": 1,
-						"name":        1,
-						"created_at":  1,
-						"items": bson.M{
-							"$elemMatch": bson.M{
-								"uuid": data.UUID,
-							},
-						},
-					},
-				),
-		).Decode(&itemcategory)
+	// projection
+	filter = bson.M{"items.uuid": data.UUID}
+	projection := bson.M{"items.$": 1}
+	opts := options.FindOne().SetProjection(projection)
 
-		// if can't marshaled, then return error
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
+	if err = repo.Collection.FindOne(ctx, filter, opts).Decode(&itemcategory); err != nil {
+		return nil, http.StatusInternalServerError, err
 	}
 
 	return &itemcategory, http.StatusOK, nil
 }
 
 func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, branchId, id string, data *domain.Item) (*domain.ItemCategory, int, error) {
-	filter := bson.M{"items.uuid": id}
+	filter := bson.M{
+		"$and": []bson.M{
+			{"branch_uuid": branchId},
+			{"items.uuid": id},
+			{"spaces.deleted_at": bson.M{"$exists": false}},
+		},
+	}
 
 	arrayFilters := options.ArrayFilters{
 		Filters: bson.A{
@@ -184,14 +181,13 @@ func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, branchI
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-
 	if result.MatchedCount == 0 {
 		return nil, http.StatusNotFound, nil
 	}
 
-	item, _, err := repo.FindItem(ctx, branchId, id, true)
+	item, code, err := repo.FindItem(ctx, branchId, id, false)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		return nil, code, err
 	}
 
 	return item, http.StatusOK, nil

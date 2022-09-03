@@ -24,6 +24,7 @@ func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, branchId str
 
 	var itemcategory domain.ItemCategory
 	itemcategory.UUID = req.UUID
+	itemcategory.BranchUUID = branchId
 	itemcategory.Name = req.Name
 	itemcategory.CreatedAt = createdAt.UTC().UnixMicro()
 

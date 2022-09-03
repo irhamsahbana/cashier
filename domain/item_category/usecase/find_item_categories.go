@@ -25,6 +25,7 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 		var items []domain.ItemResponse
 
 		data.UUID = mc.UUID
+		data.BranchUUID = mc.BranchUUID
 		data.Name = mc.Name
 		data.CreatedAt = time.UnixMicro(mc.CreatedAt).UTC()
 		if mc.UpdatedAt != nil {

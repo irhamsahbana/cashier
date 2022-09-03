@@ -24,11 +24,9 @@ func (u *itemCategoryUsecase) CreateItem(c context.Context, branchId, itemCatego
 
 	data := domain.Item{
 		UUID:        req.UUID,
-		MainUUID:    req.MainUUID,
 		Name:        req.Name,
 		Price:       req.Price,
 		Description: req.Description,
-		Label:       req.Label,
 		Public:      req.Public,
 		CreatedAt:   createdAt.UnixMicro(),
 	}
@@ -38,16 +36,38 @@ func (u *itemCategoryUsecase) CreateItem(c context.Context, branchId, itemCatego
 		return nil, code, err
 	}
 
-	menu := result.Items[0]
-
 	var resp domain.ItemResponse
-	resp.UUID = menu.UUID
-	resp.Name = menu.Name
-	resp.Price = menu.Price
-	resp.Description = menu.Description
-	resp.Label = menu.Label
-	resp.Public = menu.Public
-	resp.CreatedAt = time.UnixMicro(menu.CreatedAt).UTC()
+	for _, item := range result.Items {
+		if item.UUID != req.UUID {
+			continue
+		}
+
+		resp.UUID = item.UUID
+		resp.MainUUID = item.MainUUID
+		resp.Name = item.Name
+		resp.Price = item.Price
+		resp.Description = item.Description
+		resp.Label = item.Label
+		resp.Public = item.Public
+		resp.CreatedAt = time.UnixMicro(item.CreatedAt).UTC()
+		if item.UpdatedAt != nil {
+			respUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
+			resp.UpdatedAt = &respUpdatedAt
+		}
+		if item.DeletedAt != nil {
+			respDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
+			resp.DeletedAt = &respDeletedAt
+		}
+	}
+
+	// menu := result.Items[0]
+	// resp.UUID = menu.UUID
+	// resp.Name = menu.Name
+	// resp.Price = menu.Price
+	// resp.Description = menu.Description
+	// resp.Label = menu.Label
+	// resp.Public = menu.Public
+	// resp.CreatedAt = time.UnixMicro(menu.CreatedAt).UTC()
 
 	return &resp, http.StatusCreated, nil
 }

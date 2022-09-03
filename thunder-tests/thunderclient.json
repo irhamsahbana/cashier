@@ -4,19 +4,13 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "get item category",
-    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa?with_trashed=1",
+    "url": "{{base_url}}/item-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
     "method": "GET",
     "sortNum": 20000,
     "created": "2022-07-29T08:10:46.436Z",
-    "modified": "2022-08-19T07:19:37.692Z",
+    "modified": "2022-09-03T02:37:55.901Z",
     "headers": [],
-    "params": [
-      {
-        "name": "with_trashed",
-        "value": "1",
-        "isPath": false
-      }
-    ],
+    "params": [],
     "tests": [],
     "docs": "/menu-categories/:id\n\nuntuk melakukaan pencarian kategori menu dapat menggunakan \"id\" atau \"uuid\"\npada path paramaternya."
   },
@@ -25,11 +19,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "delete item category",
-    "url": "{{base_url}}/menu-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
+    "url": "{{base_url}}/item-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
     "method": "DELETE",
     "sortNum": 30000,
     "created": "2022-07-29T08:11:49.344Z",
-    "modified": "2022-08-12T02:49:14.548Z",
+    "modified": "2022-09-03T02:49:06.298Z",
     "headers": [],
     "params": [],
     "tests": [],
@@ -40,11 +34,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "create item",
-    "url": "{{base_url}}/menus/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
+    "url": "{{base_url}}/items/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
     "method": "POST",
     "sortNum": 50000,
     "created": "2022-08-01T04:07:55.254Z",
-    "modified": "2022-08-11T07:45:40.752Z",
+    "modified": "2022-09-03T02:31:16.013Z",
     "headers": [],
     "params": [],
     "body": {
@@ -60,13 +54,19 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "get item",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884x",
+    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b7887?with_trashed=1",
     "method": "GET",
     "sortNum": 60000,
     "created": "2022-08-02T06:21:35.815Z",
-    "modified": "2022-08-19T05:51:45.138Z",
+    "modified": "2022-09-03T04:20:53.102Z",
     "headers": [],
-    "params": [],
+    "params": [
+      {
+        "name": "with_trashed=1",
+        "value": "",
+        "isPath": false
+      }
+    ],
     "tests": [],
     "docs": "/menus/:id"
   },
@@ -75,11 +75,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "delete item",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b7884",
+    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b7887",
     "method": "DELETE",
     "sortNum": 70000,
     "created": "2022-08-02T06:50:43.933Z",
-    "modified": "2022-08-12T02:54:19.935Z",
+    "modified": "2022-09-03T03:58:16.303Z",
     "headers": [],
     "params": [],
     "tests": [],
@@ -90,11 +90,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "get all item category",
-    "url": "{{base_url}}/menu-categories",
+    "url": "{{base_url}}/item-categories",
     "method": "GET",
     "sortNum": 15000,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-08-11T08:25:20.227Z",
+    "modified": "2022-09-03T09:12:24.937Z",
     "headers": [],
     "params": [
       {
@@ -111,16 +111,16 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "upsert item category",
-    "url": "{{base_url}}/menu-categories",
+    "url": "{{base_url}}/item-categories",
     "method": "PUT",
     "sortNum": 7500,
     "created": "2022-08-07T01:28:36.386Z",
-    "modified": "2022-08-09T02:24:35.559Z",
+    "modified": "2022-09-03T02:36:44.139Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n    \"name\": \"Coffee Base\",\n    \"created_at\": \"2022-07-29T08:12:19.654321Z\"\n}",
+      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n    \"name\": \"Coffee Besse\",\n    \"created_at\": \"2022-07-29T08:12:19.654321Z\"\n}",
       "form": []
     },
     "tests": []
@@ -130,11 +130,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
     "name": "update item",
-    "url": "{{base_url}}/menus/d5c164c8-6887-4ab9-ae90-26eff07b788x",
+    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b788x",
     "method": "PATCH",
     "sortNum": 80000,
     "created": "2022-08-11T07:30:17.479Z",
-    "modified": "2022-08-12T02:35:56.163Z",
+    "modified": "2022-09-03T02:31:32.841Z",
     "headers": [],
     "params": [],
     "body": {
@@ -225,15 +225,15 @@
     "method": "GET",
     "sortNum": 130000,
     "created": "2022-08-30T04:14:42.651Z",
-    "modified": "2022-09-02T08:18:02.328Z",
+    "modified": "2022-09-03T09:09:48.231Z",
     "headers": [
       {
         "name": "X-ACCESS-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMTA2NjE1LCJuYmYiOjE2NjIxMDMwMTUsImlhdCI6MTY2MjEwMzAxNX0.RpblEnT9DANk9RjsuRgB-INhXM5uvAgVBrlvI57cS_Y"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMTkzNTM3LCJuYmYiOjE2NjIxODk5MzcsImlhdCI6MTY2MjE4OTkzN30.UkDFpZgGIxHujuJcy7tNjwW2H_kopiHd0TTxGXJx2vc"
       },
       {
         "name": "X-REFRESH-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjkzNjM5MDE1LCJuYmYiOjE2NjIxMDMwMTUsImlhdCI6MTY2MjEwMzAxNX0.gxDux7CMEssFhaMApZgyA-79lC9MRlbN3dXe31PcIaM"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjkzNzI1OTM3LCJuYmYiOjE2NjIxODk5MzcsImlhdCI6MTY2MjE4OTkzN30.vQFX7yvggkk9d1n6M35VoayPZlMXYFS87-e8gng5HOk"
       }
     ],
     "params": [],
@@ -353,13 +353,19 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "db2297a1-274f-4612-b0dd-42b8b11d1d6c",
     "name": "find space",
-    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07713",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07713?with_trashed=1",
     "method": "GET",
     "sortNum": 210000,
     "created": "2022-09-02T06:06:38.824Z",
-    "modified": "2022-09-02T06:07:02.422Z",
+    "modified": "2022-09-03T04:49:47.627Z",
     "headers": [],
-    "params": [],
+    "params": [
+      {
+        "name": "with_trashed",
+        "value": "1",
+        "isPath": false
+      }
+    ],
     "tests": []
   },
   {
@@ -404,7 +410,7 @@
     "method": "GET",
     "sortNum": 250000,
     "created": "2022-09-02T08:26:28.703Z",
-    "modified": "2022-09-02T08:49:47.343Z",
+    "modified": "2022-09-03T08:00:16.077Z",
     "headers": [],
     "params": [
       {

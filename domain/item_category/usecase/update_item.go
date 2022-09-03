@@ -32,29 +32,33 @@ func (u *itemCategoryUsecase) UpdateItem(c context.Context, branchId, id string,
 	if err != nil {
 		return nil, code, err
 	}
-
 	if code == http.StatusNotFound {
 		return nil, http.StatusOK, nil
 	}
 
-	item := result.Items[0]
-
 	var resp domain.ItemResponse
-	resp.UUID = id
-	resp.Name = item.Name
-	resp.Price = item.Price
-	resp.Description = item.Description
-	resp.Label = item.Label
-	resp.Public = item.Public
-	resp.ImageUrl = item.ImageUrl
-	resp.CreatedAt = time.UnixMicro(item.CreatedAt).UTC()
-	if item.UpdatedAt != nil {
-		itemUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
-		resp.UpdatedAt = &itemUpdatedAt
-	}
-	if item.DeletedAt != nil {
-		itemDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
-		resp.DeletedAt = &itemDeletedAt
+	for _, item := range result.Items {
+		if item.UUID != id {
+			continue
+		}
+
+		resp.UUID = item.UUID
+		resp.MainUUID = item.MainUUID
+		resp.Name = item.Name
+		resp.Price = item.Price
+		resp.Description = item.Description
+		resp.Label = item.Label
+		resp.Public = item.Public
+		resp.ImageUrl = item.ImageUrl
+		resp.CreatedAt = time.UnixMicro(item.CreatedAt).UTC()
+		if item.UpdatedAt != nil {
+			respUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
+			resp.UpdatedAt = &respUpdatedAt
+		}
+		if item.DeletedAt != nil {
+			respDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
+			resp.DeletedAt = &respDeletedAt
+		}
 	}
 
 	return &resp, http.StatusOK, nil

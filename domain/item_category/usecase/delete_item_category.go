@@ -23,6 +23,7 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 
 	var resp domain.ItemCategoryResponse
 	resp.UUID = result.UUID
+	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.UpdatedAt != nil {
