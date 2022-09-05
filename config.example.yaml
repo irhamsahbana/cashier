@@ -1,5 +1,8 @@
 app:
   name: lucy_cashier
+  url: http://localhost:9099
+  static_assets: ./storage-uploads
+  static_asssets_url: /storage
   debug: true
 
 server:

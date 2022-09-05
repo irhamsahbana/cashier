@@ -31,6 +31,10 @@ import (
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
 
+	_fileHttp "lucy/cashier/domain/file/delivery/http"
+	_fileRepo "lucy/cashier/domain/file/repository/mongo"
+	_fileUsecase "lucy/cashier/domain/file/usecase"
+
 	_tokenRepo "lucy/cashier/domain/token/repository/mongo"
 )
 
@@ -46,11 +50,14 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	router := gin.Default()
-	router.Use(cors.Default())
-
 	timeoutContext := time.Duration(bootstrap.App.Config.GetInt("context.timeout")) * time.Second
 	mongoDatabase := bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))
+
+	appStorageURL := bootstrap.App.Config.GetString("app.url") + bootstrap.App.Config.GetString("app.static_asssets_url")
+
+	router := gin.Default()
+	router.Static(bootstrap.App.Config.GetString("app.static_asssets_url"), bootstrap.App.Config.GetString("app.static_assets"))
+	router.Use(cors.Default())
 
 	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.TokenableType_USER)
 	userRepo := _userRepo.NewUserMongoRepository(*mongoDatabase)
@@ -72,6 +79,10 @@ func main() {
 	spaceGroupRepo := _spaceGroupRepo.NewSpaceGroupMongoRepository(*mongoDatabase)
 	spaceGroupUsecase := _spaceGroupUsecase.NewSpaceGroupUsecase(spaceGroupRepo, timeoutContext)
 	_spaceGroupHttp.NewSpaceGroupHandler(router, spaceGroupUsecase)
+
+	fileRepo := _fileRepo.NewFileMongoRepository(*mongoDatabase)
+	fileUsecase := _fileUsecase.NewFileUploadUsecase(fileRepo, timeoutContext)
+	_fileHttp.NewFileHandler(router, fileUsecase, appStorageURL)
 
 	appPort := fmt.Sprintf(":%v", bootstrap.App.Config.GetString("server.address"))
 	log.Fatal(router.Run(appPort))

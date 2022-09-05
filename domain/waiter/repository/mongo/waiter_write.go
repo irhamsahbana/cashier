@@ -15,6 +15,7 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 	var contents bson.M
 
 	filter := bson.M{"uuid": data.UUID}
+	opts := options.Update().SetUpsert(true)
 
 	countWaiter, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -27,8 +28,8 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 		update := bson.M{
 			"$set": bson.M{
 				"branch_uuid": data.BranchUUID,
-				"name": data.Name,
-				"updated_at": updatedAt,
+				"name":        data.Name,
+				"updated_at":  updatedAt,
 			},
 		}
 
@@ -37,15 +38,13 @@ func (repo *waiterMongoRepository) UpsertWaiter(ctx context.Context, data *domai
 		insert := bson.M{
 			"$set": bson.M{
 				"branch_uuid": data.BranchUUID,
-				"name": data.Name,
-				"created_at": data.CreatedAt,
+				"name":        data.Name,
+				"created_at":  data.CreatedAt,
 			},
 		}
 
 		contents = insert
 	}
-
-	opts := options.Update().SetUpsert(true)
 
 	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts); err != nil {
 		return nil, http.StatusInternalServerError, err
@@ -63,17 +62,17 @@ func (repo *waiterMongoRepository) DeleteWaiter(ctx context.Context, id string) 
 
 	filter := bson.M{"uuid": id}
 	update := bson.A{
-				bson.M{
-					"$set": bson.M{
-						"deleted_at": bson.M{
-							"$ifNull": bson.A{
-								"$deleted_at",
-								time.Now().UTC().UnixMicro(),
-							},
-						},
+		bson.M{
+			"$set": bson.M{
+				"deleted_at": bson.M{
+					"$ifNull": bson.A{
+						"$deleted_at",
+						time.Now().UTC().UnixMicro(),
 					},
 				},
-			}
+			},
+		},
+	}
 
 	result, err := repo.Collection.UpdateOne(ctx, filter, update)
 	if err != nil {

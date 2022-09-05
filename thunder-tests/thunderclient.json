@@ -421,5 +421,43 @@
       }
     ],
     "tests": []
+  },
+  {
+    "_id": "3c57c5f4-6037-41d9-9913-bf12592ada5a",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "42abb1dd-a0ed-4fd8-90f9-8df43fde8639",
+    "name": "upload file",
+    "url": "{{base_url}}/files",
+    "method": "POST",
+    "sortNum": 260000,
+    "created": "2022-09-05T05:36:00.776Z",
+    "modified": "2022-09-05T10:17:19.037Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "formdata",
+      "raw": "",
+      "form": [
+        {
+          "name": "uuid",
+          "value": "8cc95116-6f47-4c43-9219-0b32923c276f"
+        },
+        {
+          "name": "fileable_type",
+          "value": "item_categories.items"
+        },
+        {
+          "name": "fileable_uuid",
+          "value": "742de558-f33a-46a7-9f39-d36caca349ef"
+        }
+      ],
+      "files": [
+        {
+          "name": "file",
+          "value": "../../../Downloads/Irham_Sahbana_-_Backend_Developer.pdf"
+        }
+      ]
+    },
+    "tests": []
   }
 ]

@@ -33,8 +33,6 @@ type ItemCategoryUpsertRequest struct {
 	CreatedAt string `json:"created_at" bson:"created_at"`
 }
 
-// Item request
-
 type ItemCreateRequest struct {
 	UUID        string    `json:"uuid"`
 	Name        string    `json:"name"`

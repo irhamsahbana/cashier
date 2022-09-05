@@ -4,14 +4,23 @@ import (
 	"context"
 )
 
+type ModifierGroupCondition string
+
+const (
+	ModifierGroupCondition_MIN   ModifierGroupCondition = "MIN"
+	ModifierGroupCondition_MAX   ModifierGroupCondition = "MAX"
+	ModifierGroupCondition_EQUAL ModifierGroupCondition = "EQUAL"
+)
+
 type ItemCategory struct {
-	UUID       string `bson:"uuid"`
-	BranchUUID string `bson:"branch_uuid"`
-	Name       string `bson:"name"`
-	Items      []Item `bson:"items"`
-	CreatedAt  int64  `bson:"created_at"`
-	UpdatedAt  *int64 `bson:"updated_at,omitempty"`
-	DeletedAt  *int64 `bson:"deleted_at,omitempty"`
+	UUID          string          `bson:"uuid"`
+	BranchUUID    string          `bson:"branch_uuid"`
+	Name          string          `bson:"name"`
+	ModifierGroup []ModifierGroup `bson:"modifier_group,omitempty"`
+	Items         []Item          `bson:"items,omitempty"`
+	CreatedAt     int64           `bson:"created_at"`
+	UpdatedAt     *int64          `bson:"updated_at,omitempty"`
+	DeletedAt     *int64          `bson:"deleted_at,omitempty"`
 }
 
 type Item struct {
@@ -26,6 +35,25 @@ type Item struct {
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at,omitempty"`
 	DeletedAt   *int64  `bson:"deleted_at,omitempty"`
+}
+
+type ModifierGroup struct {
+	UUID      string                  `bson:"uuid"`
+	Name      string                  `bson:"name"`
+	Condition *ModifierGroupCondition `bson:"condition,omitempty"`
+	Quantity  *int                    `bson:"quantity,omitempty"`
+	Single    bool                    `bson:"single"`
+	Required  bool                    `bson:"required"`
+	Modifiers []Modifier              `bson:"modifiers,omitempty"`
+}
+
+type Modifier struct {
+	UUID      string  `bson:"uuid"`
+	Name      string  `bson:"name"`
+	Price     float32 `bson:"price"`
+	CreatedAt int64   `bson:"created_at"`
+	UpdatedAt *int64  `bson:"updated_at,omitempty"`
+	DeletedAt *int64  `bson:"deleted_at,omitempty"`
 }
 
 type ItemCategoryUsecaseContract interface {
