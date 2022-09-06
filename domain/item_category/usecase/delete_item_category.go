@@ -30,10 +30,6 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
 	}
-	if result.DeletedAt != nil {
-		respDeletedAt := time.UnixMicro(*result.DeletedAt).UTC()
-		resp.DeletedAt = &respDeletedAt
-	}
 
 	return &resp, http.StatusOK, nil
 }

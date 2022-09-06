@@ -80,9 +80,10 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 					"cond":  bson.M{"$lt": bson.A{"$$item.deleted_at", 0}},
 				},
 			},
-			"created_at": 1,
-			"updated_at": 1,
-			"deleted_at": 1,
+			"modifier_groups": 1,
+			"created_at":      1,
+			"updated_at":      1,
+			"deleted_at":      1,
 		}}}
 
 		pipeline = append(pipeline, filterItem)

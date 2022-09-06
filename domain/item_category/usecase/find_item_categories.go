@@ -23,6 +23,7 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 	for _, mc := range result {
 		var data domain.ItemCategoryResponse
 		var items []domain.ItemResponse
+		var modifierGroups []domain.ModifierGroupResponse
 
 		data.UUID = mc.UUID
 		data.BranchUUID = mc.BranchUUID
@@ -31,10 +32,6 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 		if mc.UpdatedAt != nil {
 			dataUpdatedAt := time.UnixMicro(*mc.UpdatedAt).UTC()
 			data.UpdatedAt = &dataUpdatedAt
-		}
-		if mc.DeletedAt != nil {
-			dataDeletedAt := time.UnixMicro(*mc.DeletedAt).UTC()
-			data.DeletedAt = &dataDeletedAt
 		}
 
 		if len(mc.Items) > 0 {
@@ -54,13 +51,43 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
 					dataItem.UpdatedAt = &dataUpdatedAt
 				}
-				if m.DeletedAt != nil {
-					dataDeletedAt := time.UnixMicro(*m.DeletedAt).UTC()
-					dataItem.DeletedAt = &dataDeletedAt
-				}
 
 				items = append(items, dataItem)
 			}
+		}
+
+		if len(mc.ModifierGroups) > 0 {
+			for _, mg := range mc.ModifierGroups {
+				var dataModifierGroup domain.ModifierGroupResponse
+
+				dataModifierGroup.UUID = mg.UUID
+				dataModifierGroup.Name = mg.Name
+				dataModifierGroup.Quantity = mg.Quantity
+				dataModifierGroup.Condition = mg.Condition
+				dataModifierGroup.Single = mg.Single
+				dataModifierGroup.Required = mg.Required
+
+				if len(mg.Modifiers) > 0 {
+					for _, m := range mg.Modifiers {
+						var dataModifier domain.ModifierResponse
+
+						dataModifier.UUID = m.UUID
+						dataModifier.Name = m.Name
+						dataModifier.Price = m.Price
+						dataModifier.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
+						if m.UpdatedAt != nil {
+							dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
+							dataModifier.UpdatedAt = &dataUpdatedAt
+						}
+
+						dataModifierGroup.Modifiers = append(dataModifierGroup.Modifiers, dataModifier)
+					}
+				}
+
+				modifierGroups = append(modifierGroups, dataModifierGroup)
+			}
+
+			data.ModifierGroups = modifierGroups
 		}
 
 		data.Items = items

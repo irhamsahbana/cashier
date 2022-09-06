@@ -55,10 +55,6 @@ func (u *itemCategoryUsecase) UpdateItem(c context.Context, branchId, id string,
 			respUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
 			resp.UpdatedAt = &respUpdatedAt
 		}
-		if item.DeletedAt != nil {
-			respDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
-			resp.DeletedAt = &respDeletedAt
-		}
 	}
 
 	return &resp, http.StatusOK, nil

@@ -28,7 +28,7 @@ func NewFileHandler(router *gin.Engine, usecase domain.FileUsecaseContract, appS
 		middleware.UserRole_BRANCH_OWNER,
 	}
 
-	router.POST("files", middleware.Auth, middleware.Authorization(permitted), handler.UploadFile)
+	router.PUT("files", middleware.Auth, middleware.Authorization(permitted), handler.UploadFile)
 }
 
 func (h *FileUploadHandler) UploadFile(c *gin.Context) {
@@ -41,14 +41,14 @@ func (h *FileUploadHandler) UploadFile(c *gin.Context) {
 
 	file, err := c.FormFile("file")
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error()+" woow", nil)
+		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.FileUsecase.UploadFile(ctx, branchId, file, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error()+"  woooow", nil)
+		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
 	}
 
@@ -69,7 +69,7 @@ func (h *FileUploadHandler) UploadFile(c *gin.Context) {
 	}
 
 	if err := c.SaveUploadedFile(file, dst); err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error()+"wooow 4", nil)
+		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 

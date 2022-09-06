@@ -25,10 +25,6 @@ func (u *itemCategoryUsecase) FindItemCategory(c context.Context, branchId, id s
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
 	}
-	if result.DeletedAt != nil {
-		respDeletedAt := time.UnixMicro(*result.DeletedAt).UTC()
-		resp.DeletedAt = &respDeletedAt
-	}
 
 	return &resp, http.StatusOK, nil
 }

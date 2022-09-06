@@ -13,14 +13,13 @@ const (
 )
 
 type ItemCategory struct {
-	UUID          string          `bson:"uuid"`
-	BranchUUID    string          `bson:"branch_uuid"`
-	Name          string          `bson:"name"`
-	ModifierGroup []ModifierGroup `bson:"modifier_group,omitempty"`
-	Items         []Item          `bson:"items,omitempty"`
-	CreatedAt     int64           `bson:"created_at"`
-	UpdatedAt     *int64          `bson:"updated_at,omitempty"`
-	DeletedAt     *int64          `bson:"deleted_at,omitempty"`
+	UUID           string          `bson:"uuid"`
+	BranchUUID     string          `bson:"branch_uuid"`
+	Name           string          `bson:"name"`
+	ModifierGroups []ModifierGroup `bson:"modifier_groups,omitempty"`
+	Items          []Item          `bson:"items,omitempty"`
+	CreatedAt      int64           `bson:"created_at"`
+	UpdatedAt      *int64          `bson:"updated_at,omitempty"`
 }
 
 type Item struct {
@@ -34,7 +33,6 @@ type Item struct {
 	Description *string `bson:"description"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at,omitempty"`
-	DeletedAt   *int64  `bson:"deleted_at,omitempty"`
 }
 
 type ModifierGroup struct {
@@ -53,7 +51,6 @@ type Modifier struct {
 	Price     float32 `bson:"price"`
 	CreatedAt int64   `bson:"created_at"`
 	UpdatedAt *int64  `bson:"updated_at,omitempty"`
-	DeletedAt *int64  `bson:"deleted_at,omitempty"`
 }
 
 type ItemCategoryUsecaseContract interface {

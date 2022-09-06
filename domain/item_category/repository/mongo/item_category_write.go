@@ -32,6 +32,7 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "name", Value: data.Name},
+				{Key: "modifier_groups", Value: data.ModifierGroups},
 				{Key: "updated_at", Value: time.Now().UTC().UnixMicro()},
 			}},
 		}
@@ -40,9 +41,9 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 	} else {
 		insert := bson.D{
 			{Key: "$set", Value: bson.D{
-				{Key: "branch_uuid", Value: branchId},
 				{Key: "name", Value: data.Name},
-				{Key: "created_at", Value: data.CreatedAt},
+				{Key: "modifier_groups", Value: data.ModifierGroups},
+				{Key: "created_at", Value: time.Now().UTC().UnixMicro()},
 			}},
 		}
 

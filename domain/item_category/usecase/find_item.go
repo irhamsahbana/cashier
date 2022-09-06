@@ -29,10 +29,6 @@ func (u *itemCategoryUsecase) FindItem(c context.Context, branchId, id string, w
 		itemUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
 		resp.UpdatedAt = &itemUpdatedAt
 	}
-	if item.DeletedAt != nil {
-		itemDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
-		resp.DeletedAt = &itemDeletedAt
-	}
 
 	return &resp, code, nil
 }

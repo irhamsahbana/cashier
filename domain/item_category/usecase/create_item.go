@@ -54,20 +54,7 @@ func (u *itemCategoryUsecase) CreateItem(c context.Context, branchId, itemCatego
 			respUpdatedAt := time.UnixMicro(*item.UpdatedAt).UTC()
 			resp.UpdatedAt = &respUpdatedAt
 		}
-		if item.DeletedAt != nil {
-			respDeletedAt := time.UnixMicro(*item.DeletedAt).UTC()
-			resp.DeletedAt = &respDeletedAt
-		}
 	}
-
-	// menu := result.Items[0]
-	// resp.UUID = menu.UUID
-	// resp.Name = menu.Name
-	// resp.Price = menu.Price
-	// resp.Description = menu.Description
-	// resp.Label = menu.Label
-	// resp.Public = menu.Public
-	// resp.CreatedAt = time.UnixMicro(menu.CreatedAt).UTC()
 
 	return &resp, http.StatusCreated, nil
 }

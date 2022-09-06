@@ -89,18 +89,17 @@
     "_id": "bbf3ecf2-fac3-4300-8236-d68856b4facb",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "get all item category",
-    "url": "{{base_url}}/item-categories",
+    "name": "get all item category with items and modifiers",
+    "url": "{{base_url}}/item-categories?with_trashed=1",
     "method": "GET",
     "sortNum": 15000,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-09-03T09:12:24.937Z",
+    "modified": "2022-09-06T08:45:16.105Z",
     "headers": [],
     "params": [
       {
         "name": "with_trashed",
         "value": "1",
-        "isDisabled": true,
         "isPath": false
       }
     ],
@@ -110,17 +109,17 @@
     "_id": "4f987a7a-fdd3-40f2-9c71-a40b51e0a5ce",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "upsert item category",
+    "name": "upsert item category with modifiers",
     "url": "{{base_url}}/item-categories",
     "method": "PUT",
     "sortNum": 7500,
     "created": "2022-08-07T01:28:36.386Z",
-    "modified": "2022-09-03T02:36:44.139Z",
+    "modified": "2022-09-06T08:36:33.553Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n    \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n    \"name\": \"Coffee Besse\",\n    \"created_at\": \"2022-07-29T08:12:19.654321Z\"\n}",
+      "raw": "{\n  \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n  \"name\": \"Kopi Kenangan Mantan\",\n  \"modifier_groups\": [\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Sugar\",\n      \"condition\": \"MAX\",\n      \"quantity\": 1,\n      \"single\": true,\n      \"required\": true,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"Less\",\n          \"price\": 0\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"Normal\",\n          \"price\": 0\n        }\n      ]\n    },\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Topping\",\n      \"single\": false,\n      \"required\": false,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"Rum\",\n          \"price\": 7000\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"Regal\",\n          \"price\": 5000\n        }\n      ]\n    }\n  ]\n}",
       "form": []
     },
     "tests": []
@@ -428,10 +427,10 @@
     "containerId": "42abb1dd-a0ed-4fd8-90f9-8df43fde8639",
     "name": "upload file",
     "url": "{{base_url}}/files",
-    "method": "POST",
+    "method": "PUT",
     "sortNum": 260000,
     "created": "2022-09-05T05:36:00.776Z",
-    "modified": "2022-09-05T10:17:19.037Z",
+    "modified": "2022-09-06T03:18:22.623Z",
     "headers": [],
     "params": [],
     "body": {
@@ -454,7 +453,7 @@
       "files": [
         {
           "name": "file",
-          "value": "../../../Downloads/Irham_Sahbana_-_Backend_Developer.pdf"
+          "value": "../../../Downloads/Blue_morpho_butterfly.jpeg"
         }
       ]
     },

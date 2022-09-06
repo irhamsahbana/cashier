@@ -28,6 +28,7 @@ func (u *FileUploadUsecase) UploadFile(c context.Context, branchId string, file 
 	data.FileableUUID = req.FileableUUID
 	data.FileableType = req.FileableType
 	data.Ext = filepath.Ext(file.Filename)
+	data.Path = "storage/" + string(data.FileableType) + "/" + data.UUID + data.Ext
 
 	result, code, err := u.fileRepo.UploadFile(ctx, branchId, &data)
 	if err != nil {
@@ -40,6 +41,7 @@ func (u *FileUploadUsecase) UploadFile(c context.Context, branchId string, file 
 	resp.FileableUUID = result.FileableUUID
 	resp.FileableType = result.FileableType
 	resp.Ext = result.Ext
+	resp.Path = result.Path
 
 	// save file *multipart.FileHeader to storage
 
