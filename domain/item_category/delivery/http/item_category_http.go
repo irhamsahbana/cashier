@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/http_response"
@@ -30,13 +29,17 @@ func NewItemCategoryHandler(router *gin.Engine, usecase domain.ItemCategoryUseca
 
 	r.PUT("/item-categories", handler.UpsertItemCategory)
 	r.GET("/item-categories", handler.FindItemCategories)
-	r.GET("/item-categories/:id", handler.FindItemCategory)
 	r.DELETE("/item-categories/:id", handler.DeleteItemCategory)
 
-	r.POST("items/:itemCategoryId", handler.CreateItem)
-	r.PATCH("items/:id", handler.UpdateItem)
-	r.GET("items/:id", handler.FindItem)
-	r.DELETE("items/:id", handler.DeleteItem)
+	r.PUT("items/:itemCategoryId", handler.UpsertItemAndVariants)
+	r.GET("items/:id", handler.FindItemAndVariants)
+	r.DELETE("items/:id", handler.DeleteItemAndVariants)
+	/*
+		r.GET("/item-categories/:id", handler.FindItemCategory)
+
+		r.PATCH("items/:id", handler.UpdateItem)
+
+	*/
 }
 
 func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
@@ -51,7 +54,7 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemCategory(ctx, branchId, &request)
+	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemCategoryAndModifiers(ctx, branchId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -60,6 +63,7 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "Item category upsert successfully", result)
 }
 
+/*
 func (h *ItemCategoryHandler) FindItemCategory(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
@@ -75,14 +79,13 @@ func (h *ItemCategoryHandler) FindItemCategory(c *gin.Context) {
 
 	http_response.ReturnResponse(c, httpCode, "OK", result)
 }
+*/
 
 func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
-	trashed := c.Query("with_trashed")
-	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategories(ctx, branchId, withTrashed)
+	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategories(ctx, branchId)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
@@ -105,32 +108,13 @@ func (h *ItemCategoryHandler) DeleteItemCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "Item category Deleted successfully", result)
 }
 
-// Item
+// Item and its variants
 
-func (h *ItemCategoryHandler) CreateItem(c *gin.Context) {
-	var request domain.ItemCreateRequest
-
-	err := c.BindJSON(&request)
-	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
-		return
-	}
-
+func (h *ItemCategoryHandler) UpsertItemAndVariants(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 	itemCategoryId := c.Param("itemCategoryId")
 
-	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.CreateItem(ctx, branchId, itemCategoryId, &request)
-	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		return
-	}
-
-	http_response.ReturnResponse(c, 200, "Item created successfully", result)
-}
-
-func (h *ItemCategoryHandler) UpdateItem(c *gin.Context) {
-	var request domain.ItemUpdateRequest
+	var request domain.ItemAndVariantsUpsertRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -138,45 +122,40 @@ func (h *ItemCategoryHandler) UpdateItem(c *gin.Context) {
 		return
 	}
 
-	branchId := c.GetString("branch_uuid")
-	id := c.Param("id")
-
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.UpdateItem(ctx, branchId, id, &request)
+	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemAndVariants(ctx, branchId, itemCategoryId, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item updated successfully", result)
+	http_response.ReturnResponse(c, httpCode, "Item and variants upsert successfully", result)
 }
 
-func (h *ItemCategoryHandler) FindItem(c *gin.Context) {
+func (h *ItemCategoryHandler) FindItemAndVariants(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
-	trashed := c.Query("with_trashed")
-	withTrashed, _ := strconv.ParseBool(trashed)
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItem(ctx, branchId, id, withTrashed)
+	result, httpCode, err := h.ItemCategoryUsecase.FindItemAndVariants(ctx, branchId, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "OK", result)
+	http_response.ReturnResponse(c, httpCode, "Item and variants upsert successfully", result)
 }
 
-func (h *ItemCategoryHandler) DeleteItem(c *gin.Context) {
+func (h *ItemCategoryHandler) DeleteItemAndVariants(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 	id := c.Param("id")
 
 	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.DeleteItem(ctx, branchId, id)
+	result, httpCode, err := h.ItemCategoryUsecase.DeleteItemAndVariants(ctx, branchId, id)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item deleted successfully", result)
+	http_response.ReturnResponse(c, httpCode, "Item and variants deleted successfully", result)
 }

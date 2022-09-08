@@ -13,16 +13,25 @@ type ItemCategoryResponse struct {
 }
 
 type ItemResponse struct {
-	UUID        string     `json:"uuid"`
-	MainUUID    *string    `json:"main_uuid,omitempty"`
-	Name        string     `json:"name"`
-	Price       float32    `json:"price"`
-	Description *string    `json:"description,omitempty"`
-	Label       string     `json:"Label"`
-	Public      bool       `json:"public"`
-	ImageUrl    *string    `json:"image_url,omitempty"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
+	UUID        string            `json:"uuid"`
+	Name        string            `json:"name"`
+	Price       float32           `json:"price"`
+	Description *string           `json:"description,omitempty"`
+	Label       string            `json:"Label"`
+	Public      bool              `json:"public"`
+	ImagePath   *string           `json:"image_path,omitempty"`
+	Variants    []VariantResponse `json:"variants,omitempty"`
+	CreatedAt   time.Time         `json:"created_at"`
+	UpdatedAt   *time.Time        `json:"updated_at,omitempty"`
+}
+
+type VariantResponse struct {
+	UUID      string    `json:"uuid"`
+	Label     string    `json:"label"`
+	Price     float32   `json:"price"`
+	Public    bool      `json:"public"`
+	ImagePath *string   `json:"image_path"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type ModifierGroupResponse struct {
@@ -44,7 +53,6 @@ type ModifierResponse struct {
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 }
 
-// Request item category and modifier group
 type ItemCategoryUpsertRequest struct {
 	UUID           string                 `json:"uuid"`
 	Name           string                 `json:"name"`
@@ -67,35 +75,21 @@ type ModifierRequest struct {
 	Price float32 `json:"price"`
 }
 
-// -- Request item category and modifier group
-
-// Request item and its variants
-type ItemCreateRequest struct {
-	UUID        string    `json:"uuid"`
-	Name        string    `json:"name"`
-	Price       float32   `json:"price"`
-	Variants    []Variant `json:"variants"`
-	Description *string   `json:"description"`
-	Public      bool      `json:"public"`
-	ImagePath   *string   `json:"image_path"`
-	CreatedAt   string    `json:"created_at"`
+type ItemAndVariantsUpsertRequest struct {
+	UUID        string           `json:"uuid"`
+	Name        string           `json:"name"`
+	Price       float32          `json:"price"`
+	Label       string           `json:"label"`
+	Variants    []VariantRequest `json:"variants"`
+	Description *string          `json:"description"`
+	Public      bool             `json:"public"`
+	ImagePath   *string          `json:"image_path"`
 }
 
-type Variant struct {
+type VariantRequest struct {
 	UUID      string  `json:"uuid"`
 	Label     string  `json:"label"`
 	Price     float32 `json:"price"`
 	Public    bool    `json:"public"`
 	ImagePath *string `json:"image_path"`
 }
-
-type ItemUpdateRequest struct {
-	MainUUID    string  `json:"main_uuid,omitempty"`
-	Name        string  `json:"name"`
-	Price       float32 `json:"price"`
-	Description *string `json:"description"`
-	Label       string  `json:"label"`
-	Public      bool    `json:"public"`
-}
-
-// -- Request item and its variants

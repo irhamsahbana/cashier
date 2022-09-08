@@ -17,22 +17,31 @@ type ItemCategory struct {
 	BranchUUID     string          `bson:"branch_uuid"`
 	Name           string          `bson:"name"`
 	ModifierGroups []ModifierGroup `bson:"modifier_groups,omitempty"`
-	Items          []Item          `bson:"items,omitempty"`
+	Items          []Item          `bson:"items"`
 	CreatedAt      int64           `bson:"created_at"`
 	UpdatedAt      *int64          `bson:"updated_at,omitempty"`
 }
 
 type Item struct {
-	UUID        string  `bson:"uuid"`
-	MainUUID    *string `bson:"main_uuid,omitempty"`
-	Name        string  `bson:"name"`
-	Price       float32 `bson:"price"`
-	Label       string  `bson:"label"`
-	Public      bool    `bson:"public"`
-	ImageUrl    *string `bson:"image_url"`
-	Description *string `bson:"description"`
-	CreatedAt   int64   `bson:"created_at"`
-	UpdatedAt   *int64  `bson:"updated_at,omitempty"`
+	UUID        string    `bson:"uuid"`
+	Name        string    `bson:"name"`
+	Price       float32   `bson:"price"`
+	Label       string    `bson:"label"`
+	Public      bool      `bson:"public"`
+	ImagePath   *string   `bson:"image_path,omitempty"`
+	Description *string   `bson:"description"`
+	Variants    []Variant `bson:"variants"`
+	CreatedAt   int64     `bson:"created_at"`
+	UpdatedAt   *int64    `bson:"updated_at,omitempty"`
+}
+
+type Variant struct {
+	UUID      string  `bson:"uuid"`
+	Price     float32 `bson:"price"`
+	Label     string  `bson:"label"`
+	Public    bool    `bson:"public"`
+	ImagePath *string `bson:"image_path"`
+	CreatedAt int64   `bson:"created_at"`
 }
 
 type ModifierGroup struct {
@@ -54,25 +63,21 @@ type Modifier struct {
 }
 
 type ItemCategoryUsecaseContract interface {
-	UpsertItemCategory(ctx context.Context, branchId string, req *ItemCategoryUpsertRequest) (*ItemCategoryResponse, int, error)
-	FindItemCategories(ctx context.Context, branchId string, withTrashed bool) ([]ItemCategoryResponse, int, error)
-	FindItemCategory(ctx context.Context, branchId, id string, withTrashed bool) (*ItemCategoryResponse, int, error)
+	UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, req *ItemCategoryUpsertRequest) (*ItemCategoryResponse, int, error)
+	FindItemCategories(ctx context.Context, branchId string) ([]ItemCategoryResponse, int, error)
 	DeleteItemCategory(ctx context.Context, branchId, id string) (*ItemCategoryResponse, int, error)
 
-	CreateItem(ctx context.Context, branchId, itemCategoryId string, data *ItemCreateRequest) (*ItemResponse, int, error)
-	UpdateItem(ctx context.Context, branchId, id string, req *ItemUpdateRequest) (*ItemResponse, int, error)
-	FindItem(ctx context.Context, branchId, id string, withTrashed bool) (*ItemResponse, int, error)
-	DeleteItem(ctx context.Context, branchId, id string) (*ItemResponse, int, error)
+	UpsertItemAndVariants(ctx context.Context, branchId, itemCategoryId string, req *ItemAndVariantsUpsertRequest) (*ItemResponse, int, error)
+	FindItemAndVariants(ctx context.Context, branchId, id string) (*ItemResponse, int, error)
+	DeleteItemAndVariants(ctx context.Context, branchId, id string) (*ItemResponse, int, error)
 }
 
 type ItemCategoryRepositoryContract interface {
-	UpsertItemCategory(ctx context.Context, branchId string, data *ItemCategory) (*ItemCategory, int, error)
-	FindItemCategories(ctx context.Context, branchId string, withTrashed bool) ([]ItemCategory, int, error)
-	FindItemCategory(ctx context.Context, branchId, id string, withTrashed bool) (*ItemCategory, int, error)
+	UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, data *ItemCategory) (*ItemCategory, int, error)
+	FindItemCategories(ctx context.Context, branchId string) ([]ItemCategory, int, error)
 	DeleteItemCategory(ctx context.Context, branchId, id string) (*ItemCategory, int, error)
 
-	InsertItem(ctx context.Context, branchId, itemCategoryId string, data *Item) (*ItemCategory, int, error)
-	UpdateItem(ctx context.Context, branchId, id string, data *Item) (*ItemCategory, int, error)
-	FindItem(ctx context.Context, branchId, id string, withTrashed bool) (*ItemCategory, int, error)
-	DeleteItem(ctx context.Context, branchId, id string) (*ItemCategory, int, error)
+	UpsertItemAndVariants(ctx context.Context, branchId, itemCategoryId string, data *Item) (*ItemCategory, int, error)
+	FindItemAndVariants(ctx context.Context, branchId, id string) (*ItemCategory, int, error)
+	DeleteItemAndVariants(ctx context.Context, branchId, id string) (*ItemCategory, int, error)
 }

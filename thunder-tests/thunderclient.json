@@ -1,20 +1,5 @@
 [
   {
-    "_id": "0a61bc37-0c27-4c1e-89b5-0c936677739c",
-    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
-    "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
-    "name": "get item category",
-    "url": "{{base_url}}/item-categories/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
-    "method": "GET",
-    "sortNum": 20000,
-    "created": "2022-07-29T08:10:46.436Z",
-    "modified": "2022-09-03T02:37:55.901Z",
-    "headers": [],
-    "params": [],
-    "tests": [],
-    "docs": "/menu-categories/:id\n\nuntuk melakukaan pencarian kategori menu dapat menggunakan \"id\" atau \"uuid\"\npada path paramaternya."
-  },
-  {
     "_id": "e89e28fc-bc94-4f85-903f-fd8ef83d7eb5",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
@@ -30,56 +15,15 @@
     "docs": "/menu-categories/:id\n\nuntuk menghapus kategori menu dapat menggunakan \"id\" atau \"uuid\" pada path parameternya"
   },
   {
-    "_id": "654be3bc-6f58-4393-b994-6891c6a8241c",
-    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
-    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "create item",
-    "url": "{{base_url}}/items/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
-    "method": "POST",
-    "sortNum": 50000,
-    "created": "2022-08-01T04:07:55.254Z",
-    "modified": "2022-09-03T02:31:16.013Z",
-    "headers": [],
-    "params": [],
-    "body": {
-      "type": "json",
-      "raw": "{\n    \"uuid\": \"d5c164c8-6887-4ab9-ae90-26eff07b7887\",\n    \"name\": \"Vietnamese drip\",\n    \"price\": 850000.25,\n    \"description\": \"Vietnamese drip or “Phin coffee” is named according to the way of brewing. Within the processing, ground coffee is filtered through a filter called Phin in Vietnamese.\",\n    \"label\": \"coffee\",\n    \"public\": true,\n    \"created_at\": \"2022-07-30T08:10:15.554671Z\"\n}",
-      "form": []
-    },
-    "tests": [],
-    "docs": "/menus/:menuCategoryId\n"
-  },
-  {
-    "_id": "cbf9c720-9adc-4079-905f-90e6d5126a3d",
-    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
-    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "get item",
-    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b7887?with_trashed=1",
-    "method": "GET",
-    "sortNum": 60000,
-    "created": "2022-08-02T06:21:35.815Z",
-    "modified": "2022-09-03T04:20:53.102Z",
-    "headers": [],
-    "params": [
-      {
-        "name": "with_trashed=1",
-        "value": "",
-        "isPath": false
-      }
-    ],
-    "tests": [],
-    "docs": "/menus/:id"
-  },
-  {
     "_id": "f9020249-da9f-4b99-9472-c1f560fc3b6a",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "delete item",
-    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b7887",
+    "name": "delete item and its variants",
+    "url": "{{base_url}}/items/7f4f2745-2569-49c2-bb3f-b66eeda69230",
     "method": "DELETE",
     "sortNum": 70000,
     "created": "2022-08-02T06:50:43.933Z",
-    "modified": "2022-09-03T03:58:16.303Z",
+    "modified": "2022-09-08T10:06:15.076Z",
     "headers": [],
     "params": [],
     "tests": [],
@@ -90,19 +34,13 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "683aa913-c0b2-4d19-97b0-2c5a88d57b45",
     "name": "get all item category with items and modifiers",
-    "url": "{{base_url}}/item-categories?with_trashed=1",
+    "url": "{{base_url}}/item-categories",
     "method": "GET",
     "sortNum": 15000,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-09-06T08:45:16.105Z",
+    "modified": "2022-09-08T08:59:40.187Z",
     "headers": [],
-    "params": [
-      {
-        "name": "with_trashed",
-        "value": "1",
-        "isPath": false
-      }
-    ],
+    "params": [],
     "tests": []
   },
   {
@@ -114,31 +52,12 @@
     "method": "PUT",
     "sortNum": 7500,
     "created": "2022-08-07T01:28:36.386Z",
-    "modified": "2022-09-06T08:36:33.553Z",
+    "modified": "2022-09-08T10:13:41.060Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n  \"name\": \"Kopi Kenangan Mantan\",\n  \"modifier_groups\": [\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Sugar\",\n      \"condition\": \"MAX\",\n      \"quantity\": 1,\n      \"single\": true,\n      \"required\": true,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"Less\",\n          \"price\": 0\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"Normal\",\n          \"price\": 0\n        }\n      ]\n    },\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Topping\",\n      \"single\": false,\n      \"required\": false,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"Rum\",\n          \"price\": 7000\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"Regal\",\n          \"price\": 5000\n        }\n      ]\n    }\n  ]\n}",
-      "form": []
-    },
-    "tests": []
-  },
-  {
-    "_id": "c9d10cad-05f6-4de2-92c1-df1220e2444e",
-    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
-    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
-    "name": "update item",
-    "url": "{{base_url}}/items/d5c164c8-6887-4ab9-ae90-26eff07b788x",
-    "method": "PATCH",
-    "sortNum": 80000,
-    "created": "2022-08-11T07:30:17.479Z",
-    "modified": "2022-09-03T02:31:32.841Z",
-    "headers": [],
-    "params": [],
-    "body": {
-      "type": "json",
-      "raw": "{\n    \"name\": \"Malware\",\n    \"price\": 1000.25,\n    \"description\": \"x\",\n    \"label\": \"x\",\n    \"public\": true\n}",
+      "raw": "{\n  \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ad\",\n  \"name\": \"kopi kenangan mantan\",\n  \"modifier_groups\": [\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Sugar\",\n      \"condition\": \"MAX\",\n      \"quantity\": 1,\n      \"single\": true,\n      \"required\": true,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"less\",\n          \"price\": 0\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"normal\",\n          \"price\": 0\n        }\n      ]\n    },\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"topping\",\n      \"single\": false,\n      \"required\": false,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        }\n      ]\n    }\n  ]\n}",
       "form": []
     },
     "tests": []
@@ -224,15 +143,15 @@
     "method": "GET",
     "sortNum": 130000,
     "created": "2022-08-30T04:14:42.651Z",
-    "modified": "2022-09-03T09:09:48.231Z",
+    "modified": "2022-09-08T10:05:25.355Z",
     "headers": [
       {
         "name": "X-ACCESS-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyMTkzNTM3LCJuYmYiOjE2NjIxODk5MzcsImlhdCI6MTY2MjE4OTkzN30.UkDFpZgGIxHujuJcy7tNjwW2H_kopiHd0TTxGXJx2vc"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyNjI5MTE1LCJuYmYiOjE2NjI2MjU1MTUsImlhdCI6MTY2MjYyNTUxNX0.dlggwFF2GVCDDqEPnvhytBnfWElEEcRNNx9FLiIwvPE"
       },
       {
         "name": "X-REFRESH-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjkzNzI1OTM3LCJuYmYiOjE2NjIxODk5MzcsImlhdCI6MTY2MjE4OTkzN30.vQFX7yvggkk9d1n6M35VoayPZlMXYFS87-e8gng5HOk"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjk0MTYxNTE1LCJuYmYiOjE2NjI2MjU1MTUsImlhdCI6MTY2MjYyNTUxNX0.kk5htqJZ9V0b-aF4KrkHfSHzzFLBWmGCdPU0F5M5nBo"
       }
     ],
     "params": [],
@@ -457,6 +376,39 @@
         }
       ]
     },
+    "tests": []
+  },
+  {
+    "_id": "e119727c-5329-41ce-9eeb-1287b3259d9f",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
+    "name": "upsert item and its variants",
+    "url": "{{base_url}}/items/3c4b91d6-f7a4-4414-a2f9-9774d51363aa",
+    "method": "PUT",
+    "sortNum": 25000,
+    "created": "2022-09-08T05:57:44.642Z",
+    "modified": "2022-09-08T08:57:17.703Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"7f4f2745-2569-49c2-bb3f-b66eeda69230\",\n  \"name\": \"Tuna Goreng\",\n  \"price\": 33000,\n  \"public\": true,\n  \"label\": \"Original\",\n  \"image_path\": \"storage/item_categories.items/xxx.jpeg\",\n  \"description\": \"Cita rasa tuna segar\",\n  \"variants\": [\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb40\",\n      \"price\": 335000,\n      \"public\": true,\n      \"label\": \"Rica-rica\",\n      \"image_path\": \"storage/item_categories.items.variants/xxx.jpeg\"\n    },\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb42\",\n      \"price\": 40000,\n      \"public\": false,\n      \"label\": \"Dabu-dabu\",\n      \"image_path\": \"storage/item_categories.items.variants/xxx.jpeg\"\n    }\n  ]\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "09ce93a0-dcc0-4c02-a6c0-2cd4176591b4",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "1a9046c1-beed-4418-b94b-a857ccb50457",
+    "name": "find item and its variants",
+    "url": "{{base_url}}/items/7f4f2745-2569-49c2-bb3f-b66eeda69230",
+    "method": "GET",
+    "sortNum": 47500,
+    "created": "2022-09-08T09:40:52.592Z",
+    "modified": "2022-09-08T10:05:57.535Z",
+    "headers": [],
+    "params": [],
     "tests": []
   }
 ]

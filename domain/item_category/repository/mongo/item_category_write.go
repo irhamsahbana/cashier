@@ -2,16 +2,18 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"lucy/cashier/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context, branchId string, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
 	var contents bson.D
 
@@ -25,7 +27,7 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategory(ctx context.Context,
 
 	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return &itemcategory, http.StatusInternalServerError, err
+		return nil, http.StatusInternalServerError, err
 	}
 
 	if countItemCategory > 0 {
@@ -101,132 +103,108 @@ func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context,
 
 // Item
 
-func (repo *itemCategoryMongoRepository) InsertItem(ctx context.Context, branchId, itemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Context, branchId, itemCategoryId string, data *domain.Item) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
-
-	_, code, err := repo.FindItemCategory(ctx, branchId, itemCategoryId, false)
-	if err != nil {
-		return nil, code, err
-	}
+	var contents bson.D
 
 	filter := bson.M{
 		"$and": []bson.M{
-			{"branch_uuid": branchId},
 			{"uuid": itemCategoryId},
+			{"branch_uuid": branchId},
+			{"items.uuid": data.UUID},
 		},
 	}
 
-	insert := bson.D{
-		{Key: "$push", Value: bson.D{
-			{Key: "items", Value: bson.D{
-				{Key: "uuid", Value: data.UUID},
-				{Key: "main_uuid", Value: data.MainUUID},
-				{Key: "name", Value: data.Name},
-				{Key: "price", Value: data.Price},
-				{Key: "public", Value: data.Public},
-				{Key: "label", Value: data.Label},
-				{Key: "image_url", Value: data.ImageUrl},
-				{Key: "description", Value: data.Description},
-				{Key: "created_at", Value: data.CreatedAt},
-			}},
-		}},
-	}
-
-	_, err = repo.Collection.UpdateOne(ctx, filter, insert)
+	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
+		fmt.Println("error 1")
 		return nil, http.StatusInternalServerError, err
 	}
 
-	// projection
-	filter = bson.M{"items.uuid": data.UUID}
-	projection := bson.M{"items.$": 1}
-	opts := options.FindOne().SetProjection(projection)
+	if countItemCategory > 0 {
+		update := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "items.$.name", Value: data.Name},
+				{Key: "items.$.price", Value: data.Price},
+				{Key: "items.$.label", Value: data.Label},
+				{Key: "items.$.description", Value: data.Description},
+				{Key: "items.$.public", Value: data.Public},
+				{Key: "items.$.image_path", Value: data.ImagePath},
+				{Key: "items.$.variants", Value: data.Variants},
+				{Key: "items.$.updated_at", Value: time.Now().UnixMicro()},
+			}},
+		}
 
-	if err = repo.Collection.FindOne(ctx, filter, opts).Decode(&itemcategory); err != nil {
+		contents = update
+	} else {
+		insert := bson.D{
+			{Key: "$push", Value: bson.D{
+				{Key: "items", Value: bson.D{
+					{Key: "uuid", Value: data.UUID},
+					{Key: "name", Value: data.Name},
+					{Key: "price", Value: data.Price},
+					{Key: "label", Value: data.Label},
+					{Key: "description", Value: data.Description},
+					{Key: "public", Value: data.Public},
+					{Key: "image_path", Value: data.ImagePath},
+					{Key: "variants", Value: data.Variants},
+					{Key: "created_at", Value: data.CreatedAt},
+				}},
+			}},
+		}
+
+		contents = insert
+
+		filter = bson.M{
+			"$and": []bson.M{
+				{"uuid": itemCategoryId},
+				{"branch_uuid": branchId},
+			},
+		}
+	}
+
+	_, err = repo.Collection.UpdateOne(ctx, filter, contents)
+	if err != nil {
+		fmt.Println("error 2")
+		return nil, http.StatusInternalServerError, err
+	}
+
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, err
+		}
+
+		fmt.Println("error 3")
 		return nil, http.StatusInternalServerError, err
 	}
 
 	return &itemcategory, http.StatusOK, nil
 }
 
-func (repo *itemCategoryMongoRepository) UpdateItem(ctx context.Context, branchId, id string, data *domain.Item) (*domain.ItemCategory, int, error) {
+func (repo *itemCategoryMongoRepository) DeleteItemAndVariants(ctx context.Context, branchId, id string) (*domain.ItemCategory, int, error) {
 	filter := bson.M{
-		"$and": []bson.M{
-			{"branch_uuid": branchId},
-			{"items.uuid": id},
-			{"spaces.deleted_at": bson.M{"$exists": false}},
-		},
-	}
-
-	arrayFilters := options.ArrayFilters{
-		Filters: bson.A{
-			bson.M{"elem.uuid": id},
-		},
+		"branch_uuid": branchId,
+		"items.uuid":  id,
 	}
 
 	update := bson.M{
-		"$set": bson.M{
-			"items.$[elem].name":        data.Name,
-			"items.$[elem].price":       data.Price,
-			"items.$[elem].description": data.Description,
-			"items.$[elem].label":       data.Label,
-			"items.$[elem].public":      data.Public,
-			"items.$[elem].updated_at":  time.Now().UTC().UnixMicro(),
+		"$pull": bson.M{
+			"items": bson.M{"uuid": id},
 		},
 	}
 
-	var updateOptions options.UpdateOptions
-	updateOptions.ArrayFilters = &arrayFilters
-
-	result, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	if result.MatchedCount == 0 {
-		return nil, http.StatusNotFound, nil
-	}
-
-	item, code, err := repo.FindItem(ctx, branchId, id, false)
+	item, code, err := repo.FindItemAndVariants(ctx, branchId, id)
 	if err != nil {
 		return nil, code, err
 	}
 
-	return item, http.StatusOK, nil
-}
-
-func (repo *itemCategoryMongoRepository) DeleteItem(ctx context.Context, branchId, id string) (*domain.ItemCategory, int, error) {
-	filter := bson.M{"items.uuid": id}
-
-	arrayFilters := options.ArrayFilters{
-		Filters: bson.A{
-			bson.M{
-				"elem.uuid":       id,
-				"elem.deleted_at": bson.M{"$exists": false},
-			},
-		},
-	}
-
-	update := bson.M{
-		"$set": bson.M{
-			"items.$[elem].deleted_at": time.Now().UTC().UnixMicro(),
-		},
-	}
-
-	var updateOptions options.UpdateOptions
-	updateOptions.ArrayFilters = &arrayFilters
-
-	result, err := repo.Collection.UpdateOne(ctx, filter, update, &updateOptions)
+	result, err := repo.Collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
 	if result.MatchedCount == 0 {
 		return nil, http.StatusNotFound, nil
-	}
-
-	item, _, err := repo.FindItem(ctx, branchId, id, true)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
 	}
 
 	return item, http.StatusOK, nil

@@ -11,7 +11,7 @@ import (
 	"lucy/cashier/lib/validator"
 )
 
-func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, branchId string, req *domain.ItemCategoryUpsertRequest) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, branchId string, req *domain.ItemCategoryUpsertRequest) (*domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -84,7 +84,7 @@ func (u *itemCategoryUsecase) UpsertItemCategory(c context.Context, branchId str
 		data.ModifierGroups = modifierGroups
 	}
 
-	result, code, err := u.itemCategoryRepo.UpsertItemCategory(ctx, branchId, &data)
+	result, code, err := u.itemCategoryRepo.UpsertItemCategoryAndModifiers(ctx, branchId, &data)
 	if err != nil {
 		return nil, code, err
 	}

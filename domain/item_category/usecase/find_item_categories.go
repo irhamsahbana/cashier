@@ -8,11 +8,11 @@ import (
 	"lucy/cashier/domain"
 )
 
-func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId string, withTrashed bool) ([]domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId string) ([]domain.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.itemCategoryRepo.FindItemCategories(ctx, branchId, withTrashed)
+	result, code, err := u.itemCategoryRepo.FindItemCategories(ctx, branchId)
 	if err != nil {
 		return nil, code, err
 	}
@@ -39,13 +39,22 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 				var dataItem domain.ItemResponse
 
 				dataItem.UUID = m.UUID
-				dataItem.MainUUID = m.MainUUID
 				dataItem.Name = m.Name
 				dataItem.Price = m.Price
 				dataItem.Description = m.Description
 				dataItem.Label = m.Label
 				dataItem.Public = m.Public
-				dataItem.ImageUrl = m.ImageUrl
+				dataItem.ImagePath = m.ImagePath
+				for _, v := range m.Variants {
+					var dataVariant domain.VariantResponse
+
+					dataVariant.UUID = v.UUID
+					dataVariant.Label = v.Label
+					dataVariant.Price = v.Price
+					dataVariant.Public = v.Public
+					dataVariant.ImagePath = v.ImagePath
+					dataItem.Variants = append(dataItem.Variants, dataVariant)
+				}
 				dataItem.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
 				if m.UpdatedAt != nil {
 					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
