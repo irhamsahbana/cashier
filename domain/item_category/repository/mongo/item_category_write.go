@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -73,28 +74,16 @@ func (repo *itemCategoryMongoRepository) DeleteItemCategory(ctx context.Context,
 		},
 	}
 
-	update := bson.A{
-		bson.M{
-			"$set": bson.M{
-				"deleted_at": bson.M{
-					"$ifNull": bson.A{
-						"$deleted_at",
-						time.Now().UTC().UnixMicro(),
-					},
-				},
-			},
-		},
-	}
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("item category not found")
+		}
 
-	result, err := repo.Collection.UpdateOne(ctx, filter, update)
-	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	if result.MatchedCount == 0 {
-		return nil, http.StatusNotFound, nil
-	}
 
-	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
+	_, err := repo.Collection.DeleteOne(ctx, filter)
+	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 

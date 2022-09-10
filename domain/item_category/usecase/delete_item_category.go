@@ -14,11 +14,11 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 
 	result, code, err := u.itemCategoryRepo.DeleteItemCategory(ctx, branchId, id)
 	if err != nil {
-		return nil, code, err
-	}
+		if code == http.StatusNotFound {
+			return nil, http.StatusOK, nil
+		}
 
-	if code == http.StatusNotFound {
-		return nil, http.StatusOK, nil
+		return nil, code, err
 	}
 
 	var resp domain.ItemCategoryResponse
@@ -29,6 +29,75 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 	if result.UpdatedAt != nil {
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
+	}
+
+	var items []domain.ItemResponse
+	if len(result.Items) > 0 {
+		for _, m := range result.Items {
+			var dataItem domain.ItemResponse
+
+			dataItem.UUID = m.UUID
+			dataItem.Name = m.Name
+			dataItem.Price = m.Price
+			dataItem.Description = m.Description
+			dataItem.Label = m.Label
+			dataItem.Public = m.Public
+			dataItem.ImagePath = m.ImagePath
+			for _, v := range m.Variants {
+				var dataVariant domain.VariantResponse
+
+				dataVariant.UUID = v.UUID
+				dataVariant.Label = v.Label
+				dataVariant.Price = v.Price
+				dataVariant.Public = v.Public
+				dataVariant.ImagePath = v.ImagePath
+				dataItem.Variants = append(dataItem.Variants, dataVariant)
+			}
+			dataItem.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
+			if m.UpdatedAt != nil {
+				dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
+				dataItem.UpdatedAt = &dataUpdatedAt
+			}
+
+			items = append(items, dataItem)
+		}
+
+		resp.Items = items
+	}
+
+	var modifierGroups []domain.ModifierGroupResponse
+	if len(result.ModifierGroups) > 0 {
+		for _, mg := range result.ModifierGroups {
+			var dataModifierGroup domain.ModifierGroupResponse
+
+			dataModifierGroup.UUID = mg.UUID
+			dataModifierGroup.Name = mg.Name
+			dataModifierGroup.Quantity = mg.Quantity
+			dataModifierGroup.Condition = mg.Condition
+			dataModifierGroup.Single = mg.Single
+			dataModifierGroup.Required = mg.Required
+
+			if len(mg.Modifiers) > 0 {
+				for _, m := range mg.Modifiers {
+					var dataModifier domain.ModifierResponse
+
+					dataModifier.UUID = m.UUID
+					dataModifier.Name = m.Name
+					dataModifier.Price = m.Price
+					dataModifier.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
+					if m.UpdatedAt != nil {
+						dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
+						dataModifier.UpdatedAt = &dataUpdatedAt
+					}
+
+					dataModifierGroup.Modifiers = append(dataModifierGroup.Modifiers, dataModifier)
+				}
+			}
+
+			modifierGroups = append(modifierGroups, dataModifierGroup)
+		}
+
+		resp.ModifierGroups = modifierGroups
 	}
 
 	return &resp, http.StatusOK, nil

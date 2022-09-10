@@ -14,11 +14,11 @@ func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId,
 
 	result, code, err := u.itemCategoryRepo.DeleteItemAndVariants(ctx, branchId, id)
 	if err != nil {
-		return nil, code, err
-	}
+		if code == http.StatusNotFound {
+			return nil, http.StatusOK, nil
+		}
 
-	if code == http.StatusNotFound {
-		return nil, http.StatusOK, nil
+		return nil, code, err
 	}
 
 	var resp domain.ItemResponse
