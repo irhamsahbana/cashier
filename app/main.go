@@ -31,6 +31,10 @@ import (
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
 
+	_shiftHttp "lucy/cashier/domain/employee_shift/delivery/http"
+	_shiftRepo "lucy/cashier/domain/employee_shift/repository/mongo"
+	_shiftUsecase "lucy/cashier/domain/employee_shift/usecase"
+
 	_fileHttp "lucy/cashier/domain/file/delivery/http"
 	_fileRepo "lucy/cashier/domain/file/repository/mongo"
 	_fileUsecase "lucy/cashier/domain/file/usecase"
@@ -75,6 +79,10 @@ func main() {
 	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
 	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)
 	_waiterHttp.NewWaiterHandler(router, waiterUsecase)
+
+	shiftRepo := _shiftRepo.NewEmployeeShiftMongoRepository(*mongoDatabase)
+	shiftUsecase := _shiftUsecase.NewEmployeeShiftUsecase(shiftRepo, timeoutContext)
+	_shiftHttp.NewEmployeeShiftHandler(router, shiftUsecase)
 
 	spaceGroupRepo := _spaceGroupRepo.NewSpaceGroupMongoRepository(*mongoDatabase)
 	spaceGroupUsecase := _spaceGroupUsecase.NewSpaceGroupUsecase(spaceGroupRepo, timeoutContext)

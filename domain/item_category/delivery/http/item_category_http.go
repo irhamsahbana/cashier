@@ -63,24 +63,6 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 	http_response.ReturnResponse(c, httpCode, "Item category upsert successfully", result)
 }
 
-/*
-func (h *ItemCategoryHandler) FindItemCategory(c *gin.Context) {
-	branchId := c.GetString("branch_uuid")
-	id := c.Param("id")
-	trashed := c.Query("with_trashed")
-	withTrashed, _ := strconv.ParseBool(trashed)
-
-	ctx := context.Background()
-	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategory(ctx, branchId, id, withTrashed)
-	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		return
-	}
-
-	http_response.ReturnResponse(c, httpCode, "OK", result)
-}
-*/
-
 func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 

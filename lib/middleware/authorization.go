@@ -14,7 +14,7 @@ const (
 	UserRole_BRANCH_OWNER UserRole = "Branch Owner"
 	UserRole_MANAGER      UserRole = "Manager"
 
-	userRole_HEAD_CASHIER    UserRole = "Admin Cashier"
+	UserRole_ADMIN_CASHIER   UserRole = "Admin Cashier"
 	UserRole_HEAD_ACCOUNTANT UserRole = "Head Accountant"
 	UserRole_STOCK_OVERSIER  UserRole = "Stock Overseer"
 
