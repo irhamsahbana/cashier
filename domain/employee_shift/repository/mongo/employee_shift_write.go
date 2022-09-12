@@ -10,6 +10,7 @@ import (
 	"github.com/golang-module/carbon/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId string, data *domain.EmployeeShiftClockInData) (*domain.EmployeeShift, int, error) {
@@ -31,14 +32,18 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 				{"user_uuid": data.UserUUID},
 				{"start_time": bson.M{"$gte": beginingOfDay}},
 				{"start_time": bson.M{"$lte": endOfDay}},
+				{"end_time": nil},
+				{"deleted_at": nil},
 			},
 		}
 
+		// check existing shift
 		err := repo.Collection.FindOne(ctx, filter).Decode(&mainShift)
 		if err != nil && err != mongo.ErrNoDocuments {
 			return nil, http.StatusInternalServerError, err
 		}
 
+		// if there is shift, return error
 		if mainShift.UUID != "" {
 			return nil, http.StatusConflict, errors.New("there is shift in the same day")
 		}
@@ -50,7 +55,12 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 			{Key: "user_uuid", Value: data.UserUUID},
 			{Key: "start_time", Value: data.StartTime},
 			{Key: "start_cash", Value: data.StartCash},
+			{Key: "end_time", Value: nil},
+			{Key: "end_cash", Value: nil},
+			{Key: "supporters", Value: []domain.EmployeeShiftSupporter{}},
 			{Key: "created_at", Value: time.Now().UnixMicro()},
+			{Key: "updated_at", Value: nil},
+			{Key: "deleted_at", Value: nil},
 		}
 
 		_, err = repo.Collection.InsertOne(ctx, doc)
@@ -96,6 +106,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 				{"branch_uuid": branchId},
 				{"uuid": data.SupportingUUID},
 				{"supporters.user_uuid": data.UserUUID},
+				{"supporters.end_time": nil},
 			}},
 		}
 
@@ -105,7 +116,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 		}
 
 		for _, s := range shift.Supporters {
-			if s.UserUUID == data.UserUUID {
+			if s.UserUUID == data.UserUUID && s.EndTime == nil {
 				return nil, http.StatusConflict, errors.New("there is supporter shift in the same day")
 			}
 		}
@@ -122,7 +133,10 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 			{Key: "uuid", Value: data.UUID},
 			{Key: "user_uuid", Value: data.UserUUID},
 			{Key: "start_time", Value: data.StartTime},
+			{Key: "end_time", Value: nil},
 			{Key: "created_at", Value: time.Now().UnixMicro()},
+			{Key: "updated_at", Value: nil},
+			{Key: "deleted_at", Value: nil},
 		}
 
 		update := bson.M{
@@ -150,4 +164,90 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 
 		return &shift, http.StatusOK, nil
 	}
+}
+
+func (repo *employeeShiftMongoRepository) ClockOut(ctx context.Context, branchId string, data *domain.EmployeeShiftClockOutData) (*domain.EmployeeShift, int, error) {
+	var shift domain.EmployeeShift
+
+	filter := bson.M{
+		"$or": bson.A{
+			bson.M{
+				"$and": []bson.M{
+					{"branch_uuid": branchId},
+					{"uuid": data.UUID},
+					{"deleted_at": nil},
+				},
+			},
+			bson.M{
+				"$and": []bson.M{
+					{"branch_uuid": branchId},
+					{"supporters.uuid": data.UUID},
+					{"deleted_at": nil},
+				},
+			},
+		},
+	}
+
+	if err := repo.Collection.FindOne(ctx, filter).Decode(&shift); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("shift not found")
+		}
+
+		return nil, http.StatusInternalServerError, err
+	}
+
+	// update main shift
+	if shift.UUID == data.UUID { // if as cashier
+		update := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "end_time", Value: data.EndTime},
+				{Key: "end_cash", Value: data.EndCash},
+				{Key: "updated_at", Value: time.Now().UnixMicro()},
+
+				{Key: "supporters.$[elem].end_time", Value: data.EndTime},
+			}},
+		}
+
+		arrayFilters := bson.A{
+			bson.M{
+				"elem.end_time": nil,
+			},
+		}
+
+		_, err := repo.Collection.UpdateOne(ctx, filter, update, options.Update().SetArrayFilters(options.ArrayFilters{
+			Filters: arrayFilters,
+		}))
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+
+		err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+	} else { // if as cashier's supporter
+		update := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "supporters.$[elem].end_time", Value: data.EndTime},
+				{Key: "supporters.$[elem].updated_at", Value: time.Now().UnixMicro()},
+			}},
+		}
+
+		arrayFilters := bson.D{
+			{Key: "elem.uuid", Value: data.UUID},
+		}
+
+		_, err := repo.Collection.UpdateOne(ctx, filter, update, options.Update().SetArrayFilters(options.ArrayFilters{
+			Filters: []interface{}{arrayFilters},
+		}))
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+
+		err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+	}
+	return &shift, http.StatusOK, nil
 }

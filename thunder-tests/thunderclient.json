@@ -143,15 +143,15 @@
     "method": "GET",
     "sortNum": 130000,
     "created": "2022-08-30T04:14:42.651Z",
-    "modified": "2022-09-10T03:31:09.896Z",
+    "modified": "2022-09-12T10:04:35.926Z",
     "headers": [
       {
         "name": "X-ACCESS-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyNzgwNjE2LCJuYmYiOjE2NjI3NzcwMTYsImlhdCI6MTY2Mjc3NzAxNn0.ReHl1qbl4iQAVaIo6512BpolFaBPxVbaNAABzAco92A"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyOTc3MDM3LCJuYmYiOjE2NjI5NzM0MzcsImlhdCI6MTY2Mjk3MzQzN30.qbUUxr0NeIFiRaYOsrZUpgcd7FIpozJoX_fXENT1NGM"
       },
       {
         "name": "X-REFRESH-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjk0MzEzMDE2LCJuYmYiOjE2NjI3NzcwMTYsImlhdCI6MTY2Mjc3NzAxNn0.1tiR7uPut0XqzksrfdZaJPhC2EBSV8sz1ryN0fzeCoQ"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjk0NTA5NDM3LCJuYmYiOjE2NjI5NzM0MzcsImlhdCI6MTY2Mjk3MzQzN30.-vLMGRTAQEjZU0qjKsS-BWep96UFgrHexnV27eWsZd0"
       }
     ],
     "params": [],
@@ -420,15 +420,62 @@
     "method": "POST",
     "sortNum": 270000,
     "created": "2022-09-10T07:27:26.114Z",
-    "modified": "2022-09-11T10:22:40.833Z",
+    "modified": "2022-09-12T09:36:09.888Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"0d94608c-c516-486f-89b7-b109d0aec579\",\n  \"supporting_uuid\": \"0d94608c-c516-486f-89b7-b109d0aec579\",\n  \"user_uuid\": \"beff3245-a002-4bad-b55a-092fcee61a69\",\n  \"start_cash\": null,\n  \"start_time\": \"2022-10-11T08:20:50.523789Z\"\n}",
+      "raw": "{\n  \"uuid\": \"0d94608c-c516-486f-89b7-b109d0aec579\",\n  \"supporting_uuid\": null,\n  \"user_uuid\": \"beff3245-a002-4bad-b55a-092fcee61a69\",\n  \"start_cash\": 300000,\n  \"start_time\": \"2022-11-12T08:20:50.523789Z\"\n}",
       "form": []
     },
     "tests": [],
     "docs": "untuk request shift sebagai kasir:\n```\n{\n  \"uuid\": \"25f42759-0d60-41ce-b83a-f5273d050d72\",\n  \"user_uuid\": \"9034026a-f33e-4497-9199-94a670078103\",\n  \"supporting_uuid\": \"48f22ba9-bd56-4a2f-98b1-cf46c0b5f14e\",\n  \"start_time\": \"2022-07-29T08:12:19.654321Z\",\n  \"start_cash\": 250000\n}\n```\n\n`supporting_uuid` dan `start_cash` bisa saja null\n\njika sebagai kasir utama:\n-  field `supporting_uuid` tidak perlu di isi\n-  field yang lain, semua perlu diisi\n\njika sebagai kasir pendukung:\n- field `start_cash` tidak perlu di isi\n- field yang lain, semua perlu diisi"
+  },
+  {
+    "_id": "e5648020-a765-4539-a6d5-5e49fb182142",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "69f54975-1593-4d33-a476-6814cd5965b1",
+    "name": "clock out",
+    "url": "{{base_url}}/employee-shifts/clock-out",
+    "method": "PATCH",
+    "sortNum": 300000,
+    "created": "2022-09-12T02:51:32.291Z",
+    "modified": "2022-09-12T10:00:36.441Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"0d94608c-c516-486f-89b7-b109d0aec571\",\n  \"end_cash\": 500000,\n  \"end_time\": \"2022-12-12T08:20:50.523987Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "2426d8ab-f24f-48fb-97d1-4570673bb8c3",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "69f54975-1593-4d33-a476-6814cd5965b1",
+    "name": "history",
+    "url": "{{base_url}}/employee-shifts/history",
+    "method": "GET",
+    "sortNum": 310000,
+    "created": "2022-09-12T06:59:41.513Z",
+    "modified": "2022-09-12T07:41:09.036Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "7111230f-7720-4079-abc2-74e795f39356",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "69f54975-1593-4d33-a476-6814cd5965b1",
+    "name": "active",
+    "url": "{{base_url}}/employee-shifts/active",
+    "method": "GET",
+    "sortNum": 340000,
+    "created": "2022-09-12T08:05:40.573Z",
+    "modified": "2022-09-12T08:06:21.265Z",
+    "headers": [],
+    "params": [],
+    "tests": []
   }
 ]

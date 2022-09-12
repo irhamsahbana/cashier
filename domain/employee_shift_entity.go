@@ -26,6 +26,7 @@ type EmployeeShiftSupporter struct {
 	DeletedAt *int64 `bson:"deleted_at"`
 }
 
+// data that are used to pass in to the repository
 type EmployeeShiftClockInData struct {
 	UUID           string   `bson:"uuid"`
 	UserUUID       string   `bson:"user_uuid"`
@@ -34,12 +35,26 @@ type EmployeeShiftClockInData struct {
 	StartCash      *float32 `bson:"start_cash"`
 }
 
+type EmployeeShiftClockOutData struct {
+	UUID    string   `bson:"uuid"`
+	EndTime int64    `bson:"end_time"`
+	EndCash *float32 `bson:"end_cash"`
+}
+
+// -- data that are used to pass in to the repository
+
 type EmployeeShiftUsecaseContract interface {
 	ClockIn(ctx context.Context, branchId string, req *EmployeeShiftClockInRequest) (*EmployeeShiftResponse, int, error)
+	ClockOut(ctx context.Context, branchId string, req *EmployeeShiftClockOutRequest) (*EmployeeShiftResponse, int, error)
+
+	History(ctx context.Context, branchId string, limit, offset int) ([]EmployeeShiftResponse, int, error)
+	Active(ctx context.Context, branchId string) ([]EmployeeShiftResponse, int, error)
 }
 
 type EmployeeShiftRepositoryContract interface {
 	ClockIn(ctx context.Context, branchId string, data *EmployeeShiftClockInData) (*EmployeeShift, int, error)
+	ClockOut(ctx context.Context, branchId string, data *EmployeeShiftClockOutData) (*EmployeeShift, int, error)
 
-	FindShiftByStartTime(ctx context.Context, branchId, userId string, startTime int64) (*EmployeeShift, int, error)
+	History(ctx context.Context, branchId string, limit, offset int) ([]EmployeeShift, int, error)
+	Active(ctx context.Context, branchId string) ([]EmployeeShift, int, error)
 }

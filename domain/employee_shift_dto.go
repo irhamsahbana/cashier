@@ -32,3 +32,9 @@ type EmployeeShiftClockInRequest struct {
 	StartTime      string   `json:"start_time"`
 	StartCash      *float32 `json:"start_cash"`
 }
+
+type EmployeeShiftClockOutRequest struct {
+	UUID    string   `json:"uuid"`
+	EndTime string   `json:"end_time"`
+	EndCash *float32 `json:"end_cash"`
+}
