@@ -5,25 +5,25 @@ import "time"
 type SpaceGroupResponse struct {
 	UUID       string          `json:"uuid"`
 	BranchUUID string          `json:"branch_uuid"`
-	Spaces     []SpaceResponse `json:"spaces,omitempty"`
+	Spaces     []SpaceResponse `json:"spaces"`
 	Code       string          `json:"code"`
 	Shape      SpaceGroupShape `json:"shape"`
 	Pax        uint            `json:"pax"`
 	Floor      uint            `json:"floor"`
 	Smooking   bool            `json:"smooking"`
 	CreatedAt  time.Time       `json:"created_at"`
-	UpdatedAt  *time.Time      `json:"updated_at,omitempty"`
-	DeletedAt  *time.Time      `json:"deleted_at,omitempty"`
+	UpdatedAt  *time.Time      `json:"updated_at"`
+	DeletedAt  *time.Time      `json:"deleted_at"`
 }
 
 type SpaceResponse struct {
 	UUID        string     `json:"uuid"`
 	Number      int        `json:"number"`
 	Occupied    bool       `json:"occupied"`
-	Description *string    `json:"description,omitempty"`
+	Description *string    `json:"description"`
 	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
-	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	DeletedAt   *time.Time `json:"deleted_at"`
 }
 
 type SpaceGroupUpsertRequest struct {
@@ -40,12 +40,12 @@ type SpaceCreateRequest struct {
 	UUID        string  `json:"uuid"`
 	Number      int     `json:"number"`
 	Occupied    bool    `json:"occupied"`
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description"`
 	CreatedAt   string  `json:"created_at"`
 }
 
 type SpaceUpdateRequest struct {
 	Number      int     `json:"number"`
 	Occupied    bool    `json:"occupied"`
-	Description *string `json:"description,omitempty"`
+	Description *string `json:"description"`
 }

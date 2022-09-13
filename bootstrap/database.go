@@ -103,10 +103,8 @@ func InitMongoDatabase() *mongo.Client {
 	}
 
 	color.Green(fmt.Sprintf("connected to MongoDB from %s:%s", dbHost, dbPort))
+	defer initMongoDatabaseIndexes(ctx, client, dbName)
 
-	defer func() {
-		initMongoDatabaseIndexes(ctx, client, dbName)
-	}()
 	return client
 }
 
@@ -215,6 +213,34 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
 				log.Fatal(err)
 			}
+
+		case "space_groups":
+			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
+				{
+					Keys: bson.D{
+						{Key: "branch_uuid", Value: 1},
+						{Key: "uuid", Value: 1},
+					},
+					Options: options.Index().SetUnique(true),
+				},
+				{
+					Keys: bson.D{
+						{Key: "spaces.uuid", Value: 1},
+					},
+					Options: options.Index().SetUnique(true).SetSparse(true),
+				},
+			})
+
+			for _, index := range res {
+				color.Green(fmt.Sprintf("index %s created", index))
+			}
+
+			if err != nil {
+				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
+				log.Fatal(err)
+			}
+
 		}
 	}
 }

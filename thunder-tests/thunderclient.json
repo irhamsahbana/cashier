@@ -143,15 +143,15 @@
     "method": "GET",
     "sortNum": 130000,
     "created": "2022-08-30T04:14:42.651Z",
-    "modified": "2022-09-12T10:04:35.926Z",
+    "modified": "2022-09-13T09:27:31.254Z",
     "headers": [
       {
         "name": "X-ACCESS-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYyOTc3MDM3LCJuYmYiOjE2NjI5NzM0MzcsImlhdCI6MTY2Mjk3MzQzN30.qbUUxr0NeIFiRaYOsrZUpgcd7FIpozJoX_fXENT1NGM"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYzMDYxMjA2LCJuYmYiOjE2NjMwNTc2MDYsImlhdCI6MTY2MzA1NzYwNn0.nmSFKKFLrQiW21dgVjUECkYle1Fr1xDMjciHhtF0dXw"
       },
       {
         "name": "X-REFRESH-TOKEN",
-        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjk0NTA5NDM3LCJuYmYiOjE2NjI5NzM0MzcsImlhdCI6MTY2Mjk3MzQzN30.-vLMGRTAQEjZU0qjKsS-BWep96UFgrHexnV27eWsZd0"
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjk0NTkzNjA2LCJuYmYiOjE2NjMwNTc2MDYsImlhdCI6MTY2MzA1NzYwNn0.CviYfqlscXaNcX34UL4RHTFtr6OHr0-5Pk6fKqVtCbI"
       }
     ],
     "params": [],
@@ -218,11 +218,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "delete space group",
-    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07718",
+    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07716",
     "method": "DELETE",
     "sortNum": 170000,
     "created": "2022-09-01T08:11:31.128Z",
-    "modified": "2022-09-02T06:57:59.346Z",
+    "modified": "2022-09-13T08:56:37.172Z",
     "headers": [],
     "params": [],
     "tests": []
@@ -232,11 +232,11 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "find space group",
-    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07718?with_trashed=1",
+    "url": "{{base_url}}/space-groups/999c0eda-f557-47fd-b3f1-dde164b07716?with_trashed=1",
     "method": "GET",
     "sortNum": 180000,
     "created": "2022-09-01T09:12:28.628Z",
-    "modified": "2022-09-02T06:59:07.545Z",
+    "modified": "2022-09-13T08:57:36.139Z",
     "headers": [],
     "params": [
       {
@@ -252,16 +252,16 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "create space",
-    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07718",
+    "url": "{{base_url}}/spaces/999c0eda-f557-47fd-b3f1-dde164b07716",
     "method": "POST",
     "sortNum": 260000,
     "created": "2022-09-02T03:07:29.456Z",
-    "modified": "2022-09-10T07:22:51.356Z",
+    "modified": "2022-09-13T08:59:05.541Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07714\",\n  \"number\": 2,\n  \"occupied\": true,\n  \"description\": \"Lorem ipsum dolor sit amet.\",\n  \"created_at\": \"2022-07-30T08:10:15.554671Z\"\n}",
+      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07714\",\n  \"number\": 1,\n  \"occupied\": true,\n  \"description\": \"Lorem ipsum dolor sit amet.\",\n  \"created_at\": \"2022-07-30T08:10:15.554671Z\"\n}",
       "form": []
     },
     "tests": []
@@ -324,17 +324,16 @@
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "ad971403-11a7-48cf-8f4b-5c033a5ca128",
     "name": "get all spaces",
-    "url": "{{base_url}}/space-groups",
+    "url": "{{base_url}}/space-groups?with_trashed=1",
     "method": "GET",
     "sortNum": 250000,
     "created": "2022-09-02T08:26:28.703Z",
-    "modified": "2022-09-03T08:00:16.077Z",
+    "modified": "2022-09-13T08:57:53.261Z",
     "headers": [],
     "params": [
       {
         "name": "with_trashed",
         "value": "1",
-        "isDisabled": true,
         "isPath": false
       }
     ],

@@ -30,7 +30,7 @@ func (repo *spaceGroupMongoRepository) FindSpaceGroups(ctx context.Context, bran
 	filter := bson.M{
 		"$and": []bson.M{
 			{"branch_uuid": branchId},
-			{"deleted_at": bson.M{"$exists": false}},
+			{"deleted_at": nil},
 		},
 	}
 
@@ -85,7 +85,7 @@ func (repo *spaceGroupMongoRepository) FindSpaceGroup(ctx context.Context, branc
 		"$and": []bson.M{
 			{"branch_uuid": branchId},
 			{"uuid": id},
-			{"deleted_at": bson.M{"$exists": false}},
+			{"deleted_at": nil},
 		},
 	}
 
@@ -112,7 +112,7 @@ func (repo *spaceGroupMongoRepository) FindSpace(ctx context.Context, branchId, 
 		"$and": []bson.M{
 			{"branch_uuid": branchId},
 			{"spaces.uuid": id},
-			{"spaces.deleted_at": bson.M{"$exists": false}},
+			{"spaces.deleted_at": nil},
 		},
 	}
 

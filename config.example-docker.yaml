@@ -1,0 +1,41 @@
+app:
+  name: lucy_cashier
+  url: http://localhost:9099
+  static_assets: ./storage-uploads
+  static_asssets_url: /storage
+  debug: true
+
+server:
+  address: 9099
+
+context:
+  timeout: 5
+
+mariadb:
+  host: lucy_mariadb
+  port: 3306
+  user: root
+  pass: secret1234
+  name: lucy
+
+mongo:
+  host: lucy_mongodb
+  port: 27017
+  user: lucy
+  pass: secret1234
+  name: lucy
+  monitor_query: false
+
+redis:
+  host: lucy_redis
+  port: 6379
+  pass: xxxx
+  name: lucy
+
+jwt:
+  secret: JwtSecretBroh
+  lifetime: 60
+
+admin:
+  username: vian
+  password: 12345678

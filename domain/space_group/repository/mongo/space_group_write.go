@@ -13,15 +13,16 @@ import (
 
 func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, data *domain.SpaceGroup) (*domain.SpaceGroup, int, error) {
 	var spacegroup domain.SpaceGroup
-	var contents bson.D
 
-	filter := bson.M{
-		"$and": []bson.M{
-			{"uuid": data.UUID},
-			{"branch_uuid": data.BranchUUID},
+	filter := bson.D{{
+		Key: "$and", Value: bson.A{
+			bson.D{
+				{Key: "uuid", Value: data.UUID},
+				{Key: "branch_uuid", Value: data.BranchUUID},
+				{Key: "deleted_at", Value: nil},
+			},
 		},
-	}
-	opts := options.Update().SetUpsert(true)
+	}}
 
 	countSpaceGroup, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -31,7 +32,7 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 	if countSpaceGroup > 0 {
 		updatedAt := time.Now().UTC().UnixMicro()
 
-		update := bson.D{
+		contents := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "code", Value: data.Code},
 				{Key: "shape", Value: data.Shape},
@@ -42,25 +43,27 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 			}},
 		}
 
-		contents = update
+		if _, err := repo.Collection.UpdateOne(ctx, filter, contents); err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
 	} else {
-		insert := bson.D{
-			{Key: "$set", Value: bson.D{
-				{Key: "branch_uuid", Value: data.BranchUUID},
-				{Key: "code", Value: data.Code},
-				{Key: "shape", Value: data.Shape},
-				{Key: "pax", Value: data.Pax},
-				{Key: "floor", Value: data.Floor},
-				{Key: "smooking", Value: data.Smooking},
-				{Key: "created_at", Value: data.CreatedAt},
-			}},
+		contents := bson.D{
+			{Key: "uuid", Value: data.UUID},
+			{Key: "branch_uuid", Value: data.BranchUUID},
+			{Key: "spaces", Value: bson.A{}},
+			{Key: "code", Value: data.Code},
+			{Key: "shape", Value: data.Shape},
+			{Key: "pax", Value: data.Pax},
+			{Key: "floor", Value: data.Floor},
+			{Key: "smooking", Value: data.Smooking},
+			{Key: "created_at", Value: data.CreatedAt},
+			{Key: "updated_at", Value: nil},
+			{Key: "deleted_at", Value: nil},
 		}
 
-		contents = insert
-	}
-
-	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts); err != nil {
-		return nil, http.StatusInternalServerError, err
+		if _, err := repo.Collection.InsertOne(ctx, contents); err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&spacegroup); err != nil {
@@ -120,6 +123,20 @@ func (repo *spaceGroupMongoRepository) InsertSpace(ctx context.Context, branchId
 
 	filter := bson.M{
 		"$and": []bson.M{
+			{"spaces.uuid": data.UUID},
+		},
+	}
+
+	countSpace, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	if countSpace > 0 {
+		return nil, http.StatusConflict, errors.New("uuid of space already exists")
+	}
+
+	filter = bson.M{
+		"$and": []bson.M{
 			{"branch_uuid": branchId},
 			{"uuid": SpaceGroupId},
 		},
@@ -133,6 +150,8 @@ func (repo *spaceGroupMongoRepository) InsertSpace(ctx context.Context, branchId
 				{Key: "occupied", Value: data.Occupied},
 				{Key: "description", Value: data.Description},
 				{Key: "created_at", Value: data.CreatedAt},
+				{Key: "updated_at", Value: nil},
+				{Key: "deleted_at", Value: nil},
 			}},
 		}},
 	}
@@ -166,7 +185,7 @@ func (repo *spaceGroupMongoRepository) DeleteSpace(ctx context.Context, branchId
 		Filters: bson.A{
 			bson.M{
 				"elem.uuid":       id,
-				"elem.deleted_at": bson.M{"$exists": false},
+				"elem.deleted_at": nil,
 			},
 		},
 	}
@@ -198,11 +217,10 @@ func (repo *spaceGroupMongoRepository) DeleteSpace(ctx context.Context, branchId
 }
 
 func (repo *spaceGroupMongoRepository) UpdateSpace(ctx context.Context, branchId, id string, data *domain.Space) (*domain.SpaceGroup, int, error) {
-	// filter := bson.M{"branch_uuid": branchId, "spaces.uuid": id}
 	filter := bson.M{"$and": bson.A{
 		bson.M{"branch_uuid": branchId},
 		bson.M{"spaces.uuid": id},
-		bson.M{"spaces.deleted_at": bson.M{"$exists": false}},
+		bson.M{"spaces.deleted_at": nil},
 	}}
 
 	arrayFilters := options.ArrayFilters{
