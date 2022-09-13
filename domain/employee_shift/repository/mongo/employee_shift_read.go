@@ -26,7 +26,7 @@ func (repo *employeeShiftMongoRepository) FindShiftByStartTime(ctx context.Conte
 	panic("implement me")
 }
 
-func (repo *employeeShiftMongoRepository) History(ctx context.Context, branchId string, limit, offset int) ([]domain.EmployeeShift, int, error) {
+func (repo *employeeShiftMongoRepository) History(ctx context.Context, branchId string, limit, page int) ([]domain.EmployeeShift, int, error) {
 	var shifts []domain.EmployeeShift
 
 	filter := bson.M{
@@ -38,7 +38,7 @@ func (repo *employeeShiftMongoRepository) History(ctx context.Context, branchId 
 		},
 	}
 
-	opts := options.Find().SetLimit(int64(limit)).SetSkip(int64(offset))
+	opts := options.Find().SetLimit(int64(limit)).SetSkip(int64(limit * page))
 
 	cursor, err := repo.Collection.Find(ctx, filter, opts)
 	if err != nil {

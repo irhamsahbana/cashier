@@ -81,23 +81,23 @@ func (h *EmployeeShiftHandler) History(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 
 	limit := c.DefaultQuery("limit", "10")
-	offset := c.DefaultQuery("offset", "0")
+	page := c.DefaultQuery("page", "0")
 
-	// convert limit and offset to int
+	// convert limit and page to int
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
 		http_response.ReturnResponse(c, http.StatusBadRequest, "limit must be integer", nil)
 		return
 	}
 
-	offsetInt, err := strconv.Atoi(offset)
+	pageInt, err := strconv.Atoi(page)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, "offset must be integer", nil)
+		http_response.ReturnResponse(c, http.StatusBadRequest, "page must be integer", nil)
 		return
 	}
 
 	ctx := context.Background()
-	result, httpCode, err := h.EmployeeShiftUsecase.History(ctx, branchId, limitInt, offsetInt)
+	result, httpCode, err := h.EmployeeShiftUsecase.History(ctx, branchId, limitInt, pageInt)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
 		return

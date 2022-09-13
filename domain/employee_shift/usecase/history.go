@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit, offset int) ([]domain.EmployeeShiftResponse, int, error) {
+func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit, page int) ([]domain.EmployeeShiftResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	result, code, err := u.employeeShiftRepo.History(ctx, branchId, limit, offset)
+	result, code, err := u.employeeShiftRepo.History(ctx, branchId, limit, page)
 	if err != nil {
 		return nil, code, err
 	}

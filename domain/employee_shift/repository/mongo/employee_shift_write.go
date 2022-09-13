@@ -100,7 +100,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 			return nil, http.StatusInternalServerError, err
 		}
 
-		// check if there is supporter shift in the same day, if there is, return error
+		// check if there is supporter shift in the same day and same main shift, if there is, return error
 		filter = bson.D{
 			{Key: "$and", Value: []bson.M{
 				{"branch_uuid": branchId},
@@ -113,6 +113,10 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 		err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
 		if err != nil && err != mongo.ErrNoDocuments {
 			return nil, http.StatusInternalServerError, err
+		}
+
+		if shift.EndTime != nil {
+			return nil, http.StatusForbidden, errors.New("main shift already ended")
 		}
 
 		for _, s := range shift.Supporters {
@@ -196,8 +200,17 @@ func (repo *employeeShiftMongoRepository) ClockOut(ctx context.Context, branchId
 		return nil, http.StatusInternalServerError, err
 	}
 
+	if shift.EndTime != nil {
+		return nil, http.StatusForbidden, errors.New("shift already ended")
+	}
+
 	// update main shift
-	if shift.UUID == data.UUID { // if as cashier
+	if shift.UUID == data.UUID { // if as main cashier
+
+		if data.EndCash == nil {
+			return nil, http.StatusBadRequest, errors.New("end cash is required")
+		}
+
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "end_time", Value: data.EndTime},

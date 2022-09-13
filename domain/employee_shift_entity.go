@@ -47,7 +47,7 @@ type EmployeeShiftUsecaseContract interface {
 	ClockIn(ctx context.Context, branchId string, req *EmployeeShiftClockInRequest) (*EmployeeShiftResponse, int, error)
 	ClockOut(ctx context.Context, branchId string, req *EmployeeShiftClockOutRequest) (*EmployeeShiftResponse, int, error)
 
-	History(ctx context.Context, branchId string, limit, offset int) ([]EmployeeShiftResponse, int, error)
+	History(ctx context.Context, branchId string, limit, page int) ([]EmployeeShiftResponse, int, error)
 	Active(ctx context.Context, branchId string) ([]EmployeeShiftResponse, int, error)
 }
 
@@ -55,6 +55,6 @@ type EmployeeShiftRepositoryContract interface {
 	ClockIn(ctx context.Context, branchId string, data *EmployeeShiftClockInData) (*EmployeeShift, int, error)
 	ClockOut(ctx context.Context, branchId string, data *EmployeeShiftClockOutData) (*EmployeeShift, int, error)
 
-	History(ctx context.Context, branchId string, limit, offset int) ([]EmployeeShift, int, error)
+	History(ctx context.Context, branchId string, limit, page int) ([]EmployeeShift, int, error)
 	Active(ctx context.Context, branchId string) ([]EmployeeShift, int, error)
 }
