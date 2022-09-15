@@ -27,6 +27,10 @@ import (
 	_spaceGroupRepo "lucy/cashier/domain/space_group/repository/mongo"
 	_spaceGroupUsecase "lucy/cashier/domain/space_group/usecase"
 
+	_zoneHttp "lucy/cashier/domain/zone/delivery/http"
+	_zoneRepo "lucy/cashier/domain/zone/repository/mongo"
+	_zoneUsecase "lucy/cashier/domain/zone/usecase"
+
 	_waiterHttp "lucy/cashier/domain/waiter/delivery/http"
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
@@ -87,6 +91,10 @@ func main() {
 	spaceGroupRepo := _spaceGroupRepo.NewSpaceGroupMongoRepository(*mongoDatabase)
 	spaceGroupUsecase := _spaceGroupUsecase.NewSpaceGroupUsecase(spaceGroupRepo, timeoutContext)
 	_spaceGroupHttp.NewSpaceGroupHandler(router, spaceGroupUsecase)
+
+	zoneRepo := _zoneRepo.NewZoneMongoRepository(*mongoDatabase)
+	zoneUsecase := _zoneUsecase.NewZoneUsecase(zoneRepo, timeoutContext)
+	_zoneHttp.NewZoneHandler(router, zoneUsecase)
 
 	fileRepo := _fileRepo.NewFileMongoRepository(*mongoDatabase)
 	fileUsecase := _fileUsecase.NewFileUploadUsecase(fileRepo, timeoutContext)

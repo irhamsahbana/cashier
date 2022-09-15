@@ -36,9 +36,9 @@
     "name": "get all item category with items and modifiers",
     "url": "{{base_url}}/item-categories",
     "method": "GET",
-    "sortNum": 15000,
+    "sortNum": 3750,
     "created": "2022-08-06T09:04:35.944Z",
-    "modified": "2022-09-08T08:59:40.187Z",
+    "modified": "2022-09-15T08:03:31.271Z",
     "headers": [],
     "params": [],
     "tests": []
@@ -52,12 +52,12 @@
     "method": "PUT",
     "sortNum": 7500,
     "created": "2022-08-07T01:28:36.386Z",
-    "modified": "2022-09-08T10:13:41.060Z",
+    "modified": "2022-09-15T07:30:05.908Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ad\",\n  \"name\": \"kopi kenangan mantan\",\n  \"modifier_groups\": [\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Sugar\",\n      \"condition\": \"MAX\",\n      \"quantity\": 1,\n      \"single\": true,\n      \"required\": true,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"less\",\n          \"price\": 0\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"normal\",\n          \"price\": 0\n        }\n      ]\n    },\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"topping\",\n      \"single\": false,\n      \"required\": false,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        }\n      ]\n    }\n  ]\n}",
+      "raw": "{\n  \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363ad\",\n  \"name\": \"Coffee Base\",\n  \"modifier_groups\": [\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"Sugar\",\n      \"condition\": \"MAX\",\n      \"quantity\": 1,\n      \"single\": true,\n      \"required\": true,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"less\",\n          \"price\": 0\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"normal\",\n          \"price\": 0\n        }\n      ]\n    },\n    {\n      \"uuid\": \"3c4b91d6-f7a4-4414-a2f9-9774d51363aa\",\n      \"name\": \"topping\",\n      \"single\": false,\n      \"required\": false,\n      \"modifiers\": [\n        {\n          \"uuid\": \"4740a662-1f46-442d-a161-307a6219cecc\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        },\n        {\n          \"uuid\": \"4b3478b4-7b85-4406-8c84-897964c2167d\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        }\n      ]\n    }\n  ]\n}",
       "form": []
     },
     "tests": []
@@ -203,12 +203,12 @@
     "method": "PUT",
     "sortNum": 160000,
     "created": "2022-09-01T03:25:13.500Z",
-    "modified": "2022-09-02T09:03:07.473Z",
+    "modified": "2022-09-15T05:22:43.049Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07716\",\n  \"code\": \"MOODY\",\n  \"shape\": \"circle\",\n  \"pax\": 5,\n  \"floor\": 1,\n  \"smoking\": false,\n  \"created_at\": \"2022-07-29T08:12:19.123456Z\"\n}",
+      "raw": "{\n  \"uuid\": \"999c0eda-f557-47fd-b3f1-dde164b07715\",\n  \"code\": \"Loud\",\n  \"shape\": \"circle\",\n  \"pax\": 4,\n  \"floor\": 1,\n  \"smoking\": true,\n  \"created_at\": \"2022-07-29T08:12:19.123456Z\"\n}",
       "form": []
     },
     "tests": []
@@ -386,12 +386,12 @@
     "method": "PUT",
     "sortNum": 40000,
     "created": "2022-09-08T05:57:44.642Z",
-    "modified": "2022-09-10T02:45:32.741Z",
+    "modified": "2022-09-15T08:53:12.577Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"7f4f2745-2569-49c2-bb3f-b66eeda69230\",\n  \"name\": \"Tuna Goreng\",\n  \"price\": 33000,\n  \"public\": true,\n  \"label\": \"Original\",\n  \"image_path\": \"storage/item_categories.items/xxx.jpeg\",\n  \"description\": \"Cita rasa tuna segar\",\n  \"variants\": [\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb40\",\n      \"price\": 335000,\n      \"public\": true,\n      \"label\": \"Rica-rica\",\n      \"image_path\": \"storage/item_categories.items.variants/xxx.jpeg\"\n    },\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb42\",\n      \"price\": 40000,\n      \"public\": false,\n      \"label\": \"Dabu-dabu\",\n      \"image_path\": \"storage/item_categories.items.variants/xxx.jpeg\"\n    }\n  ]\n}",
+      "raw": "{\n  \"uuid\": \"7f4f2745-2569-49c2-bb3f-b66eeda69230\",\n  \"name\": \"Kopi Kenangan Mantan\",\n  \"price\": 18000,\n  \"public\": true,\n  \"label\": \"Original\",\n  \"image_path\": \"storage/item_categories.items/xxx.jpeg\",\n  \"description\": \"After taste yang lama, memorinya masih tertinggal\",\n  \"variants\": [\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb40\",\n      \"price\": 22000,\n      \"public\": true,\n      \"label\": \"Ice\",\n      \"image_path\": \"storage/item_categories.items.variants/xxx.jpeg\"\n    },\n    {\n      \"uuid\": \"05b72f5d-54af-4835-acf5-98ec4bb6cb42\",\n      \"price\": 20000,\n      \"public\": false,\n      \"label\": \"Hot\",\n      \"image_path\": \"storage/item_categories.items.variants/xxy.jpeg\"\n    }\n  ]\n}",
       "form": []
     },
     "tests": []
@@ -473,6 +473,39 @@
     "sortNum": 340000,
     "created": "2022-09-12T08:05:40.573Z",
     "modified": "2022-09-12T08:06:21.265Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  },
+  {
+    "_id": "7af02899-32a1-4d99-b081-bff4bf6ddfe0",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "2710b13b-0447-4739-9811-d90e9eecb3a7",
+    "name": "upsert zones",
+    "url": "{{base_url}}/zones",
+    "method": "PUT",
+    "sortNum": 350000,
+    "created": "2022-09-15T02:15:07.372Z",
+    "modified": "2022-09-15T04:46:52.551Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"zones\": [\n    {\n      \"uuid\": \"7bb33c58-e056-40ca-bd3d-66f35f6410dc\",\n      \"name\": \"Lantai 1\",\n      \"description\": \"Outdoor\",\n      \"space_groups\": [\n        \"999c0eda-f557-47fd-b3f1-dde164b07716\"\n      ],\n      \"created_at\": \"2022-11-12T08:20:50.523789Z\"\n    },\n    {\n      \"uuid\": \"7bb33c58-e056-40ca-bd3d-66f35f6410da\",\n      \"name\": \"Lantai 2\",\n      \"description\": \"Indoor\",\n      \"created_at\": \"2022-11-12T08:20:50.523789Z\"\n    }\n  ]\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "55b8335c-62d3-46db-abfe-c6e616c23d7a",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "2710b13b-0447-4739-9811-d90e9eecb3a7",
+    "name": "get all zones",
+    "url": "{{base_url}}/zones",
+    "method": "GET",
+    "sortNum": 370000,
+    "created": "2022-09-15T06:04:21.237Z",
+    "modified": "2022-09-15T06:20:45.551Z",
     "headers": [],
     "params": [],
     "tests": []

@@ -45,6 +45,7 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 				dataItem.Label = m.Label
 				dataItem.Public = m.Public
 				dataItem.ImagePath = m.ImagePath
+
 				for _, v := range m.Variants {
 					var dataVariant domain.VariantResponse
 
@@ -55,6 +56,11 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 					dataVariant.ImagePath = v.ImagePath
 					dataItem.Variants = append(dataItem.Variants, dataVariant)
 				}
+
+				if len(dataItem.Variants) == 0 {
+					dataItem.Variants = make([]domain.VariantResponse, 0)
+				}
+
 				dataItem.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
 				if m.UpdatedAt != nil {
 					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
@@ -62,6 +68,10 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 				}
 
 				items = append(items, dataItem)
+			}
+
+			if len(items) == 0 {
+				items = make([]domain.ItemResponse, 0)
 			}
 		}
 
@@ -91,16 +101,33 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 
 						dataModifierGroup.Modifiers = append(dataModifierGroup.Modifiers, dataModifier)
 					}
+
+					if len(dataModifierGroup.Modifiers) == 0 {
+						dataModifierGroup.Modifiers = make([]domain.ModifierResponse, 0)
+					}
 				}
 
 				modifierGroups = append(modifierGroups, dataModifierGroup)
 			}
 
 			data.ModifierGroups = modifierGroups
+
+			if len(data.ModifierGroups) == 0 {
+				data.ModifierGroups = make([]domain.ModifierGroupResponse, 0)
+			}
 		}
 
 		data.Items = items
+
+		if len(data.Items) == 0 {
+			data.Items = make([]domain.ItemResponse, 0)
+		}
+
 		resp = append(resp, data)
+	}
+
+	if len(resp) == 0 {
+		resp = make([]domain.ItemCategoryResponse, 0)
 	}
 
 	return resp, http.StatusOK, nil

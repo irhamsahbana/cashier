@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -11,28 +10,24 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (repo *itemCategoryMongoRepository) UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, data *domain.ItemCategory) (*domain.ItemCategory, int, error) {
 	var itemcategory domain.ItemCategory
-	var contents bson.D
 
 	filter := bson.M{
 		"$and": []bson.M{
-			{"uuid": data.UUID},
 			{"branch_uuid": branchId},
+			{"uuid": data.UUID},
 		},
 	}
-	opts := options.Update().SetUpsert(true)
-
 	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
 	if countItemCategory > 0 {
-		update := bson.D{
+		contents := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "name", Value: data.Name},
 				{Key: "modifier_groups", Value: data.ModifierGroups},
@@ -40,21 +35,23 @@ func (repo *itemCategoryMongoRepository) UpsertItemCategoryAndModifiers(ctx cont
 			}},
 		}
 
-		contents = update
+		if _, err := repo.Collection.UpdateOne(ctx, filter, contents); err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
 	} else {
-		insert := bson.D{
-			{Key: "$set", Value: bson.D{
-				{Key: "name", Value: data.Name},
-				{Key: "modifier_groups", Value: data.ModifierGroups},
-				{Key: "created_at", Value: time.Now().UTC().UnixMicro()},
-			}},
+		contents := bson.D{
+			{Key: "uuid", Value: data.UUID},
+			{Key: "branch_uuid", Value: branchId},
+			{Key: "name", Value: data.Name},
+			{Key: "modifier_groups", Value: data.ModifierGroups},
+			{Key: "items", Value: bson.A{}},
+			{Key: "created_at", Value: time.Now().UTC().UnixMicro()},
+			{Key: "updated_at", Value: nil},
 		}
 
-		contents = insert
-	}
-
-	if _, err := repo.Collection.UpdateOne(ctx, filter, contents, opts); err != nil {
-		return nil, http.StatusInternalServerError, err
+		if _, err := repo.Collection.InsertOne(ctx, contents); err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
@@ -106,7 +103,6 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 
 	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
-		fmt.Println("error 1")
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -146,15 +142,14 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 
 		filter = bson.M{
 			"$and": []bson.M{
-				{"uuid": itemCategoryId},
 				{"branch_uuid": branchId},
+				{"uuid": itemCategoryId},
 			},
 		}
 	}
 
 	_, err = repo.Collection.UpdateOne(ctx, filter, contents)
 	if err != nil {
-		fmt.Println("error 2")
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -163,7 +158,6 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 			return nil, http.StatusNotFound, err
 		}
 
-		fmt.Println("error 3")
 		return nil, http.StatusInternalServerError, err
 	}
 

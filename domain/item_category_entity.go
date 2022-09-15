@@ -16,10 +16,10 @@ type ItemCategory struct {
 	UUID           string          `bson:"uuid"`
 	BranchUUID     string          `bson:"branch_uuid"`
 	Name           string          `bson:"name"`
-	ModifierGroups []ModifierGroup `bson:"modifier_groups,omitempty"`
+	ModifierGroups []ModifierGroup `bson:"modifier_groups"`
 	Items          []Item          `bson:"items"`
 	CreatedAt      int64           `bson:"created_at"`
-	UpdatedAt      *int64          `bson:"updated_at,omitempty"`
+	UpdatedAt      *int64          `bson:"updated_at"`
 }
 
 type Item struct {
@@ -28,11 +28,11 @@ type Item struct {
 	Price       float32   `bson:"price"`
 	Label       string    `bson:"label"`
 	Public      bool      `bson:"public"`
-	ImagePath   *string   `bson:"image_path,omitempty"`
+	ImagePath   *string   `bson:"image_path"`
 	Description *string   `bson:"description"`
 	Variants    []Variant `bson:"variants"`
 	CreatedAt   int64     `bson:"created_at"`
-	UpdatedAt   *int64    `bson:"updated_at,omitempty"`
+	UpdatedAt   *int64    `bson:"updated_at"`
 }
 
 type Variant struct {
@@ -47,11 +47,11 @@ type Variant struct {
 type ModifierGroup struct {
 	UUID      string                  `bson:"uuid"`
 	Name      string                  `bson:"name"`
-	Condition *ModifierGroupCondition `bson:"condition,omitempty"`
-	Quantity  *int                    `bson:"quantity,omitempty"`
+	Condition *ModifierGroupCondition `bson:"condition"`
+	Quantity  *int                    `bson:"quantity"`
 	Single    bool                    `bson:"single"`
 	Required  bool                    `bson:"required"`
-	Modifiers []Modifier              `bson:"modifiers,omitempty"`
+	Modifiers []Modifier              `bson:"modifiers"`
 }
 
 type Modifier struct {
@@ -59,7 +59,7 @@ type Modifier struct {
 	Name      string  `bson:"name"`
 	Price     float32 `bson:"price"`
 	CreatedAt int64   `bson:"created_at"`
-	UpdatedAt *int64  `bson:"updated_at,omitempty"`
+	UpdatedAt *int64  `bson:"updated_at"`
 }
 
 type ItemCategoryUsecaseContract interface {

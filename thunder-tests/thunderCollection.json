@@ -53,6 +53,13 @@
         "containerId": "",
         "created": "2022-09-10T07:27:09.236Z",
         "sortNum": 70000
+      },
+      {
+        "_id": "2710b13b-0447-4739-9811-d90e9eecb3a7",
+        "name": "zones",
+        "containerId": "",
+        "created": "2022-09-15T02:14:02.890Z",
+        "sortNum": 80000
       }
     ],
     "settings": {
@@ -64,7 +71,7 @@
       ],
       "auth": {
         "type": "bearer",
-        "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYzMDY0ODcyLCJuYmYiOjE2NjMwNjEyNzIsImlhdCI6MTY2MzA2MTI3Mn0.C3TnUeR93zWF6eOZsACzP40uw62XBO2ntDYvJ9wtRvs"
+        "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3V1aWQiOiI4NDAxN2JlNC05MDgyLTQzMjMtODUxMy1hNDQ1MDc4NWY2MjIiLCJyb2xlIjoiT3duZXIiLCJpc3MiOiJBdXRoZW50aWNhdG9yIiwiZXhwIjoxNjYzMjQ4OTg2LCJuYmYiOjE2NjMyMTI5ODYsImlhdCI6MTY2MzIxMjk4Nn0.JXB88638x-TmOQEH4RBG7RzwNW0gZCFvyvqJJDBtHzc"
       },
       "tests": [],
       "envId": "53c00846-acd0-4c06-8406-8ebb47522663"

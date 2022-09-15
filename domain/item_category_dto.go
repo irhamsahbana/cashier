@@ -6,23 +6,23 @@ type ItemCategoryResponse struct {
 	UUID           string                  `json:"uuid"`
 	BranchUUID     string                  `json:"branch_uuid"`
 	Name           string                  `json:"name"`
-	Items          []ItemResponse          `json:"items,omitempty"`
-	ModifierGroups []ModifierGroupResponse `json:"modifier_groups,omitempty"`
+	Items          []ItemResponse          `json:"items"`
+	ModifierGroups []ModifierGroupResponse `json:"modifier_groups"`
 	CreatedAt      time.Time               `json:"created_at"`
-	UpdatedAt      *time.Time              `json:"updated_at,omitempty"`
+	UpdatedAt      *time.Time              `json:"updated_at"`
 }
 
 type ItemResponse struct {
 	UUID        string            `json:"uuid"`
 	Name        string            `json:"name"`
 	Price       float32           `json:"price"`
-	Description *string           `json:"description,omitempty"`
+	Description *string           `json:"description"`
 	Label       string            `json:"Label"`
 	Public      bool              `json:"public"`
-	ImagePath   *string           `json:"image_path,omitempty"`
-	Variants    []VariantResponse `json:"variants,omitempty"`
+	ImagePath   *string           `json:"image_path"`
+	Variants    []VariantResponse `json:"variants"`
 	CreatedAt   time.Time         `json:"created_at"`
-	UpdatedAt   *time.Time        `json:"updated_at,omitempty"`
+	UpdatedAt   *time.Time        `json:"updated_at"`
 }
 
 type VariantResponse struct {
@@ -42,7 +42,7 @@ type ModifierGroupResponse struct {
 	Quantity  *int                    `json:"quantity"`
 	Single    bool                    `json:"single"`
 	Required  bool                    `json:"required"`
-	UpdatedAt *time.Time              `json:"updated_at,omitempty"`
+	UpdatedAt *time.Time              `json:"updated_at"`
 }
 
 type ModifierResponse struct {
@@ -50,7 +50,7 @@ type ModifierResponse struct {
 	Name      string     `json:"name"`
 	Price     float32    `json:"price"`
 	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
 type ItemCategoryUpsertRequest struct {

@@ -24,65 +24,61 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 	data.BranchUUID = branchId
 	data.Name = req.Name
 
-	if req.ModifierGroups != nil {
-		var modifierGroups []domain.ModifierGroup
+	var modifierGroups []domain.ModifierGroup
+	for _, modifierGroup := range req.ModifierGroups {
+		var modifierGroupItem domain.ModifierGroup
 
-		for _, modifierGroup := range req.ModifierGroups {
-			var modifierGroupItem domain.ModifierGroup
-
-			if err := validator.IsUUID(modifierGroup.UUID); err != nil {
-				return nil, http.StatusUnprocessableEntity, err
-			}
-
-			if modifierGroup.Name == "" {
-				return nil, http.StatusUnprocessableEntity, errors.New("modifier group name is required")
-			}
-
-			modifierGroupItem.UUID = modifierGroup.UUID
-			modifierGroupItem.Name = modifierGroup.Name
-			modifierGroupItem.Quantity = modifierGroup.Quantity
-			modifierGroupItem.Condition = modifierGroup.Condition
-			modifierGroupItem.Single = modifierGroup.Single
-			modifierGroupItem.Required = modifierGroup.Required
-
-			if modifierGroup.Condition != nil {
-				modifierGroupItem.Condition = modifierGroup.Condition
-
-				if err := validateCondition(*modifierGroup.Condition); err != nil {
-					return nil, http.StatusUnprocessableEntity, err
-				}
-			}
-
-			if modifierGroup.Modifiers != nil {
-				var modifiers []domain.Modifier
-
-				for _, modifier := range modifierGroup.Modifiers {
-					var modifierItem domain.Modifier
-
-					modifierItem.UUID = modifier.UUID
-					modifierItem.Name = modifier.Name
-					modifierItem.Price = modifier.Price
-					modifierItem.CreatedAt = time.Now().UnixMicro()
-
-					if err := validator.IsUUID(modifier.UUID); err != nil {
-						return nil, http.StatusUnprocessableEntity, err
-					}
-
-					if modifier.Name == "" {
-						return nil, http.StatusUnprocessableEntity, errors.New("modifier name is required")
-					}
-
-					modifiers = append(modifiers, modifierItem)
-				}
-
-				modifierGroupItem.Modifiers = modifiers
-			}
-
-			modifierGroups = append(modifierGroups, modifierGroupItem)
+		if err := validator.IsUUID(modifierGroup.UUID); err != nil {
+			return nil, http.StatusUnprocessableEntity, err
 		}
 
-		data.ModifierGroups = modifierGroups
+		if modifierGroup.Name == "" {
+			return nil, http.StatusUnprocessableEntity, errors.New("modifier group name is required")
+		}
+
+		modifierGroupItem.UUID = modifierGroup.UUID
+		modifierGroupItem.Name = modifierGroup.Name
+		modifierGroupItem.Quantity = modifierGroup.Quantity
+		modifierGroupItem.Condition = modifierGroup.Condition
+		modifierGroupItem.Single = modifierGroup.Single
+		modifierGroupItem.Required = modifierGroup.Required
+
+		if modifierGroup.Condition != nil {
+			modifierGroupItem.Condition = modifierGroup.Condition
+
+			if err := validateCondition(*modifierGroup.Condition); err != nil {
+				return nil, http.StatusUnprocessableEntity, err
+			}
+		}
+
+		if modifierGroup.Modifiers != nil {
+			var modifiers []domain.Modifier
+
+			for _, modifier := range modifierGroup.Modifiers {
+				var modifierItem domain.Modifier
+
+				modifierItem.UUID = modifier.UUID
+				modifierItem.Name = modifier.Name
+				modifierItem.Price = modifier.Price
+				modifierItem.CreatedAt = time.Now().UnixMicro()
+
+				if err := validator.IsUUID(modifier.UUID); err != nil {
+					return nil, http.StatusUnprocessableEntity, err
+				}
+
+				if modifier.Name == "" {
+					return nil, http.StatusUnprocessableEntity, errors.New("modifier name is required")
+				}
+
+				modifiers = append(modifiers, modifierItem)
+			}
+
+			modifierGroupItem.Modifiers = modifiers
+		}
+
+		modifierGroups = append(modifierGroups, modifierGroupItem)
 	}
+	data.ModifierGroups = modifierGroups
 
 	result, code, err := u.itemCategoryRepo.UpsertItemCategoryAndModifiers(ctx, branchId, &data)
 	if err != nil {
@@ -94,40 +90,45 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
-	if result.ModifierGroups != nil {
-		var modifierGroups []domain.ModifierGroupResponse
 
-		for _, modifierGroup := range result.ModifierGroups {
-			var modifierGroupItem domain.ModifierGroupResponse
+	var modifierGroupsResp []domain.ModifierGroupResponse
+	for _, modifierGroup := range result.ModifierGroups {
+		var modifierGroupItem domain.ModifierGroupResponse
 
-			modifierGroupItem.UUID = modifierGroup.UUID
-			modifierGroupItem.Name = modifierGroup.Name
-			modifierGroupItem.Quantity = modifierGroup.Quantity
-			modifierGroupItem.Condition = modifierGroup.Condition
-			modifierGroupItem.Single = modifierGroup.Single
-			modifierGroupItem.Required = modifierGroup.Required
+		modifierGroupItem.UUID = modifierGroup.UUID
+		modifierGroupItem.Name = modifierGroup.Name
+		modifierGroupItem.Quantity = modifierGroup.Quantity
+		modifierGroupItem.Condition = modifierGroup.Condition
+		modifierGroupItem.Single = modifierGroup.Single
+		modifierGroupItem.Required = modifierGroup.Required
 
-			if modifierGroup.Modifiers != nil {
-				var modifiers []domain.ModifierResponse
+		var modifiers []domain.ModifierResponse
+		for _, modifier := range modifierGroup.Modifiers {
+			var modifierItem domain.ModifierResponse
 
-				for _, modifier := range modifierGroup.Modifiers {
-					var modifierItem domain.ModifierResponse
+			modifierItem.UUID = modifier.UUID
+			modifierItem.Name = modifier.Name
+			modifierItem.Price = modifier.Price
+			modifierItem.CreatedAt = time.UnixMicro(modifier.CreatedAt).UTC()
 
-					modifierItem.UUID = modifier.UUID
-					modifierItem.Name = modifier.Name
-					modifierItem.Price = modifier.Price
-					modifierItem.CreatedAt = time.UnixMicro(modifier.CreatedAt).UTC()
+			modifiers = append(modifiers, modifierItem)
+		}
+		modifierGroupItem.Modifiers = modifiers
 
-					modifiers = append(modifiers, modifierItem)
-				}
-
-				modifierGroupItem.Modifiers = modifiers
-			}
-
-			modifierGroups = append(modifierGroups, modifierGroupItem)
+		if len(modifierGroupItem.Modifiers) == 0 {
+			modifierGroupItem.Modifiers = make([]domain.ModifierResponse, 0)
 		}
 
-		resp.ModifierGroups = modifierGroups
+		modifierGroupsResp = append(modifierGroupsResp, modifierGroupItem)
+	}
+	resp.ModifierGroups = modifierGroupsResp
+
+	if len(result.ModifierGroups) == 0 {
+		resp.ModifierGroups = []domain.ModifierGroupResponse{}
+	}
+
+	if len(result.Items) == 0 {
+		resp.Items = make([]domain.ItemResponse, 0)
 	}
 
 	if result.UpdatedAt != nil {
