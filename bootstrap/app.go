@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/go-redis/redis/v9"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -17,6 +18,7 @@ type Application struct {
 	Maria  *sql.DB
 	Mongo  *mongo.Client
 	Redis  *redis.Client
+	Log    *logrus.Logger
 }
 
 func init() {
@@ -29,4 +31,5 @@ func AppInit() {
 	App.Maria = InitMariaDatabase()
 	App.Mongo = InitMongoDatabase()
 	App.Redis = InitRedis()
+	App.Log = InitLogger()
 }

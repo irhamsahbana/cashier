@@ -155,7 +155,7 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, http.StatusNotFound, err
+			return nil, http.StatusNotFound, errors.New("item category not found")
 		}
 
 		return nil, http.StatusInternalServerError, err

@@ -37,16 +37,10 @@ func InitMariaDatabase() *sql.DB {
 	dbConn.SetConnMaxIdleTime(5 * time.Minute)
 	dbConn.SetConnMaxLifetime(1 * time.Hour)
 
-	if err != nil {
-		color.Red(err.Error())
-		log.Fatal(err)
-	}
+	errCheck("MariaDB", err)
 
 	err = dbConn.Ping()
-	if err != nil {
-		color.Red(err.Error())
-		log.Fatal(err)
-	}
+	errCheck("MariaDB", err)
 
 	color.Green(fmt.Sprintf("connected to MariaDB from %s:%s", dbHost, dbPort))
 	return dbConn
@@ -84,22 +78,13 @@ func InitMongoDatabase() *mongo.Client {
 		client, err = mongo.NewClient(options.Client().ApplyURI(mongodbURI))
 	}
 
-	if err != nil {
-		color.Red("MongoDB: " + err.Error())
-		log.Fatal(err)
-	}
+	errCheck("MongoDB", err)
 
 	err = client.Connect(ctx)
-	if err != nil {
-		color.Red("MongoDB: " + err.Error())
-		log.Fatal(err)
-	}
+	errCheck("MongoDB", err)
 
 	err = client.Ping(ctx, readpref.Primary())
-	if err != nil {
-		color.Red("MongoDB: " + err.Error())
-		log.Fatal(err)
-	}
+	errCheck("MongoDB", err)
 
 	color.Green(fmt.Sprintf("connected to MongoDB from %s:%s", dbHost, dbPort))
 	defer initMongoDatabaseIndexes(ctx, client, dbName)
@@ -123,11 +108,15 @@ func InitRedis() *redis.Client {
 	})
 
 	_, err := client.Ping(ctx).Result()
-	if err != nil {
-		color.Red("Redis: " + err.Error())
-		log.Fatal(err)
-	}
+	errCheck("Redis", err)
 
 	color.Green(fmt.Sprintf("connected to Redis from %s:%s", dbHost, dbPort))
 	return client
+}
+
+func errCheck(prefix string, err error) {
+	if err != nil {
+		color.Red(fmt.Sprintf("%s: %s", prefix, err.Error()))
+		log.Fatal(err)
+	}
 }

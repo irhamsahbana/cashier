@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"lucy/cashier/bootstrap"
 	"lucy/cashier/domain"
 	"net/http"
 	"time"
@@ -40,11 +41,13 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 		// check existing shift
 		err := repo.Collection.FindOne(ctx, filter).Decode(&mainShift)
 		if err != nil && err != mongo.ErrNoDocuments {
+			bootstrap.App.Log.Warn(err)
 			return nil, http.StatusInternalServerError, err
 		}
 
 		// if there is shift, return error
 		if mainShift.UUID != "" {
+			bootstrap.App.Log.Warn("there is shift in the same day")
 			return nil, http.StatusConflict, errors.New("there is shift in the same day")
 		}
 
@@ -65,6 +68,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 
 		_, err = repo.Collection.InsertOne(ctx, doc)
 		if err != nil {
+			bootstrap.App.Log.Warn(err)
 			return nil, http.StatusInternalServerError, err
 		}
 
@@ -121,6 +125,12 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 
 		for _, s := range shift.Supporters {
 			if s.UserUUID == data.UserUUID && s.EndTime == nil {
+				bootstrap.App.Log.WithFields(map[string]interface{}{
+					"branch_uuid":     branchId,
+					"main_shift_uuid": shift.UUID,
+					"user_uuid":       data.UserUUID,
+				}).Warn("there is supporter shift in the same day and same main shift")
+
 				return nil, http.StatusConflict, errors.New("there is supporter shift in the same day")
 			}
 		}

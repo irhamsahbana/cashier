@@ -2,3 +2,5 @@
 config.yaml
 storage-uploads
 tmp/
+logrus.log
+logrus.json
