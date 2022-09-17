@@ -4,15 +4,22 @@ import (
 	"context"
 	"errors"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
+	"lucy/cashier/lib/mapper"
 	"net/http"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, data *domain.SpaceGroup) (*domain.SpaceGroup, int, error) {
 	var spacegroup domain.SpaceGroup
+	var logFields = logrus.Fields{
+		"branch_uuid": data.BranchUUID,
+	}
 
 	filter := bson.D{{
 		Key: "$and", Value: bson.A{
@@ -24,8 +31,15 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 		},
 	}}
 
+	//testing
+	logger.Log(logFields).Info("testing coba duluu")
+
 	countSpaceGroup, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
+		logFields["query"] = filter
+		logger.Log(logFields).Error(err)
+		mapper.DeleteKeys(logFields, "query")
+
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -44,6 +58,11 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 		}
 
 		if _, err := repo.Collection.UpdateOne(ctx, filter, contents); err != nil {
+			logFields["query"] = filter
+			logFields["data"] = contents
+			logger.Log(logFields).Error(err)
+			mapper.DeleteKeys(logFields, "query", "data")
+
 			return nil, http.StatusInternalServerError, err
 		}
 	} else {
@@ -62,11 +81,25 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 		}
 
 		if _, err := repo.Collection.InsertOne(ctx, contents); err != nil {
+			logFields["query"] = filter
+			logFields["data"] = contents
+			logger.Log(logFields).Error(err)
+
+			mapper.DeleteKeys(logFields, "query", "data")
+
 			return nil, http.StatusInternalServerError, err
 		}
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&spacegroup); err != nil {
+		logFields["query"] = filter
+		logger.Log(logFields).Error(err)
+		mapper.DeleteKeys(logFields, "query")
+
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("space group not found")
+		}
+
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -78,33 +111,20 @@ func (repo *spaceGroupMongoRepository) DeleteSpaceGroup(ctx context.Context, bra
 
 	filter := bson.M{
 		"$and": []bson.M{
-			{"uuid": id},
 			{"branch_uuid": branchId},
+			{"uuid": id},
 		},
-	}
-
-	update := bson.A{
-		bson.M{
-			"$set": bson.M{
-				"deleted_at": bson.M{
-					"$ifNull": bson.A{
-						"$deleted_at",
-						time.Now().UTC().UnixMicro(),
-					},
-				},
-			},
-		},
-	}
-
-	result, err := repo.Collection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	if result.MatchedCount == 0 {
-		return nil, http.StatusNotFound, nil
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&spacegroup); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("space group not found")
+		}
+
+		return nil, http.StatusInternalServerError, err
+	}
+
+	if _, err := repo.Collection.DeleteOne(ctx, filter); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 

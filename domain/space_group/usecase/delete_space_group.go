@@ -13,11 +13,10 @@ func (u *spaceGroupUsecase) DeleteSpaceGroup(c context.Context, branchId, id str
 
 	result, code, err := u.spaceGroupRepo.DeleteSpaceGroup(ctx, branchId, id)
 	if err != nil {
+		if code == http.StatusNotFound {
+			return nil, http.StatusOK, nil
+		}
 		return nil, code, err
-	}
-
-	if code == http.StatusNotFound {
-		return nil, http.StatusOK, nil
 	}
 
 	var resp domain.SpaceGroupResponse
