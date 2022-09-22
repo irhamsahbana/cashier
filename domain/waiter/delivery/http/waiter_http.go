@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/dto"
 	"lucy/cashier/lib/http_response"
 	"lucy/cashier/lib/middleware"
 	"net/http"
@@ -33,7 +34,7 @@ func NewWaiterHandler(router *gin.Engine, usecase domain.WaiterUsecaseContract) 
 }
 
 func (h *WaiterHandler) UpsertWaiter(c *gin.Context) {
-	var request domain.WaiterUpsertrequest
+	var request dto.WaiterUpsertrequest
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)

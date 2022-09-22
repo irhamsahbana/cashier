@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"lucy/cashier/lib/dto"
 )
 
 type Waiter struct {
@@ -15,9 +16,9 @@ type Waiter struct {
 }
 
 type WaiterUsecaseContract interface {
-	UpsertWaiter(ctx context.Context, branchId string, data *WaiterUpsertrequest) (*WaiterResponse, int, error)
-	FindWaiter(ctx context.Context, id string, withTrashed bool) (*WaiterResponse, int, error)
-	DeleteWaiter(ctx context.Context, id string) (*WaiterResponse, int, error)
+	UpsertWaiter(ctx context.Context, branchId string, data *dto.WaiterUpsertrequest) (*dto.WaiterResponse, int, error)
+	FindWaiter(ctx context.Context, id string, withTrashed bool) (*dto.WaiterResponse, int, error)
+	DeleteWaiter(ctx context.Context, id string) (*dto.WaiterResponse, int, error)
 }
 
 type WaiterRepositoryContract interface {

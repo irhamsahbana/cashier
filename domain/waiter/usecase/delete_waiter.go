@@ -2,12 +2,12 @@ package usecase
 
 import (
 	"context"
-	"lucy/cashier/domain"
+	"lucy/cashier/lib/dto"
 	"net/http"
 	"time"
 )
 
-func (u *waiterUsecase) DeleteWaiter(c context.Context, id string) (*domain.WaiterResponse, int, error) {
+func (u *waiterUsecase) DeleteWaiter(c context.Context, id string) (*dto.WaiterResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -20,7 +20,7 @@ func (u *waiterUsecase) DeleteWaiter(c context.Context, id string) (*domain.Wait
 		return nil, http.StatusOK, nil
 	}
 
-	var resp domain.WaiterResponse
+	var resp dto.WaiterResponse
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name

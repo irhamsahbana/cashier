@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/dto"
 	"lucy/cashier/lib/validator"
 	"net/http"
 	"time"
 )
 
-func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *domain.WaiterUpsertrequest) (*domain.WaiterResponse, int, error) {
+func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *dto.WaiterUpsertrequest) (*dto.WaiterResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -37,7 +38,7 @@ func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *do
 		return nil, code, err
 	}
 
-	var resp domain.WaiterResponse
+	var resp dto.WaiterResponse
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
