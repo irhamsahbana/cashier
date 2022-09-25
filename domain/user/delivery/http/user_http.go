@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
 	jwthandler "lucy/cashier/lib/jwt_handler"
 	"lucy/cashier/lib/middleware"
@@ -23,15 +24,15 @@ func NewUserHandler(router *gin.Engine, usecase domain.UserUsecaseContract) {
 	}
 
 	authorized := router.Group("/", middleware.Auth)
+	authorized.GET("/user-infos", handler.Profile)
 	authorized.GET("/auth/logout", handler.Logout)
-	authorized.GET("/users/profile", handler.Profile)
 
 	router.POST("auth/login", handler.Login)
 	router.GET("auth/refresh-token", handler.RefreshToken)
 }
 
 func (h *UserHandler) Login(c *gin.Context) {
-	var request domain.UserLoginRequest
+	var request dto.UserLoginRequest
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
@@ -50,7 +51,16 @@ func (h *UserHandler) Login(c *gin.Context) {
 }
 
 func (h *UserHandler) Profile(c *gin.Context) {
-	http_response.ReturnResponse(c, http.StatusOK, "you are ...", nil)
+	userId := c.GetString("user_uuid")
+
+	ctx := context.Background()
+	result, httpcode, err := h.UserUsecase.FindUser(ctx, userId, true)
+	if err != nil {
+		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpcode, "Profile", result)
 }
 
 func (h *UserHandler) RefreshToken(c *gin.Context) {

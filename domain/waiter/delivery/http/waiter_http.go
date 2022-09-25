@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 	"lucy/cashier/domain"
-	"lucy/cashier/lib/dto"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
 	"lucy/cashier/lib/middleware"
 	"net/http"

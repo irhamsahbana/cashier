@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"lucy/cashier/domain"
-	"lucy/cashier/lib/dto"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/validator"
 	"net/http"
 	"time"

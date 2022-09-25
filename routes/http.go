@@ -2,13 +2,14 @@ package route
 
 import (
 	"fmt"
-	"log"
 	"lucy/cashier/bootstrap"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 
 	_itemCategoryHttp "lucy/cashier/domain/item_category/delivery/http"
 	_itemCategoryRepo "lucy/cashier/domain/item_category/repository/mongo"
@@ -42,6 +43,8 @@ import (
 	_fileRepo "lucy/cashier/domain/file/repository/mongo"
 	_fileUsecase "lucy/cashier/domain/file/usecase"
 
+	_branchDiscountRepo "lucy/cashier/domain/branch_discount/repository/mongo"
+	_companyRepo "lucy/cashier/domain/company/repository/mongo"
 	_tokenRepo "lucy/cashier/domain/token/repository/mongo"
 )
 
@@ -57,39 +60,52 @@ func NewHttpRoutes(r *gin.Engine) {
 	r.Static(bootstrap.App.Config.GetString("app.static_asssets_url"), bootstrap.App.Config.GetString("app.static_assets"))
 	r.Use(cors.Default())
 
+	// user
 	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.TokenableType_USER)
 	userRepo := _userRepo.NewUserMongoRepository(*mongoDatabase)
 	userRoleRepo := _userRoleRepo.NewUserRoleMongoRepository(*mongoDatabase)
-	userUsecase := _userUsecase.NewUserUsecase(userRepo, userRoleRepo, tokenRepo, timeoutContext)
+	companyRepo := _companyRepo.NewCompanyMongoRepository(*mongoDatabase)
+	branchDiscountRepo := _branchDiscountRepo.NewBranchDiscountMongoRepository(*mongoDatabase)
+	userUsecase := _userUsecase.NewUserUsecase(userRepo, userRoleRepo, tokenRepo, companyRepo, branchDiscountRepo, timeoutContext)
 	_userHttp.NewUserHandler(r, userUsecase)
 
+	// user role
 	userRoleUsecase := _userRoleUsecase.NewUserRoleUsecase(userRoleRepo, timeoutContext)
 	_userRoleHttp.NewUserRoleHandler(r, userRoleUsecase)
 
+	// item category
 	itemCategoryRepo := _itemCategoryRepo.NewItemCategoryMongoRepository(*mongoDatabase)
 	itemCategoryUsecase := _itemCategoryUsecase.NewItemCategoryUsecase(itemCategoryRepo, timeoutContext)
 	_itemCategoryHttp.NewItemCategoryHandler(r, itemCategoryUsecase)
 
+	// waiter
 	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
 	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)
 	_waiterHttp.NewWaiterHandler(r, waiterUsecase)
 
+	// employee shift
 	shiftRepo := _shiftRepo.NewEmployeeShiftMongoRepository(*mongoDatabase)
 	shiftUsecase := _shiftUsecase.NewEmployeeShiftUsecase(shiftRepo, timeoutContext)
 	_shiftHttp.NewEmployeeShiftHandler(r, shiftUsecase)
 
+	// space group
 	spaceGroupRepo := _spaceGroupRepo.NewSpaceGroupMongoRepository(*mongoDatabase)
 	spaceGroupUsecase := _spaceGroupUsecase.NewSpaceGroupUsecase(spaceGroupRepo, timeoutContext)
 	_spaceGroupHttp.NewSpaceGroupHandler(r, spaceGroupUsecase)
 
+	// zone
 	zoneRepo := _zoneRepo.NewZoneMongoRepository(*mongoDatabase)
 	zoneUsecase := _zoneUsecase.NewZoneUsecase(zoneRepo, timeoutContext)
 	_zoneHttp.NewZoneHandler(r, zoneUsecase)
 
+	// file
 	fileRepo := _fileRepo.NewFileMongoRepository(*mongoDatabase)
 	fileUsecase := _fileUsecase.NewFileUploadUsecase(fileRepo, timeoutContext)
 	_fileHttp.NewFileHandler(r, fileUsecase, appStorageURL)
 
 	appPort := fmt.Sprintf(":%v", bootstrap.App.Config.GetString("server.address"))
-	log.Fatal(r.Run(appPort))
+
+	logger.Log(logrus.Fields{
+		"port": appPort,
+	}).Error(r.Run(appPort))
 }

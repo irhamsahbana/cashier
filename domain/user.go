@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"lucy/cashier/dto"
 )
 
 type User struct {
@@ -23,11 +24,11 @@ type User struct {
 }
 
 type UserUsecaseContract interface {
-	FindUser(ctx context.Context, id string, withTrashed bool) (*UserResponse, int, error)
+	FindUser(ctx context.Context, id string, withTrashed bool) (*dto.UserResponse, int, error)
 
-	Login(ctx context.Context, request *UserLoginRequest) (*UserResponse, int, error)
-	RefreshToken(ctx context.Context, oldAccessToken string, oldRefreshToken string, userId string) (*UserResponse, int, error)
-	Logout(ctx context.Context, accessToken string, userId string) (*UserResponse, int, error)
+	Login(ctx context.Context, request *dto.UserLoginRequest) (*dto.UserResponse, int, error)
+	RefreshToken(ctx context.Context, oldAccessToken string, oldRefreshToken string, userId string) (*dto.UserResponse, int, error)
+	Logout(ctx context.Context, accessToken string, userId string) (*dto.UserResponse, int, error)
 }
 
 type UserRepositoryContract interface {

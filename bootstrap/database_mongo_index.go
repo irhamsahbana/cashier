@@ -11,8 +11,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
+}
+
 func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName string) {
 	var collections []string = []string{
+		"companies",
+		"branch_discounts",
+
 		"users",
 		"user_roles",
 		"tokens",
@@ -25,6 +38,23 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		"employee_shifts",
 
 		"files",
+	}
+
+	// get all collections
+	collNames, err := client.Database(dbName).ListCollectionNames(ctx, bson.M{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// create collection if not exists
+	for _, collName := range collections {
+		if !contains(collNames, collName) {
+			err = client.Database(dbName).CreateCollection(ctx, collName)
+			if err != nil {
+				log.Fatal(err)
+			}
+			color.Cyan(fmt.Sprintf("Collection %s created", collName))
+		}
 	}
 
 	//delete all indexes first
@@ -41,7 +71,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 	for _, collection := range collections {
 		switch collection {
 		case "users":
-			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{
 					Keys: bson.D{
@@ -55,18 +85,11 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true),
 				},
 			})
-
-			for _, index := range res {
-				color.Green(fmt.Sprintf("index %s created", index))
-			}
-
-			if err != nil {
-				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
-				log.Fatal(err)
-			}
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
 
 		case "employee_shifts":
-			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{
 					Keys: bson.D{
@@ -83,18 +106,11 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true).SetSparse(true),
 				},
 			})
-
-			for _, index := range res {
-				color.Green(fmt.Sprintf("index %s created", index))
-			}
-
-			if err != nil {
-				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
-				log.Fatal(err)
-			}
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
 
 		case "item_categories":
-			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{
 					Keys: bson.D{
@@ -104,18 +120,11 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true),
 				},
 			})
-
-			for _, index := range res {
-				color.Green(fmt.Sprintf("index %s created", index))
-			}
-
-			if err != nil {
-				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
-				log.Fatal(err)
-			}
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
 
 		case "space_groups":
-			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{
 					Keys: bson.D{
@@ -131,18 +140,11 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true).SetSparse(true),
 				},
 			})
-
-			for _, index := range res {
-				color.Green(fmt.Sprintf("index %s created", index))
-			}
-
-			if err != nil {
-				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
-				log.Fatal(err)
-			}
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
 
 		case "zones":
-			color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{
 					Keys: bson.D{
@@ -152,15 +154,26 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true),
 				},
 			})
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
 
-			for _, index := range res {
-				color.Green(fmt.Sprintf("index %s created", index))
-			}
-
-			if err != nil {
-				color.Red("MongoDB: " + err.Error() + " on collection " + collection)
-				log.Fatal(err)
-			}
 		}
+	}
+}
+
+func createCollectionIndex(collection string) {
+	color.Cyan(fmt.Sprintf("creating indexes for %s", collection) + " collection ...")
+}
+
+func errCollectionIndexingCheck(err error, collection string) {
+	if err != nil {
+		color.Red("MongoDB: " + err.Error() + " on collection " + collection)
+		log.Fatal(err)
+	}
+}
+
+func notifyCollectionIndexesCreated(res []string) {
+	for _, index := range res {
+		color.Green(fmt.Sprintf("index %s created", index))
 	}
 }

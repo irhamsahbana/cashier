@@ -3,11 +3,11 @@ package usecase
 import (
 	"context"
 	"errors"
-	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"net/http"
 )
 
-func (u *userUsecase) Logout(c context.Context, userId, accessToken string) (*domain.UserResponse, int, error) {
+func (u *userUsecase) Logout(c context.Context, userId, accessToken string) (*dto.UserResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 

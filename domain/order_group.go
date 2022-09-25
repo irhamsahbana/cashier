@@ -2,7 +2,7 @@ package domain
 
 import (
 	"context"
-	"lucy/cashier/lib/dto"
+	"lucy/cashier/dto"
 )
 
 type OrderGroup struct {

@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"lucy/cashier/lib/dto"
+	"lucy/cashier/dto"
 	"net/http"
 	"time"
 )

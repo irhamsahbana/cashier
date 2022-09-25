@@ -3,13 +3,13 @@ package usecase
 import (
 	"context"
 	"errors"
-	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	jwthandler "lucy/cashier/lib/jwt_handler"
 	passwordhandler "lucy/cashier/lib/password_handler"
 	"net/http"
 )
 
-func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*domain.UserResponse, int, error) {
+func (u *userUsecase) Login(c context.Context, req *dto.UserLoginRequest) (*dto.UserResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -42,7 +42,7 @@ func (u *userUsecase) Login(c context.Context, req *domain.UserLoginRequest) (*d
 		return nil, code, err
 	}
 
-	var resp domain.UserResponse
+	var resp dto.UserResponse
 	resp.UUID = userResult.UUID
 	resp.BranchUUID = userResult.BranchUUID
 	resp.Name = userResult.Name

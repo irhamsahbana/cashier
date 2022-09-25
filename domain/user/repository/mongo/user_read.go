@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -32,7 +34,7 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 		filter = bson.M{
 			"$and": bson.A{
 				bson.M{key: val},
-				bson.M{"deleted_at": bson.M{"$exists": false}},
+				bson.M{"deleted_at": nil},
 			},
 		}
 	}
@@ -40,9 +42,15 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 	err := repo.Collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
+			logger.Log(logrus.Fields{
+				"error": err,
+			}).Error("user not found")
 			return nil, http.StatusNotFound, errors.New("user not found")
 		}
 
+		logger.Log(logrus.Fields{
+			"error": err,
+		}).Error("error while fetching user")
 		return nil, http.StatusInternalServerError, err
 	}
 

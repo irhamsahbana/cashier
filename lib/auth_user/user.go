@@ -4,6 +4,7 @@ import (
 	"context"
 	"lucy/cashier/bootstrap"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"net/http"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func FindUser(id string) (*domain.UserResponse, int, error) {
+func FindUser(id string) (*dto.UserResponse, int, error) {
 	c := context.Background()
 	ctx, cancel := context.WithTimeout(c, 10*time.Second)
 	defer cancel()
@@ -59,7 +60,7 @@ func FindUser(id string) (*domain.UserResponse, int, error) {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	var resp domain.UserResponse
+	var resp dto.UserResponse
 	resp.UUID = user.UUID
 	resp.BranchUUID = user.BranchUUID
 	resp.Name = user.Name

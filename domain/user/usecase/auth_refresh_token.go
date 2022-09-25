@@ -2,12 +2,12 @@ package usecase
 
 import (
 	"context"
-	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	jwthandler "lucy/cashier/lib/jwt_handler"
 	"net/http"
 )
 
-func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId string) (*domain.UserResponse, int, error) {
+func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId string) (*dto.UserResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -46,7 +46,7 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 		return nil, code, err
 	}
 
-	var resp domain.UserResponse
+	var resp dto.UserResponse
 	resp.UUID = user.UUID
 	resp.BranchUUID = user.BranchUUID
 	resp.Name = user.Name

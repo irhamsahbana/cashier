@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"lucy/cashier/domain"
 	"net/http"
 
@@ -31,7 +32,7 @@ func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, wit
 		filter = bson.M{
 			"$and": bson.A{
 				bson.M{"uuid": id},
-				bson.M{"deleted_at": bson.M{"$exists": false}},
+				bson.M{"deleted_at": nil},
 			},
 		}
 	}
@@ -39,7 +40,7 @@ func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, wit
 	err := repo.Collection.FindOne(ctx, filter).Decode(&userRole)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, http.StatusNotFound, err
+			return nil, http.StatusNotFound, errors.New("user role not found")
 		}
 
 		return nil, http.StatusInternalServerError, err
