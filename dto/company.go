@@ -23,6 +23,7 @@ type BranchResponse struct {
 	Taxes             []TaxResponse                 `json:"taxes"`
 	Tips              []TipResponse                 `json:"tips"`
 	Discounts         []BranchDiscountResponse      `json:"discounts"`
+	Employees         []UserResponse                `json:"employees"`
 	Address           AddressResponse               `json:"address"`
 	SocialMedia       SocialMediaResponse           `json:"social_media"`
 	FeePreference     FeePreferenceResponse         `json:"fee_preference"`

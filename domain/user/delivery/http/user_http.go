@@ -54,7 +54,7 @@ func (h *UserHandler) Profile(c *gin.Context) {
 	userId := c.GetString("user_uuid")
 
 	ctx := context.Background()
-	result, httpcode, err := h.UserUsecase.FindUser(ctx, userId, true)
+	result, httpcode, err := h.UserUsecase.UserBranchInfo(ctx, userId, true)
 	if err != nil {
 		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
 		return

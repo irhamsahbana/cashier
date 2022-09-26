@@ -25,6 +25,7 @@ type User struct {
 
 type UserUsecaseContract interface {
 	FindUser(ctx context.Context, id string, withTrashed bool) (*dto.UserResponse, int, error)
+	UserBranchInfo(ctx context.Context, id string, withTrashed bool) (*dto.BranchResponse, int, error)
 
 	Login(ctx context.Context, request *dto.UserLoginRequest) (*dto.UserResponse, int, error)
 	RefreshToken(ctx context.Context, oldAccessToken string, oldRefreshToken string, userId string) (*dto.UserResponse, int, error)

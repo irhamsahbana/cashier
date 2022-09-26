@@ -542,7 +542,7 @@
     "_id": "7383d5aa-ed31-4b8d-a280-9ae9d2c6092c",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "53658d17-9bd3-43b5-adb5-8d5441bc3781",
-    "name": "profile",
+    "name": "user info",
     "url": "{{base_url}}/user-infos",
     "method": "GET",
     "sortNum": 400000,
@@ -567,6 +567,25 @@
     "body": {
       "type": "json",
       "raw": "{\n  \"company\": {\n    \"name\": \"PT. Coba coba\"\n  },\n  \"branch\": {\n    \"name\": \"Cabang Perintis\",\n    \"timezone\": \"Asia/Makassar\",\n    \"phone\": \"082188449289\",\n    \"address\": {\n      \"province\": \"Sulawesi Selatan\",\n      \"city\": \"Makassar\",\n      \"street\": \"Jln. Percobaan No. 666\",\n      \"postal_code\": \"904321\"\n    }\n  },\n  \"user\": {\n    \"name\": \"Irham Sahbana\",\n    \"email\": \"irhamsahbana@gmail.com\",\n    \"phone\": \"082188449289\",\n    \"password\": \"password\"\n  }\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "1f4dc12f-4ada-4318-88bc-710267d01e59",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "97a169fd-cf1d-42f2-bf00-937d25adbb7c",
+    "name": "create quick order",
+    "url": "{{base_url}}/order-groups",
+    "method": "PUT",
+    "sortNum": 385000,
+    "created": "2022-09-26T03:09:29.806Z",
+    "modified": "2022-09-26T03:09:56.871Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"9c5db234-0703-456d-9023-e64f1a4889d9\",\n        \"name\": \"Kopi Kenangan\",\n        \"label\": \"Mantan\",\n        \"price\": 38000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"c5d8d41d-17f2-4851-9da6-c347bee176d0\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        },\n        {\n          \"uuid\": \"479f5bbd-8a90-4397-8d7f-3526d952de61\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        }\n      ],\n      \"waiter\": {\n        \"uuid\": \"de1d661d-49d8-49a2-a513-cce248db2890\",\n        \"branch_uuid\": \"601a2d5c-c950-4741-818d-12fc98555cdd\",\n        \"name\": \"Fahri\"\n      }\n    }\n  ],\n  \"created_by\": \"Fahri\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
       "form": []
     },
     "tests": []
