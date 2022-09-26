@@ -1,6 +1,7 @@
+.vscode/
+tmp/
 .DS_Store
 config.yaml
 storage-uploads
-tmp/
 logrus.log
 logrus.json
