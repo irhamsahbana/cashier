@@ -159,6 +159,8 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 
 		}
 	}
+
+	
 }
 
 func createCollectionIndex(collection string) {
