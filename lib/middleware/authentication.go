@@ -5,9 +5,11 @@ import (
 	authuser "lucy/cashier/lib/auth_user"
 	"lucy/cashier/lib/http_response"
 	jwthandler "lucy/cashier/lib/jwt_handler"
+	"lucy/cashier/lib/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func Auth(c *gin.Context) {
@@ -31,7 +33,12 @@ func Auth(c *gin.Context) {
 
 	user, code, err := authuser.FindUser(claims.UserUUID)
 	if err != nil {
-		fmt.Println("masuk sini gan xxx")
+		fmt.Println(err)
+		logger.Log(logrus.Fields{
+			"claims":    claims,
+			"user_uuid": claims.UserUUID,
+			"user":      user,
+		}).Error(err)
 		http_response.ReturnResponse(c, code, err.Error(), nil)
 		c.Abort()
 		return

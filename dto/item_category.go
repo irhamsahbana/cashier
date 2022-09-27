@@ -1,4 +1,4 @@
-package domain
+package dto
 
 import "time"
 
@@ -6,8 +6,8 @@ type ItemCategoryResponse struct {
 	UUID           string                  `json:"uuid"`
 	BranchUUID     string                  `json:"branch_uuid"`
 	Name           string                  `json:"name"`
-	Items          []ItemResponse          `json:"items"`
 	ModifierGroups []ModifierGroupResponse `json:"modifier_groups"`
+	Items          []ItemResponse          `json:"items"`
 	CreatedAt      time.Time               `json:"created_at"`
 	UpdatedAt      *time.Time              `json:"updated_at"`
 }
@@ -52,6 +52,8 @@ type ModifierResponse struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+// requests
+
 type ItemCategoryUpsertRequest struct {
 	UUID           string                 `json:"uuid"`
 	Name           string                 `json:"name"`
@@ -79,7 +81,7 @@ type ItemAndVariantsUpsertRequest struct {
 	Price       float32          `json:"price"`
 	Label       string           `json:"label"`
 	Variants    []VariantRequest `json:"variants"`
-	Description string           `json:"description"`
+	Description *string          `json:"description"`
 	Public      bool             `json:"public"`
 	ImagePath   *string          `json:"image_path"`
 }

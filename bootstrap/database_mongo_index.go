@@ -57,7 +57,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		}
 	}
 
-	//delete all indexes first
+	// delete all indexes first
 	for _, collection := range collections {
 		color.Yellow(fmt.Sprintf("deleting indexes from %s", collection) + " collection ...")
 		_, err := client.Database(dbName).Collection(collection).Indexes().DropAll(ctx)
@@ -67,7 +67,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		}
 	}
 
-	//create indexes
+	// create indexes
 	for _, collection := range collections {
 		switch collection {
 		case "users":
@@ -160,7 +160,18 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		}
 	}
 
-	
+	// // delete documents from collections
+	// for _, collection := range collections {
+	// 	color.Yellow(fmt.Sprintf("deleting documents from %s", collection) + " collection ...")
+	// 	_, err := client.Database(dbName).Collection(collection).DeleteMany(ctx, bson.M{})
+	// 	if err != nil {
+	// 		color.Red("MongoDB: " + err.Error() + " on collection " + collection)
+	// 		log.Fatal(err)
+	// 	}
+	// }
+
+	// // seeding dummy data
+	// dummydata.Seed(client.Database(dbName))
 }
 
 func createCollectionIndex(collection string) {

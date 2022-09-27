@@ -24,7 +24,7 @@ func FindUser(id string) (*dto.UserResponse, int, error) {
 	filter := bson.M{
 		"$and": bson.A{
 			bson.M{"uuid": id},
-			bson.M{"deleted_at": bson.M{"$exists": false}},
+			bson.M{"deleted_at": nil},
 		},
 	}
 

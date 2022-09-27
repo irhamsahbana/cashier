@@ -73,7 +73,6 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 			dataModifierGroup.UUID = mg.UUID
 			dataModifierGroup.Name = mg.Name
 			dataModifierGroup.Quantity = mg.Quantity
-			dataModifierGroup.Condition = mg.Condition
 			dataModifierGroup.Single = mg.Single
 			dataModifierGroup.Required = mg.Required
 

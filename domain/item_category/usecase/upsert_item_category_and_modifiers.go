@@ -3,15 +3,15 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/validator"
 )
 
-func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, branchId string, req *domain.ItemCategoryUpsertRequest) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, branchId string, req *dto.ItemCategoryUpsertRequest) (*dto.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -39,17 +39,8 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 		modifierGroupItem.UUID = modifierGroup.UUID
 		modifierGroupItem.Name = modifierGroup.Name
 		modifierGroupItem.Quantity = modifierGroup.Quantity
-		modifierGroupItem.Condition = modifierGroup.Condition
 		modifierGroupItem.Single = modifierGroup.Single
 		modifierGroupItem.Required = modifierGroup.Required
-
-		if modifierGroup.Condition != nil {
-			modifierGroupItem.Condition = modifierGroup.Condition
-
-			if err := validateCondition(*modifierGroup.Condition); err != nil {
-				return nil, http.StatusUnprocessableEntity, err
-			}
-		}
 
 		if modifierGroup.Modifiers != nil {
 			var modifiers []domain.Modifier
@@ -85,26 +76,31 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 		return nil, code, err
 	}
 
-	var resp domain.ItemCategoryResponse
+	var resp dto.ItemCategoryResponse
+	itemCategoryDomainToDTO_UpsertItemCategoryAndModifiers(&resp, result)
+
+	return &resp, http.StatusOK, nil
+}
+
+func itemCategoryDomainToDTO_UpsertItemCategoryAndModifiers(resp *dto.ItemCategoryResponse, result *domain.ItemCategory) {
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 
-	var modifierGroupsResp []domain.ModifierGroupResponse
+	var modifierGroupsResp []dto.ModifierGroupResponse
 	for _, modifierGroup := range result.ModifierGroups {
-		var modifierGroupItem domain.ModifierGroupResponse
+		var modifierGroupItem dto.ModifierGroupResponse
 
 		modifierGroupItem.UUID = modifierGroup.UUID
 		modifierGroupItem.Name = modifierGroup.Name
 		modifierGroupItem.Quantity = modifierGroup.Quantity
-		modifierGroupItem.Condition = modifierGroup.Condition
 		modifierGroupItem.Single = modifierGroup.Single
 		modifierGroupItem.Required = modifierGroup.Required
 
-		var modifiers []domain.ModifierResponse
+		var modifiers []dto.ModifierResponse
 		for _, modifier := range modifierGroup.Modifiers {
-			var modifierItem domain.ModifierResponse
+			var modifierItem dto.ModifierResponse
 
 			modifierItem.UUID = modifier.UUID
 			modifierItem.Name = modifier.Name
@@ -116,7 +112,7 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 		modifierGroupItem.Modifiers = modifiers
 
 		if len(modifierGroupItem.Modifiers) == 0 {
-			modifierGroupItem.Modifiers = make([]domain.ModifierResponse, 0)
+			modifierGroupItem.Modifiers = make([]dto.ModifierResponse, 0)
 		}
 
 		modifierGroupsResp = append(modifierGroupsResp, modifierGroupItem)
@@ -124,28 +120,15 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 	resp.ModifierGroups = modifierGroupsResp
 
 	if len(result.ModifierGroups) == 0 {
-		resp.ModifierGroups = []domain.ModifierGroupResponse{}
+		resp.ModifierGroups = []dto.ModifierGroupResponse{}
 	}
 
 	if len(result.Items) == 0 {
-		resp.Items = make([]domain.ItemResponse, 0)
+		resp.Items = make([]dto.ItemResponse, 0)
 	}
 
 	if result.UpdatedAt != nil {
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
 		resp.UpdatedAt = &respUpdatedAt
-	}
-
-	return &resp, http.StatusOK, nil
-}
-
-func validateCondition(condition domain.ModifierGroupCondition) error {
-	switch condition {
-	case domain.ModifierGroupCondition_MIN,
-		domain.ModifierGroupCondition_MAX,
-		domain.ModifierGroupCondition_EQUAL:
-		return nil
-	default:
-		return errors.New(fmt.Sprintf("invalid condition %s, choose one: %s, %s, %s", condition, domain.ModifierGroupCondition_MIN, domain.ModifierGroupCondition_MAX, domain.ModifierGroupCondition_EQUAL))
 	}
 }

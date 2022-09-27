@@ -39,6 +39,7 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 		resp.Timezone = branch.Timezone
 		resp.Public = branch.Public
 		resp.Preferences = branch.Preferences
+		resp.Phone = branch.Phone
 		resp.CreatedAt = time.UnixMicro(branch.CreatedAt).UTC()
 
 		// address
@@ -145,6 +146,36 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 		if len(respTips) == 0 {
 			resp.Tips = make([]dto.TipResponse, 0)
 		}
+
+		// payment methods
+		var respPaymentMethods []dto.PaymentMethodResponse
+		for _, paymentMethod := range branch.PaymentMethods {
+			var paymentMethodResp dto.PaymentMethodResponse
+			paymentMethodResp.UUID = paymentMethod.UUID
+			paymentMethodResp.EntryUUID = paymentMethod.EntryUUID
+			paymentMethodResp.Group = paymentMethod.Group
+			paymentMethodResp.Name = paymentMethod.Name
+			paymentMethodResp.Fee = paymentMethod.Fee
+			paymentMethodResp.Description = paymentMethod.Description
+			paymentMethodResp.Disabled = paymentMethod.Disabled
+			paymentMethodResp.CreatedAt = time.UnixMicro(paymentMethod.CreatedAt).UTC()
+			if paymentMethod.UpdatedAt != nil {
+				paymentMethodRespUpdatedAt := time.UnixMicro(*paymentMethod.UpdatedAt).UTC()
+				paymentMethodResp.UpdatedAt = &paymentMethodRespUpdatedAt
+			}
+			if paymentMethod.DeletedAt != nil {
+				paymentMethodRespDeletedAt := time.UnixMicro(*paymentMethod.DeletedAt).UTC()
+				paymentMethodResp.DeletedAt = &paymentMethodRespDeletedAt
+			}
+
+			respPaymentMethods = append(respPaymentMethods, paymentMethodResp)
+		}
+		resp.PaymentMethods = respPaymentMethods
+		if len(respPaymentMethods) == 0 {
+			resp.PaymentMethods = make([]dto.PaymentMethodResponse, 0)
+		}
+
+		//
 
 		// fee preferences
 		resp.FeePreference.Service.Nominal = branch.FeePreference.Service.Nominal

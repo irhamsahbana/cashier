@@ -24,19 +24,32 @@ type Branch struct {
 	UniqueIndentifier *string                       `bson:"unique_identifier"`
 	Name              string                        `bson:"name"`
 	Preferences       []customtype.BranchPreference `bson:"preferences"`
-	FeePreference     FeePreference                 `bson:"fee_preference"`
-	PaymentMethods    []string                      `bson:"payment_methods"`
-	Timezone          string                        `bson:"timezone"`
+	PaymentMethods    []PaymentMethod               `bson:"payment_methods"`
 	Taxes             []Tax                         `bson:"taxes"`
 	Tips              []Tip                         `bson:"tips"`
-	Phone             string                        `bson:"phone"`
 	Address           Address                       `bson:"address"`
+	FeePreference     FeePreference                 `bson:"fee_preference"`
 	SocialMedia       SocialMedia                   `bson:"social_media"`
+	Phone             string                        `bson:"phone"`
+	Timezone          string                        `bson:"timezone"`
 	Public            bool                          `bson:"public"`
 	Password          string                        `bson:"password"`
 	CreatedAt         int64                         `bson:"created_at"`
 	UpdatedAt         *int64                        `bson:"updated_at"`
 	DeletedAt         *int64                        `bson:"deleted_at"`
+}
+
+type PaymentMethod struct {
+	UUID        string                        `bson:"uuid"`
+	EntryUUID   *string                       `bson:"entry_uuid"`
+	Group       customtype.PaymentMethodGroup `bson:"group"`
+	Name        string                        `bson:"name"`
+	Fee         float32                       `bson:"fee"`
+	Description string                        `bson:"description"`
+	Disabled    bool                          `bson:"disabled"`
+	CreatedAt   int64                         `bson:"created_at"`
+	UpdatedAt   *int64                        `bson:"updated_at"`
+	DeletedAt   *int64                        `bson:"deleted_at"`
 }
 
 type Address struct {

@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v4"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/gin-gonic/gin"
 )
@@ -43,7 +44,6 @@ func (h *UserHandler) Login(c *gin.Context) {
 	result, httpCode, err := h.UserUsecase.Login(ctx, &request)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		c.Abort()
 		return
 	}
 
@@ -56,6 +56,11 @@ func (h *UserHandler) Profile(c *gin.Context) {
 	ctx := context.Background()
 	result, httpcode, err := h.UserUsecase.UserBranchInfo(ctx, userId, true)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			http_response.ReturnResponse(c, http.StatusNotFound, err.Error(), nil)
+			return
+		}
+
 		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
 		return
 	}
@@ -88,7 +93,6 @@ func (h *UserHandler) RefreshToken(c *gin.Context) {
 	result, httpCode, err := h.UserUsecase.RefreshToken(ctx, accessToken, refreshToken, claimsRT.UserUUID)
 	if err != nil {
 		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
-		c.Abort()
 		return
 	}
 

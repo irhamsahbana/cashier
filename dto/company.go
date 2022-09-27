@@ -20,6 +20,7 @@ type BranchResponse struct {
 	Name              string                        `json:"name"`
 	Company           CompanyResponse               `json:"company"`
 	Preferences       []customtype.BranchPreference `json:"preferences"`
+	PaymentMethods    []PaymentMethodResponse       `json:"payment_methods"`
 	Taxes             []TaxResponse                 `json:"taxes"`
 	Tips              []TipResponse                 `json:"tips"`
 	Discounts         []BranchDiscountResponse      `json:"discounts"`
@@ -27,11 +28,25 @@ type BranchResponse struct {
 	Address           AddressResponse               `json:"address"`
 	SocialMedia       SocialMediaResponse           `json:"social_media"`
 	FeePreference     FeePreferenceResponse         `json:"fee_preference"`
+	Phone             string                        `json:"phone"`
 	Timezone          string                        `json:"timezone"`
 	Public            bool                          `json:"public"`
 	CreatedAt         time.Time                     `json:"created_at"`
 	UpdatedAt         *time.Time                    `json:"updated_at"`
 	DeletedAt         *time.Time                    `json:"deleted_at"`
+}
+
+type PaymentMethodResponse struct {
+	UUID        string                        `json:"uuid"`
+	EntryUUID   *string                       `json:"entry_uuid"`
+	Group       customtype.PaymentMethodGroup `json:"group"`
+	Name        string                        `json:"name"`
+	Fee         float32                       `json:"fee"`
+	Description string                        `json:"description"`
+	Disabled    bool                          `json:"disabled"`
+	CreatedAt   time.Time                     `json:"created_at"`
+	UpdatedAt   *time.Time                    `json:"updated_at"`
+	DeletedAt   *time.Time                    `json:"deleted_at"`
 }
 
 type BranchDiscountResponse struct {

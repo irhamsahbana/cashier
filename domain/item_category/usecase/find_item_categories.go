@@ -82,7 +82,6 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 				dataModifierGroup.UUID = mg.UUID
 				dataModifierGroup.Name = mg.Name
 				dataModifierGroup.Quantity = mg.Quantity
-				dataModifierGroup.Condition = mg.Condition
 				dataModifierGroup.Single = mg.Single
 				dataModifierGroup.Required = mg.Required
 
@@ -132,3 +131,5 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 
 	return resp, http.StatusOK, nil
 }
+
+// func itemCategoryDomainToDTO_FindItemCategories(resp *dto)

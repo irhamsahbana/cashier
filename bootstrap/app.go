@@ -15,10 +15,10 @@ var (
 
 type Application struct {
 	Config *viper.Viper
+	Log    *logrus.Logger
 	Maria  *sql.DB
 	Mongo  *mongo.Client
 	Redis  *redis.Client
-	Log    *logrus.Logger
 }
 
 func init() {
@@ -28,8 +28,8 @@ func init() {
 func AppInit() {
 	App = &Application{}
 	App.Config = InitConfig()
+	App.Log = InitLogger()
 	App.Maria = InitMariaDatabase()
 	App.Mongo = InitMongoDatabase()
 	App.Redis = InitRedis()
-	App.Log = InitLogger()
 }

@@ -2,14 +2,7 @@ package domain
 
 import (
 	"context"
-)
-
-type ModifierGroupCondition string
-
-const (
-	ModifierGroupCondition_MIN   ModifierGroupCondition = "MIN"
-	ModifierGroupCondition_MAX   ModifierGroupCondition = "MAX"
-	ModifierGroupCondition_EQUAL ModifierGroupCondition = "EQUAL"
+	"lucy/cashier/dto"
 )
 
 type ItemCategory struct {
@@ -29,7 +22,7 @@ type Item struct {
 	Label       string    `bson:"label"`
 	Public      bool      `bson:"public"`
 	ImagePath   *string   `bson:"image_path"`
-	Description *string   `bson:"description"`
+	Description string    `bson:"description"`
 	Variants    []Variant `bson:"variants"`
 	CreatedAt   int64     `bson:"created_at"`
 	UpdatedAt   *int64    `bson:"updated_at"`
@@ -45,13 +38,12 @@ type Variant struct {
 }
 
 type ModifierGroup struct {
-	UUID      string                  `bson:"uuid"`
-	Name      string                  `bson:"name"`
-	Condition *ModifierGroupCondition `bson:"condition"`
-	Quantity  *int                    `bson:"quantity"`
-	Single    bool                    `bson:"single"`
-	Required  bool                    `bson:"required"`
-	Modifiers []Modifier              `bson:"modifiers"`
+	UUID      string     `bson:"uuid"`
+	Name      string     `bson:"name"`
+	Quantity  *int       `bson:"quantity"`
+	Single    bool       `bson:"single"`
+	Required  bool       `bson:"required"`
+	Modifiers []Modifier `bson:"modifiers"`
 }
 
 type Modifier struct {
@@ -63,13 +55,13 @@ type Modifier struct {
 }
 
 type ItemCategoryUsecaseContract interface {
-	UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, req *ItemCategoryUpsertRequest) (*ItemCategoryResponse, int, error)
-	FindItemCategories(ctx context.Context, branchId string) ([]ItemCategoryResponse, int, error)
-	DeleteItemCategory(ctx context.Context, branchId, id string) (*ItemCategoryResponse, int, error)
+	UpsertItemCategoryAndModifiers(ctx context.Context, branchId string, req *dto.ItemCategoryUpsertRequest) (*dto.ItemCategoryResponse, int, error)
+	FindItemCategories(ctx context.Context, branchId string) ([]dto.ItemCategoryResponse, int, error)
+	DeleteItemCategory(ctx context.Context, branchId, id string) (*dto.ItemCategoryResponse, int, error)
 
-	UpsertItemAndVariants(ctx context.Context, branchId, itemCategoryId string, req *ItemAndVariantsUpsertRequest) (*ItemResponse, int, error)
-	FindItemAndVariants(ctx context.Context, branchId, id string) (*ItemResponse, int, error)
-	DeleteItemAndVariants(ctx context.Context, branchId, id string) (*ItemResponse, int, error)
+	UpsertItemAndVariants(ctx context.Context, branchId, itemCategoryId string, req *dto.ItemAndVariantsUpsertRequest) (*dto.ItemResponse, int, error)
+	FindItemAndVariants(ctx context.Context, branchId, id string) (*dto.ItemResponse, int, error)
+	DeleteItemAndVariants(ctx context.Context, branchId, id string) (*dto.ItemResponse, int, error)
 }
 
 type ItemCategoryRepositoryContract interface {
