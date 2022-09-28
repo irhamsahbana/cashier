@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 )
 
-func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId, id string) (*domain.ItemResponse, int, error) {
+func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId, id string) (*dto.ItemResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -21,8 +22,13 @@ func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId,
 		return nil, code, err
 	}
 
-	var resp domain.ItemResponse
+	var resp dto.ItemResponse
+	itemCategoryDomainToDTO_DeleteItemAndVariants(&resp, result)
 
+	return &resp, http.StatusOK, nil
+}
+
+func itemCategoryDomainToDTO_DeleteItemAndVariants(resp *dto.ItemResponse, result *domain.ItemCategory) {
 	for _, item := range result.Items {
 		resp.UUID = item.UUID
 		resp.Name = item.Name
@@ -36,9 +42,9 @@ func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId,
 			resp.UpdatedAt = &respUpdatedAt
 		}
 
-		var variants []domain.VariantResponse
+		var variants []dto.VariantResponse
 		for _, v := range item.Variants {
-			var dataVariant domain.VariantResponse
+			var dataVariant dto.VariantResponse
 
 			dataVariant.UUID = v.UUID
 			dataVariant.Label = v.Label
@@ -48,9 +54,5 @@ func (u *itemCategoryUsecase) DeleteItemAndVariants(c context.Context, branchId,
 			variants = append(variants, dataVariant)
 		}
 		resp.Variants = variants
-
-		return &resp, http.StatusOK, nil
 	}
-
-	return &resp, http.StatusOK, nil
 }

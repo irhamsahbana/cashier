@@ -62,11 +62,10 @@ func (u *zoneUsecase) UpsertZones(ctx context.Context, branchId string, req *dom
 
 			spaceGroupResp.UUID = spaceGroup.UUID
 			spaceGroupResp.BranchUUID = spaceGroup.BranchUUID
+			spaceGroupResp.Name = spaceGroup.Name
 			spaceGroupResp.Code = spaceGroup.Code
 			spaceGroupResp.Shape = spaceGroup.Shape
 			spaceGroupResp.Pax = spaceGroup.Pax
-			spaceGroupResp.Floor = spaceGroup.Floor
-			spaceGroupResp.Smooking = spaceGroup.Smooking
 			spaceGroupResp.CreatedAt = time.UnixMicro(spaceGroup.CreatedAt).UTC()
 
 			for _, space := range spaceGroup.Spaces {

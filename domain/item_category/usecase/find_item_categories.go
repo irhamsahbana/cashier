@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 )
 
-func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId string) ([]domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId string) ([]dto.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -17,119 +18,117 @@ func (u *itemCategoryUsecase) FindItemCategories(c context.Context, branchId str
 		return nil, code, err
 	}
 
-	var resp []domain.ItemCategoryResponse
+	var resp []dto.ItemCategoryResponse
+	resp = itemCategoryDomainToDTO_FindItemCategories(resp, result)
 
-	// mc -> item category, m -> item
+	return resp, http.StatusOK, nil
+}
+
+func itemCategoryDomainToDTO_FindItemCategories(resp []dto.ItemCategoryResponse, result []domain.ItemCategory) []dto.ItemCategoryResponse {
 	for _, mc := range result {
-		var data domain.ItemCategoryResponse
-		var items []domain.ItemResponse
-		var modifierGroups []domain.ModifierGroupResponse
+		var data dto.ItemCategoryResponse
+		var items []dto.ItemResponse
+		var modifierGroups []dto.ModifierGroupResponse
 
 		data.UUID = mc.UUID
 		data.BranchUUID = mc.BranchUUID
 		data.Name = mc.Name
 		data.CreatedAt = time.UnixMicro(mc.CreatedAt).UTC()
 		if mc.UpdatedAt != nil {
-			dataUpdatedAt := time.UnixMicro(*mc.UpdatedAt).UTC()
-			data.UpdatedAt = &dataUpdatedAt
+			respUpdatedAt := time.UnixMicro(*mc.UpdatedAt).UTC()
+			data.UpdatedAt = &respUpdatedAt
 		}
 
-		if len(mc.Items) > 0 {
-			for _, m := range mc.Items {
-				var dataItem domain.ItemResponse
+		// items
+		for _, m := range mc.Items {
+			var dataItem dto.ItemResponse
 
-				dataItem.UUID = m.UUID
-				dataItem.Name = m.Name
-				dataItem.Price = m.Price
-				dataItem.Description = m.Description
-				dataItem.Label = m.Label
-				dataItem.Public = m.Public
-				dataItem.ImagePath = m.ImagePath
+			dataItem.UUID = m.UUID
+			dataItem.Name = m.Name
+			dataItem.Price = m.Price
+			dataItem.Description = m.Description
+			dataItem.Label = m.Label
+			dataItem.Public = m.Public
+			dataItem.ImagePath = m.ImagePath
 
-				for _, v := range m.Variants {
-					var dataVariant domain.VariantResponse
+			for _, v := range m.Variants {
+				var dataVariant dto.VariantResponse
 
-					dataVariant.UUID = v.UUID
-					dataVariant.Label = v.Label
-					dataVariant.Price = v.Price
-					dataVariant.Public = v.Public
-					dataVariant.ImagePath = v.ImagePath
-					dataItem.Variants = append(dataItem.Variants, dataVariant)
-				}
-
-				if len(dataItem.Variants) == 0 {
-					dataItem.Variants = make([]domain.VariantResponse, 0)
-				}
-
-				dataItem.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
-				if m.UpdatedAt != nil {
-					dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
-					dataItem.UpdatedAt = &dataUpdatedAt
-				}
-
-				items = append(items, dataItem)
+				dataVariant.UUID = v.UUID
+				dataVariant.Label = v.Label
+				dataVariant.Price = v.Price
+				dataVariant.Public = v.Public
+				dataVariant.ImagePath = v.ImagePath
+				dataItem.Variants = append(dataItem.Variants, dataVariant)
 			}
 
-			if len(items) == 0 {
-				items = make([]domain.ItemResponse, 0)
+			if len(dataItem.Variants) == 0 {
+				dataItem.Variants = make([]dto.VariantResponse, 0)
 			}
+
+			dataItem.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
+			if m.UpdatedAt != nil {
+				respUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
+				dataItem.UpdatedAt = &respUpdatedAt
+			}
+
+			items = append(items, dataItem)
 		}
-
-		if len(mc.ModifierGroups) > 0 {
-			for _, mg := range mc.ModifierGroups {
-				var dataModifierGroup domain.ModifierGroupResponse
-
-				dataModifierGroup.UUID = mg.UUID
-				dataModifierGroup.Name = mg.Name
-				dataModifierGroup.Quantity = mg.Quantity
-				dataModifierGroup.Single = mg.Single
-				dataModifierGroup.Required = mg.Required
-
-				if len(mg.Modifiers) > 0 {
-					for _, m := range mg.Modifiers {
-						var dataModifier domain.ModifierResponse
-
-						dataModifier.UUID = m.UUID
-						dataModifier.Name = m.Name
-						dataModifier.Price = m.Price
-						dataModifier.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
-						if m.UpdatedAt != nil {
-							dataUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
-							dataModifier.UpdatedAt = &dataUpdatedAt
-						}
-
-						dataModifierGroup.Modifiers = append(dataModifierGroup.Modifiers, dataModifier)
-					}
-
-					if len(dataModifierGroup.Modifiers) == 0 {
-						dataModifierGroup.Modifiers = make([]domain.ModifierResponse, 0)
-					}
-				}
-
-				modifierGroups = append(modifierGroups, dataModifierGroup)
-			}
-
-			data.ModifierGroups = modifierGroups
-
-			if len(data.ModifierGroups) == 0 {
-				data.ModifierGroups = make([]domain.ModifierGroupResponse, 0)
-			}
-		}
-
+		// items, when empty make it empty array
 		data.Items = items
-
 		if len(data.Items) == 0 {
-			data.Items = make([]domain.ItemResponse, 0)
+			data.Items = make([]dto.ItemResponse, 0)
+		}
+
+		// modifier groups
+		for _, mg := range mc.ModifierGroups {
+			var dataModifierGroup dto.ModifierGroupResponse
+			dataModifierGroup.UUID = mg.UUID
+			dataModifierGroup.Name = mg.Name
+			dataModifierGroup.MaxQty = mg.MaxQty
+			dataModifierGroup.MinQty = mg.MinQty
+
+			// modifiers
+			for _, m := range mg.Modifiers {
+				var dataModifier dto.ModifierResponse
+
+				dataModifier.UUID = m.UUID
+				dataModifier.Name = m.Name
+				dataModifier.Price = m.Price
+				dataModifier.CreatedAt = time.UnixMicro(m.CreatedAt).UTC()
+				if m.UpdatedAt != nil {
+					respUpdatedAt := time.UnixMicro(*m.UpdatedAt).UTC()
+					dataModifier.UpdatedAt = &respUpdatedAt
+				}
+
+				dataModifierGroup.Modifiers = append(dataModifierGroup.Modifiers, dataModifier)
+			}
+			// modifiers, when empty make it empty array
+			if len(dataModifierGroup.Modifiers) == 0 {
+				dataModifierGroup.Modifiers = make([]dto.ModifierResponse, 0)
+			}
+
+			dataModifierGroup.CreatedAt = time.UnixMicro(mg.CreatedAt).UTC()
+			if mg.UpdatedAt != nil {
+				respUpdatedAt := time.UnixMicro(*mg.UpdatedAt).UTC()
+				dataModifierGroup.UpdatedAt = &respUpdatedAt
+			}
+
+			modifierGroups = append(modifierGroups, dataModifierGroup)
+		}
+		// modifier groups, when empty make it empty array
+		data.ModifierGroups = modifierGroups
+		if len(modifierGroups) == 0 {
+			data.ModifierGroups = make([]dto.ModifierGroupResponse, 0)
 		}
 
 		resp = append(resp, data)
 	}
 
+	// if not have item category ( include item & modifier group not found) so make empty array
 	if len(resp) == 0 {
-		resp = make([]domain.ItemCategoryResponse, 0)
+		resp = make([]dto.ItemCategoryResponse, 0)
 	}
 
-	return resp, http.StatusOK, nil
+	return resp
 }
-
-// func itemCategoryDomainToDTO_FindItemCategories(resp *dto)

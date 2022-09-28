@@ -25,11 +25,10 @@ func (u *spaceGroupUsecase) FindSpaceGroups(c context.Context, branchId string, 
 
 		data.UUID = sg.UUID
 		data.BranchUUID = sg.BranchUUID
+		data.Name = sg.Name
 		data.Code = sg.Code
 		data.Shape = sg.Shape
 		data.Pax = sg.Pax
-		data.Floor = sg.Floor
-		data.Smooking = sg.Smooking
 		data.CreatedAt = time.UnixMicro(sg.CreatedAt).UTC()
 		if sg.UpdatedAt != nil {
 			dataUpdatedAt := time.UnixMicro(*sg.UpdatedAt).UTC()

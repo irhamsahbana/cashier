@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
 	"lucy/cashier/lib/middleware"
 
@@ -43,7 +44,7 @@ func NewItemCategoryHandler(router *gin.Engine, usecase domain.ItemCategoryUseca
 }
 
 func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
-	var request domain.ItemCategoryUpsertRequest
+	var request dto.ItemCategoryUpsertRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -96,7 +97,7 @@ func (h *ItemCategoryHandler) UpsertItemAndVariants(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 	itemCategoryId := c.Param("itemCategoryId")
 
-	var request domain.ItemAndVariantsUpsertRequest
+	var request dto.ItemAndVariantsUpsertRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {

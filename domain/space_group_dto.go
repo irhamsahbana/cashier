@@ -5,12 +5,11 @@ import "time"
 type SpaceGroupResponse struct {
 	UUID       string          `json:"uuid"`
 	BranchUUID string          `json:"branch_uuid"`
+	Name       string          `json:"name"`
 	Spaces     []SpaceResponse `json:"spaces"`
 	Code       string          `json:"code"`
 	Shape      SpaceGroupShape `json:"shape"`
 	Pax        uint            `json:"pax"`
-	Floor      uint            `json:"floor"`
-	Smooking   bool            `json:"smooking"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  *time.Time      `json:"updated_at"`
 	DeletedAt  *time.Time      `json:"deleted_at"`
@@ -26,9 +25,12 @@ type SpaceResponse struct {
 	DeletedAt   *time.Time `json:"deleted_at"`
 }
 
+// requests
+
 type SpaceGroupUpsertRequest struct {
 	UUID      string          `json:"uuid"`
 	Code      string          `json:"code"`
+	Name      string          `json:"name"`
 	Shape     SpaceGroupShape `json:"shape"`
 	Pax       uint            `json:"pax"`
 	Floor     uint            `json:"floor"`

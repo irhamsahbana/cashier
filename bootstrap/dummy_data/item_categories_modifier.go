@@ -14,17 +14,15 @@ func modifierGroups1() bson.A {
 	return data
 }
 
-func modifierGroup1() bson.A {
-	data := bson.A{
-		bson.D{
-			{Key: "uuid", Value: "2d09500f-eed9-471d-956e-d15f34cbd60f"},
-			{Key: "name", Value: "Topping"},
-			{Key: "modifiers", Value: modifierGroup1Modifiers()},
-			{Key: "max_quantity", Value: 1},
-			{Key: "min_quantity", Value: 1},
-			{Key: "created_at", Value: 1660403045123456},
-			{Key: "updated_at", Value: nil},
-		},
+func modifierGroup1() bson.D {
+	data := bson.D{
+		{Key: "uuid", Value: "2d09500f-eed9-471d-956e-d15f34cbd60f"},
+		{Key: "name", Value: "Topping"},
+		{Key: "modifiers", Value: modifierGroup1Modifiers()},
+		{Key: "max_quantity", Value: 1},
+		{Key: "min_quantity", Value: 1},
+		{Key: "created_at", Value: 1660403045123456},
+		{Key: "updated_at", Value: nil},
 	}
 
 	return data
@@ -58,17 +56,15 @@ func modifierGroup1Modifiers() bson.A {
 	return data
 }
 
-func modifierGroup2() bson.A {
-	data := bson.A{
-		bson.D{
-			{Key: "uuid", Value: "064532a1-4c00-4d96-9342-824710d4be56"},
-			{Key: "name", Value: "sugar"},
-			{Key: "modifiers", Value: modifierGroup2Modifiers()},
-			{Key: "max_quantity", Value: 1},
-			{Key: "min_quantity", Value: 1},
-			{Key: "created_at", Value: 1660403045123456},
-			{Key: "updated_at", Value: nil},
-		},
+func modifierGroup2() bson.D {
+	data := bson.D{
+		{Key: "uuid", Value: "064532a1-4c00-4d96-9342-824710d4be56"},
+		{Key: "name", Value: "sugar"},
+		{Key: "modifiers", Value: modifierGroup2Modifiers()},
+		{Key: "max_quantity", Value: 1},
+		{Key: "min_quantity", Value: 1},
+		{Key: "created_at", Value: 1660403045123456},
+		{Key: "updated_at", Value: nil},
 	}
 
 	return data

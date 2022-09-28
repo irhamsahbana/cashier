@@ -38,9 +38,9 @@ type ModifierGroupResponse struct {
 	UUID      string             `json:"uuid"`
 	Name      string             `json:"name"`
 	Modifiers []ModifierResponse `json:"modifiers"`
-	Quantity  *int               `json:"quantity"`
-	Single    bool               `json:"single"`
-	Required  bool               `json:"required"`
+	MaxQty    *int               `json:"max_quantity"`
+	MinQty    *int               `json:"min_quantity"`
+	CreatedAt time.Time          `json:"created_at"`
 	UpdatedAt *time.Time         `json:"updated_at"`
 }
 
@@ -64,9 +64,8 @@ type ModifierGroupRequest struct {
 	UUID      string            `json:"uuid"`
 	Name      string            `json:"name"`
 	Modifiers []ModifierRequest `json:"modifiers"`
-	Quantity  *int              `json:"quantity"`
-	Single    bool              `json:"single"`
-	Required  bool              `json:"required"`
+	MaxQty    *int              `json:"max_quantity"`
+	MinQty    *int              `json:"min_quantity"`
 }
 
 type ModifierRequest struct {
@@ -81,7 +80,7 @@ type ItemAndVariantsUpsertRequest struct {
 	Price       float32          `json:"price"`
 	Label       string           `json:"label"`
 	Variants    []VariantRequest `json:"variants"`
-	Description *string          `json:"description"`
+	Description string           `json:"description"`
 	Public      bool             `json:"public"`
 	ImagePath   *string          `json:"image_path"`
 }

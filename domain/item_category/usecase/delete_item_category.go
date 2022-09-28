@@ -6,9 +6,10 @@ import (
 	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 )
 
-func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id string) (*domain.ItemCategoryResponse, int, error) {
+func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id string) (*dto.ItemCategoryResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -21,7 +22,13 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 		return nil, code, err
 	}
 
-	var resp domain.ItemCategoryResponse
+	var resp dto.ItemCategoryResponse
+	itemCategoryDomainToDTO_DeleteItemCategory(&resp, result)
+
+	return &resp, http.StatusOK, nil
+}
+
+func itemCategoryDomainToDTO_DeleteItemCategory(resp *dto.ItemCategoryResponse, result *domain.ItemCategory) {
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.Name = result.Name
@@ -31,10 +38,11 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 		resp.UpdatedAt = &respUpdatedAt
 	}
 
-	var items []domain.ItemResponse
+	// items
+	var items []dto.ItemResponse
 	if len(result.Items) > 0 {
 		for _, m := range result.Items {
-			var dataItem domain.ItemResponse
+			var dataItem dto.ItemResponse
 
 			dataItem.UUID = m.UUID
 			dataItem.Name = m.Name
@@ -44,7 +52,7 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 			dataItem.Public = m.Public
 			dataItem.ImagePath = m.ImagePath
 			for _, v := range m.Variants {
-				var dataVariant domain.VariantResponse
+				var dataVariant dto.VariantResponse
 
 				dataVariant.UUID = v.UUID
 				dataVariant.Label = v.Label
@@ -65,20 +73,18 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 		resp.Items = items
 	}
 
-	var modifierGroups []domain.ModifierGroupResponse
+	// modifier groups
+	var modifierGroups []dto.ModifierGroupResponse
 	if len(result.ModifierGroups) > 0 {
 		for _, mg := range result.ModifierGroups {
-			var dataModifierGroup domain.ModifierGroupResponse
+			var dataModifierGroup dto.ModifierGroupResponse
 
 			dataModifierGroup.UUID = mg.UUID
 			dataModifierGroup.Name = mg.Name
-			dataModifierGroup.Quantity = mg.Quantity
-			dataModifierGroup.Single = mg.Single
-			dataModifierGroup.Required = mg.Required
 
 			if len(mg.Modifiers) > 0 {
 				for _, m := range mg.Modifiers {
-					var dataModifier domain.ModifierResponse
+					var dataModifier dto.ModifierResponse
 
 					dataModifier.UUID = m.UUID
 					dataModifier.Name = m.Name
@@ -98,6 +104,4 @@ func (u *itemCategoryUsecase) DeleteItemCategory(c context.Context, branchId, id
 
 		resp.ModifierGroups = modifierGroups
 	}
-
-	return &resp, http.StatusOK, nil
 }

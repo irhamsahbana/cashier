@@ -30,10 +30,9 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 	var data domain.SpaceGroup
 	data.UUID = req.UUID
 	data.BranchUUID = branchId
+	data.Name = req.Name
 	data.Code = req.Code
 	data.Pax = req.Pax
-	data.Floor = req.Floor
-	data.Smooking = req.Smooking
 	data.Shape = req.Shape
 	data.CreatedAt = createdAt.UTC().UnixMicro()
 
@@ -45,11 +44,10 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 	var resp domain.SpaceGroupResponse
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
+	resp.Name = result.Name
 	resp.Code = result.Code
 	resp.Shape = result.Shape
 	resp.Pax = result.Pax
-	resp.Floor = result.Floor
-	resp.Smooking = result.Smooking
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.UpdatedAt != nil {
 		respUpdatedAt := time.UnixMicro(*result.UpdatedAt).UTC()

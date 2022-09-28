@@ -15,6 +15,24 @@ type ItemCategory struct {
 	UpdatedAt      *int64          `bson:"updated_at"`
 }
 
+type ModifierGroup struct {
+	UUID      string     `bson:"uuid"`
+	Name      string     `bson:"name"`
+	Modifiers []Modifier `bson:"modifiers"`
+	MaxQty    *int       `bson:"max_quantity"`
+	MinQty    *int       `bson:"min_quantity"`
+	CreatedAt int64      `bson:"created_at"`
+	UpdatedAt *int64     `bson:"updated_at"`
+}
+
+type Modifier struct {
+	UUID      string  `bson:"uuid"`
+	Name      string  `bson:"name"`
+	Price     float32 `bson:"price"`
+	CreatedAt int64   `bson:"created_at"`
+	UpdatedAt *int64  `bson:"updated_at"`
+}
+
 type Item struct {
 	UUID        string    `bson:"uuid"`
 	Name        string    `bson:"name"`
@@ -35,23 +53,6 @@ type Variant struct {
 	Public    bool    `bson:"public"`
 	ImagePath *string `bson:"image_path"`
 	CreatedAt int64   `bson:"created_at"`
-}
-
-type ModifierGroup struct {
-	UUID      string     `bson:"uuid"`
-	Name      string     `bson:"name"`
-	Quantity  *int       `bson:"quantity"`
-	Single    bool       `bson:"single"`
-	Required  bool       `bson:"required"`
-	Modifiers []Modifier `bson:"modifiers"`
-}
-
-type Modifier struct {
-	UUID      string  `bson:"uuid"`
-	Name      string  `bson:"name"`
-	Price     float32 `bson:"price"`
-	CreatedAt int64   `bson:"created_at"`
-	UpdatedAt *int64  `bson:"updated_at"`
 }
 
 type ItemCategoryUsecaseContract interface {

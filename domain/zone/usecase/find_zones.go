@@ -34,11 +34,10 @@ func (u *zoneUsecase) Zones(ctx context.Context, branchId string) (*domain.Zones
 
 			spaceGroupResp.UUID = spaceGroup.UUID
 			spaceGroupResp.BranchUUID = spaceGroup.BranchUUID
+			spaceGroupResp.Name = spaceGroup.Name
 			spaceGroupResp.Code = spaceGroup.Code
 			spaceGroupResp.Shape = spaceGroup.Shape
 			spaceGroupResp.Pax = spaceGroup.Pax
-			spaceGroupResp.Floor = spaceGroup.Floor
-			spaceGroupResp.Smooking = spaceGroup.Smooking
 			spaceGroupResp.CreatedAt = time.UnixMicro(spaceGroup.CreatedAt).UTC()
 
 			for _, space := range spaceGroup.Spaces {

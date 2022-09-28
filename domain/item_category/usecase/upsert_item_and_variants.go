@@ -3,12 +3,13 @@ package usecase
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/validator"
 	"net/http"
 	"time"
 )
 
-func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId, itemCategoryId string, req *domain.ItemAndVariantsUpsertRequest) (*domain.ItemResponse, int, error) {
+func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId, itemCategoryId string, req *dto.ItemAndVariantsUpsertRequest) (*dto.ItemResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -50,10 +51,15 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 		return nil, code, err
 	}
 
-	var resp domain.ItemResponse
+	var resp dto.ItemResponse
+	itemCategoryDomainToDTO_UpsertItemAndVariants(&resp, result)
 
+	return &resp, code, nil
+}
+
+func itemCategoryDomainToDTO_UpsertItemAndVariants(resp *dto.ItemResponse, result *domain.ItemCategory) {
 	for _, item := range result.Items {
-		if item.UUID != req.UUID {
+		if item.UUID != resp.UUID {
 			continue
 		}
 
@@ -70,9 +76,9 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 			resp.UpdatedAt = &respUpdatedAt
 		}
 
-		var variants []domain.VariantResponse
+		var variants []dto.VariantResponse
 		for _, v := range item.Variants {
-			var variant domain.VariantResponse
+			var variant dto.VariantResponse
 
 			variant.UUID = v.UUID
 			variant.Price = v.Price
@@ -84,7 +90,9 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 			variants = append(variants, variant)
 		}
 		resp.Variants = variants
-	}
 
-	return &resp, code, nil
+		if len(resp.Variants) == 0 {
+			resp.Variants = make([]dto.VariantResponse, 0)
+		}
+	}
 }

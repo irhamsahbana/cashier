@@ -17,25 +17,25 @@ var ErrSpaceGroupShapeInvalid = errors.New("space group shape invalid")
 type SpaceGroup struct {
 	UUID       string          `bson:"uuid"`
 	BranchUUID string          `bson:"branch_uuid"`
-	Spaces     []Space         `bson:"spaces,omitempty"`
+	Spaces     []Space         `bson:"spaces"`
+	Name       string          `bson:"name"`
 	Code       string          `bson:"code"`
+	Length     uint8           `bson:"length"`
 	Shape      SpaceGroupShape `bson:"shape"`
 	Pax        uint            `bson:"pax"`
-	Floor      uint            `bson:"floor"`
-	Smooking   bool            `bson:"smooking"`
 	CreatedAt  int64           `bson:"created_at"`
-	UpdatedAt  *int64          `bson:"updated_at,omitempty"`
-	DeletedAt  *int64          `bson:"deleted_at,omitempty"`
+	UpdatedAt  *int64          `bson:"updated_at"`
+	DeletedAt  *int64          `bson:"deleted_at"`
 }
 
 type Space struct {
 	UUID        string  `bson:"uuid"`
 	Number      int     `bson:"number"`
 	Occupied    bool    `bson:"occupied"`
-	Description *string `bson:"description,omitempty"`
+	Description *string `bson:"description"`
 	CreatedAt   int64   `bson:"created_at"`
-	UpdatedAt   *int64  `bson:"updated_at,omitempty"`
-	DeletedAt   *int64  `bson:"deleted_at,omitempty"`
+	UpdatedAt   *int64  `bson:"updated_at"`
+	DeletedAt   *int64  `bson:"deleted_at"`
 }
 
 type SpaceGroupUsecaseContract interface {

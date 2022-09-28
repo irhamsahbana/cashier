@@ -38,9 +38,6 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 
 		modifierGroupItem.UUID = modifierGroup.UUID
 		modifierGroupItem.Name = modifierGroup.Name
-		modifierGroupItem.Quantity = modifierGroup.Quantity
-		modifierGroupItem.Single = modifierGroup.Single
-		modifierGroupItem.Required = modifierGroup.Required
 
 		if modifierGroup.Modifiers != nil {
 			var modifiers []domain.Modifier
@@ -94,9 +91,6 @@ func itemCategoryDomainToDTO_UpsertItemCategoryAndModifiers(resp *dto.ItemCatego
 
 		modifierGroupItem.UUID = modifierGroup.UUID
 		modifierGroupItem.Name = modifierGroup.Name
-		modifierGroupItem.Quantity = modifierGroup.Quantity
-		modifierGroupItem.Single = modifierGroup.Single
-		modifierGroupItem.Required = modifierGroup.Required
 
 		var modifiers []dto.ModifierResponse
 		for _, modifier := range modifierGroup.Modifiers {

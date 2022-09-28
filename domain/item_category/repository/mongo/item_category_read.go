@@ -6,7 +6,9 @@ import (
 	"net/http"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	// "go.mongodb.org/mongo-driver/mongo/options"
@@ -64,10 +66,12 @@ func (repo *itemCategoryMongoRepository) FindItemCategories(ctx context.Context,
 
 	cursor, err := repo.Collection.Aggregate(ctx, pipeline)
 	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 
 	if err := cursor.All(ctx, &itemcategories); err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 

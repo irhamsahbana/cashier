@@ -6,24 +6,25 @@ import (
 )
 
 func Seed(DB *mongo.Database) error {
-	company := DB.Collection("companies")
-	collectionCompany(company)
+	collectionCompany(DB.Collection("companies"))
 	color.Green("Dummy companies data seeded")
 
-	branchDiscount := DB.Collection("branch_discounts")
-	collectionBranchDiscount(branchDiscount)
+	collectionBranchDiscount(DB.Collection("branch_discounts"))
 	color.Green("Dummy branch_discounts data seeded")
 
-	itemCategory := DB.Collection("item_categories")
-	collectionItemCategory(itemCategory)
+	collectionSpaceGroup(DB.Collection("space_groups"))
+	color.Green("Dummy space_groups data seeded")
+
+	collectionZone(DB.Collection("zones"))
+	color.Green("Dummy zones data seeded")
+
+	collectionItemCategory(DB.Collection("item_categories"))
 	color.Green("Dummy item_categories data seeded")
 
-	userRole := DB.Collection("user_roles")
-	collectionUserRole(userRole)
+	collectionUserRole(DB.Collection("user_roles"))
 	color.Green("Dummy user_roles data seeded")
 
-	user := DB.Collection("users")
-	collectionUser(user)
+	collectionUser(DB.Collection("users"))
 	color.Green("Dummy users data seeded")
 
 	return nil

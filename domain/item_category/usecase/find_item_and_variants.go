@@ -3,11 +3,12 @@ package usecase
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"net/http"
 	"time"
 )
 
-func (u *itemCategoryUsecase) FindItemAndVariants(c context.Context, branchId, id string) (*domain.ItemResponse, int, error) {
+func (u *itemCategoryUsecase) FindItemAndVariants(c context.Context, branchId, id string) (*dto.ItemResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -20,8 +21,13 @@ func (u *itemCategoryUsecase) FindItemAndVariants(c context.Context, branchId, i
 		return nil, http.StatusOK, nil
 	}
 
-	var resp domain.ItemResponse
+	var resp dto.ItemResponse
+	itemCategoryDomainToDTO_FindItemAndVariants(&resp, result)
 
+	return &resp, http.StatusOK, nil
+}
+
+func itemCategoryDomainToDTO_FindItemAndVariants(resp *dto.ItemResponse, result *domain.ItemCategory) {
 	for _, item := range result.Items {
 		resp.UUID = item.UUID
 		resp.Name = item.Name
@@ -35,9 +41,9 @@ func (u *itemCategoryUsecase) FindItemAndVariants(c context.Context, branchId, i
 			resp.UpdatedAt = &respUpdatedAt
 		}
 
-		var variants []domain.VariantResponse
+		var variants []dto.VariantResponse
 		for _, v := range item.Variants {
-			var dataVariant domain.VariantResponse
+			var dataVariant dto.VariantResponse
 
 			dataVariant.UUID = v.UUID
 			dataVariant.Label = v.Label
@@ -47,9 +53,5 @@ func (u *itemCategoryUsecase) FindItemAndVariants(c context.Context, branchId, i
 			variants = append(variants, dataVariant)
 		}
 		resp.Variants = variants
-
-		return &resp, http.StatusOK, nil
 	}
-
-	return &resp, http.StatusOK, nil
 }

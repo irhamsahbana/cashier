@@ -51,8 +51,6 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 				{Key: "code", Value: data.Code},
 				{Key: "shape", Value: data.Shape},
 				{Key: "pax", Value: data.Pax},
-				{Key: "floor", Value: data.Floor},
-				{Key: "smooking", Value: data.Smooking},
 				{Key: "updated_at", Value: updatedAt},
 			}},
 		}
@@ -69,12 +67,11 @@ func (repo *spaceGroupMongoRepository) UpsertSpaceGroup(ctx context.Context, dat
 		contents := bson.D{
 			{Key: "uuid", Value: data.UUID},
 			{Key: "branch_uuid", Value: data.BranchUUID},
+			{Key: "name", Value: data.Name},
 			{Key: "spaces", Value: bson.A{}},
 			{Key: "code", Value: data.Code},
 			{Key: "shape", Value: data.Shape},
 			{Key: "pax", Value: data.Pax},
-			{Key: "floor", Value: data.Floor},
-			{Key: "smooking", Value: data.Smooking},
 			{Key: "created_at", Value: data.CreatedAt},
 			{Key: "updated_at", Value: nil},
 			{Key: "deleted_at", Value: nil},

@@ -87,6 +87,9 @@ func InitMongoDatabase() *mongo.Client {
 	errCheck("MongoDB", err)
 
 	color.Green(fmt.Sprintf("connected to MongoDB from %s:%s", dbHost, dbPort))
+	// // be careful, this will delete all data in your database and seed it again
+	// defer initMongoDatabaseDummyData(ctx, client, dbName)
+	// //
 	defer initMongoDatabaseIndexes(ctx, client, dbName)
 
 	return client
