@@ -35,6 +35,10 @@ import (
 	_waiterRepo "lucy/cashier/domain/waiter/repository/mongo"
 	_waiterUsecase "lucy/cashier/domain/waiter/usecase"
 
+	_orderHttp "lucy/cashier/domain/order/delivery/http"
+	_orderRepo "lucy/cashier/domain/order/repository/mongo"
+	_orderUsecase "lucy/cashier/domain/order/usecase"
+
 	_shiftHttp "lucy/cashier/domain/employee_shift/delivery/http"
 	_shiftRepo "lucy/cashier/domain/employee_shift/repository/mongo"
 	_shiftUsecase "lucy/cashier/domain/employee_shift/usecase"
@@ -82,6 +86,11 @@ func NewHttpRoutes(r *gin.Engine) {
 	waiterRepo := _waiterRepo.NewWaiterMongoRepository(*mongoDatabase)
 	waiterUsecase := _waiterUsecase.NewWaiterUsecase(waiterRepo, timeoutContext)
 	_waiterHttp.NewWaiterHandler(r, waiterUsecase)
+
+	// order
+	orderRepo := _orderRepo.NewOrderMongoRepository(*mongoDatabase)
+	orderUsecase := _orderUsecase.NewOrderUsecase(orderRepo, timeoutContext)
+	_orderHttp.NewOrderHandler(r, orderUsecase)
 
 	// employee shift
 	shiftRepo := _shiftRepo.NewEmployeeShiftMongoRepository(*mongoDatabase)

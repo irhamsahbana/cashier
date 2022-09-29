@@ -9,6 +9,7 @@ type SpaceGroupResponse struct {
 	Spaces     []SpaceResponse `json:"spaces"`
 	Code       string          `json:"code"`
 	Shape      SpaceGroupShape `json:"shape"`
+	Length     uint8           `json:"length"`
 	Pax        uint            `json:"pax"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  *time.Time      `json:"updated_at"`

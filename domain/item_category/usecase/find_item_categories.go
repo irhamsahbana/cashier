@@ -51,6 +51,7 @@ func itemCategoryDomainToDTO_FindItemCategories(resp []dto.ItemCategoryResponse,
 			dataItem.Public = m.Public
 			dataItem.ImagePath = m.ImagePath
 
+			// item variant
 			for _, v := range m.Variants {
 				var dataVariant dto.VariantResponse
 
@@ -59,9 +60,11 @@ func itemCategoryDomainToDTO_FindItemCategories(resp []dto.ItemCategoryResponse,
 				dataVariant.Price = v.Price
 				dataVariant.Public = v.Public
 				dataVariant.ImagePath = v.ImagePath
+
+				dataVariant.CreatedAt = time.UnixMicro(v.CreatedAt).UTC()
 				dataItem.Variants = append(dataItem.Variants, dataVariant)
 			}
-
+			// item variant, when empty make it empty array
 			if len(dataItem.Variants) == 0 {
 				dataItem.Variants = make([]dto.VariantResponse, 0)
 			}

@@ -21,6 +21,8 @@ func NewZoneHandler(router *gin.Engine, usecase domain.ZoneUsecaseContract) {
 	permitted := []middleware.UserRole{
 		middleware.UserRole_OWNER,
 		middleware.UserRole_BRANCH_OWNER,
+		middleware.UserRole_ADMIN_CASHIER,
+		middleware.UserRole_CASHIER,
 	}
 
 	r := router.Group("/", middleware.Auth, middleware.Authorization(permitted))
@@ -58,5 +60,5 @@ func (handler *ZoneHandler) GetZones(ctx *gin.Context) {
 		return
 	}
 
-	http_response.ReturnResponse(ctx, http.StatusOK, "success to get zones", result)
+	http_response.ReturnResponse(ctx, http.StatusOK, "success to get zones", result.Zones)
 }

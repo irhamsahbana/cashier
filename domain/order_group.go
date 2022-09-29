@@ -18,15 +18,19 @@ type OrderGroup struct {
 	Pending    *bool     `bson:"pending"`
 	Completed  bool      `bson:"completed"`
 	CreatedAt  int64     `bson:"created_at"`
+	UpdatedAt  *int64    `bson:"updated_at"`
+	DeletedAt  *int64    `bson:"deleted_at"`
 }
 
 type Order struct {
 	UUID        string          `bson:"uuid"`
 	Item        ItemOrder       `bson:"item"`
 	Modifiers   []ModifierOrder `bson:"modifiers"`
-	Waiter      *Waiter         `bson:"waiter"`
+	Waiter      *WaiterOrder    `bson:"waiter"`
 	RefundedQty int32           `bson:"refunded_qty"`
 	CreatedAt   int64           `bson:"created_at"`
+	UpdatedAt   *int64          `bson:"updated_at"`
+	DeletedAt   *int64          `bson:"deleted_at"`
 }
 
 type ItemOrder struct {
@@ -57,6 +61,8 @@ type Delivery struct {
 	Driver    string   `bson:"driver"`
 	Customer  Customer `bson:"customer"`
 	CreatedAt int64    `bson:"created_at"`
+	UpdatedAt *int64   `bson:"updated_at"`
+	DeletedAt *int64   `bson:"deleted_at"`
 }
 
 type Queue struct {
@@ -64,6 +70,8 @@ type Queue struct {
 	Customer   Customer `bson:"customer"`
 	PromisedAt *int64   `bson:"promised_at"`
 	CreatedAt  int64    `bson:"created_at"`
+	UpdatedAt  *int64   `bson:"updated_at"`
+	DeletedAt  *int64   `bson:"deleted_at"`
 }
 
 type Customer struct {
@@ -73,9 +81,9 @@ type Customer struct {
 }
 
 type OrderRepositoryContract interface {
-	UpsertOrder(ctx context.Context, OrderGroup *OrderGroup) (*OrderGroup, int, error)
+	UpsertActiveOrder(ctx context.Context, branchId string, OrderGroup *OrderGroup) (*OrderGroup, int, error)
 }
 
 type OrderUsecaseContract interface {
-	UpsertOrder(ctx context.Context, branchId string, req *dto.OrderGroupUpsertRequest) (*dto.OrderGroup, int, error)
+	UpsertActiveOrder(ctx context.Context, branchId string, req *dto.OrderGroupUpsertRequest) (*dto.OrderGroupResponse, int, error)
 }

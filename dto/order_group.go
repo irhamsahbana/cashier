@@ -2,83 +2,99 @@ package dto
 
 import "time"
 
-type OrderGroupUpsertRequest struct {
-	UUID      string    `bson:"uuid"`
-	SpaceUUID *string   `bson:"space_uuid"`
-	Delivery  *Delivery `bson:"delivery"`
-	Queue     *Queue    `bson:"queue"`
-	Orders    []Order   `bson:"orders"`
-	CreatedBy string    `bson:"created_by"`
-	Tax       float32   `bson:"tax"`
-	Tip       float32   `bson:"tip"`
-	Pending   *bool     `bson:"pending"`
-	Completed bool      `bson:"completed"`
-	CreatedAt string    `bson:"created_at"`
+// response
+type OrderGroupResponse struct {
+	UUID       string            `json:"uuid"`
+	BranchUUID string            `json:"branch_uuid"`
+	SpaceUUID  *string           `json:"space_uuid"`
+	Delivery   *DeliveryResponse `json:"delivery"`
+	Queue      *Queue            `json:"queue"`
+	Orders     []Order           `json:"orders"`
+	CreatedBy  string            `json:"created_by"`
+	Tax        float32           `json:"tax"`
+	Tip        float32           `json:"tip"`
+	Pending    *bool             `json:"pending"`
+	Completed  bool              `json:"completed"`
+	CreatedAt  time.Time         `json:"created_at"`
+	UpdatedAt  *time.Time        `json:"updated_at"`
+	DeletedAt  *time.Time        `json:"deleted_at"`
 }
 
-type OrderGroup struct {
-	UUID       string    `bson:"uuid"`
-	BranchUUID string    `bson:"branch_uuid"`
-	SpaceUUID  *string   `bson:"space_uuid"`
-	Delivery   *Delivery `bson:"delivery"`
-	Queue      *Queue    `bson:"queue"`
-	Orders     []Order   `bson:"orders"`
-	CreatedBy  string    `bson:"created_by"`
-	Tax        float32   `bson:"tax"`
-	Tip        float32   `bson:"tip"`
-	Pending    *bool     `bson:"pending"`
-	Completed  bool      `bson:"completed"`
-	CreatedAt  time.Time `bson:"created_at"`
+type DeliveryResponse struct {
+	UUID      string     `json:"uuid"`
+	Number    string     `json:"number"`
+	Partner   string     `json:"partner"`
+	Driver    string     `json:"driver"`
+	Customer  Customer   `json:"customer"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+}
+
+// requests
+
+type OrderGroupUpsertRequest struct {
+	UUID      string    `json:"uuid"`
+	SpaceUUID *string   `json:"space_uuid"`
+	Delivery  *Delivery `json:"delivery"`
+	Queue     *Queue    `json:"queue"`
+	Orders    []Order   `json:"orders"`
+	CreatedBy string    `json:"created_by"`
+	Tax       float32   `json:"tax"`
+	Tip       float32   `json:"tip"`
+	Pending   *bool     `json:"pending"`
+	Completed bool      `json:"completed"`
+	CreatedAt string    `json:"created_at"`
 }
 
 type Order struct {
-	UUID        string          `bson:"uuid"`
-	Item        ItemOrder       `bson:"item"`
-	Modifiers   []ModifierOrder `bson:"modifiers"`
-	Waiter      *WaiterOrder    `bson:"waiter"`
-	RefundedQty int32           `bson:"refunded_qty"`
-	CreatedAt   time.Time       `bson:"created_at"`
+	UUID        string          `json:"uuid"`
+	Item        ItemOrder       `json:"item"`
+	Modifiers   []ModifierOrder `json:"modifiers"`
+	Waiter      *WaiterOrder    `json:"waiter"`
+	RefundedQty int32           `json:"refunded_qty"`
+	CreatedAt   string          `json:"created_at"`
 }
 
 type ItemOrder struct {
-	UUID     string  `bson:"uuid"`
-	Name     string  `bson:"name"`
-	Label    string  `bson:"label"`
-	Price    float32 `bson:"price"`
-	Quantity int     `bson:"quantity"`
+	UUID     string  `json:"uuid"`
+	Name     string  `json:"name"`
+	Label    string  `json:"label"`
+	Price    float32 `json:"price"`
+	Quantity int     `json:"quantity"`
 }
 
 type ModifierOrder struct {
-	UUID     string  `bson:"uuid"`
-	Name     string  `bson:"name"`
-	Quantity int     `bson:"quantity"`
-	Price    float32 `bson:"price"`
+	UUID     string  `json:"uuid"`
+	Name     string  `json:"name"`
+	Quantity int     `json:"quantity"`
+	Price    float32 `json:"price"`
 }
 
 type WaiterOrder struct {
-	UUID       string `bson:"uuid"`
-	BranchUUID string `bson:"branch_uuid"`
-	Name       string `bson:"name"`
+	UUID       string `json:"uuid"`
+	BranchUUID string `json:"branch_uuid"`
+	Name       string `json:"name"`
 }
 
 type Delivery struct {
-	UUID      string    `bson:"uuid"`
-	Number    string    `bson:"number"`
-	Partner   string    `bson:"partner"`
-	Driver    string    `bson:"driver"`
-	Customer  Customer  `bson:"customer"`
-	CreatedAt time.Time `bson:"created_at"`
+	UUID      string   `json:"uuid"`
+	Number    string   `json:"number"`
+	Partner   string   `json:"partner"`
+	Driver    string   `json:"driver"`
+	Customer  Customer `json:"customer"`
+	CreatedAt string   `json:"created_at"`
 }
 
 type Queue struct {
-	UUID       string     `bson:"uuid"`
-	Customer   Customer   `bson:"customer"`
-	PromisedAt *time.Time `bson:"promised_at"`
-	CreatedAt  time.Time  `bson:"created_at"`
+	UUID       string   `json:"uuid"`
+	Customer   Customer `json:"customer"`
+	PromisedAt *string  `json:"promised_at"`
+	CreatedAt  string   `json:"created_at"`
 }
 
 type Customer struct {
-	Name    string  `bson:"name"`
-	Phone   *string `bson:"phone"`
-	Address *string `bson:"address"`
+	Name    string  `json:"name"`
+	Phone   *string `json:"phone"`
+	Address *string `json:"address"`
 }

@@ -14,7 +14,12 @@ func (u *zoneUsecase) Zones(ctx context.Context, branchId string) (*domain.Zones
 	}
 
 	var resp domain.ZonesResponse
+	zoneDomainToDTO_Zones(&resp, result)
 
+	return &resp, http.StatusOK, nil
+}
+
+func zoneDomainToDTO_Zones(resp *domain.ZonesResponse, result []domain.ZoneWithSpaceGroups) {
 	for _, zone := range result {
 		var zoneResp domain.ZoneResponse
 
@@ -37,6 +42,7 @@ func (u *zoneUsecase) Zones(ctx context.Context, branchId string) (*domain.Zones
 			spaceGroupResp.Name = spaceGroup.Name
 			spaceGroupResp.Code = spaceGroup.Code
 			spaceGroupResp.Shape = spaceGroup.Shape
+			spaceGroupResp.Length = spaceGroup.Length
 			spaceGroupResp.Pax = spaceGroup.Pax
 			spaceGroupResp.CreatedAt = time.UnixMicro(spaceGroup.CreatedAt).UTC()
 
@@ -87,7 +93,4 @@ func (u *zoneUsecase) Zones(ctx context.Context, branchId string) (*domain.Zones
 	if len(result) == 0 {
 		resp.Zones = make([]domain.ZoneResponse, 0)
 	}
-
-	return &resp, http.StatusOK, nil
-
 }

@@ -54,6 +54,8 @@ func items2() bson.A {
 			{Key: "description", Value: ""},
 			{Key: "image_path", Value: nil},
 			{Key: "public", Value: true},
+			{Key: "created_at", Value: 1660403045123456},
+			{Key: "updated_at", Value: nil},
 		},
 
 		bson.D{
