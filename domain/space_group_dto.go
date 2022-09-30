@@ -11,6 +11,8 @@ type SpaceGroupResponse struct {
 	Shape      SpaceGroupShape `json:"shape"`
 	Length     uint8           `json:"length"`
 	Pax        uint            `json:"pax"`
+	Reservable bool            `json:"reservable"`
+	Disabled   bool            `json:"disabled"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  *time.Time      `json:"updated_at"`
 	DeletedAt  *time.Time      `json:"deleted_at"`

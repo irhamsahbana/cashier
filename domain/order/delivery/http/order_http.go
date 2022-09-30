@@ -29,6 +29,7 @@ func NewOrderHandler(router *gin.Engine, usecase domain.OrderUsecaseContract) {
 	r := router.Group("/", middleware.Auth, middleware.Authorization(permitted))
 
 	r.PUT("/order-groups", handler.UpsertActiveOrder)
+	r.GET("/order-groups", handler.FindActiveOrders)
 }
 
 func (h *orderHandler) UpsertActiveOrder(ctx *gin.Context) {
@@ -49,4 +50,16 @@ func (h *orderHandler) UpsertActiveOrder(ctx *gin.Context) {
 	}
 
 	http_response.ReturnResponse(ctx, http.StatusOK, "success to upsert active order", result)
+}
+
+func (h *orderHandler) FindActiveOrders(ctx *gin.Context) {
+	branchId := ctx.GetString("branch_uuid")
+
+	result, httpCode, err := h.orderUsecase.FindActiveOrders(ctx, branchId)
+	if err != nil {
+		http_response.ReturnResponse(ctx, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(ctx, http.StatusOK, "success to find active orders", result)
 }

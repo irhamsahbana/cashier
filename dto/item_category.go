@@ -17,7 +17,7 @@ type ItemResponse struct {
 	Name        string            `json:"name"`
 	Price       float32           `json:"price"`
 	Description string            `json:"description"`
-	Label       string            `json:"Label"`
+	Label       string            `json:"label"`
 	Public      bool              `json:"public"`
 	ImagePath   *string           `json:"image_path"`
 	Variants    []VariantResponse `json:"variants"`

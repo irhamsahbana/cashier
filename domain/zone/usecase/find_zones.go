@@ -44,6 +44,8 @@ func zoneDomainToDTO_Zones(resp *domain.ZonesResponse, result []domain.ZoneWithS
 			spaceGroupResp.Shape = spaceGroup.Shape
 			spaceGroupResp.Length = spaceGroup.Length
 			spaceGroupResp.Pax = spaceGroup.Pax
+			spaceGroupResp.Reservable = spaceGroup.Reservable
+			spaceGroupResp.Disabled = spaceGroup.Disabled
 			spaceGroupResp.CreatedAt = time.UnixMicro(spaceGroup.CreatedAt).UTC()
 
 			for _, space := range spaceGroup.Spaces {

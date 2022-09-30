@@ -23,6 +23,8 @@ type SpaceGroup struct {
 	Length     uint8           `bson:"length"`
 	Shape      SpaceGroupShape `bson:"shape"`
 	Pax        uint            `bson:"pax"`
+	Reservable bool            `bson:"reservable"`
+	Disabled   bool            `bson:"disabled"`
 	CreatedAt  int64           `bson:"created_at"`
 	UpdatedAt  *int64          `bson:"updated_at"`
 	DeletedAt  *int64          `bson:"deleted_at"`

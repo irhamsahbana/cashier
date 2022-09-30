@@ -67,6 +67,7 @@ type Delivery struct {
 
 type Queue struct {
 	UUID       string   `bson:"uuid"`
+	Number     string   `bson:"number"`
 	Customer   Customer `bson:"customer"`
 	PromisedAt *int64   `bson:"promised_at"`
 	CreatedAt  int64    `bson:"created_at"`
@@ -82,8 +83,10 @@ type Customer struct {
 
 type OrderRepositoryContract interface {
 	UpsertActiveOrder(ctx context.Context, branchId string, OrderGroup *OrderGroup) (*OrderGroup, int, error)
+	FindActiveOrders(ctx context.Context, branchId string) ([]OrderGroup, int, error)
 }
 
 type OrderUsecaseContract interface {
 	UpsertActiveOrder(ctx context.Context, branchId string, req *dto.OrderGroupUpsertRequest) (*dto.OrderGroupResponse, int, error)
+	FindActiveOrders(ctx context.Context, branchId string) ([]dto.OrderGroupResponse, int, error)
 }

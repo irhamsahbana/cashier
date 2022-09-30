@@ -98,6 +98,10 @@ func validateUpsertActiveOrderRequest(req *dto.OrderGroupUpsertRequest) error {
 			return errors.New("invalid queue uuid")
 		}
 
+		if req.Queue.Number == "" {
+			return errors.New("queue number is required")
+		}
+
 		if req.Queue.Customer.Name == "" {
 			return errors.New("queue customer name is required")
 		}
@@ -205,6 +209,7 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 		createdAt, _ := time.Parse(time.RFC3339Nano, req.Queue.CreatedAt)
 		data.Queue = &domain.Queue{
 			UUID:       req.Queue.UUID,
+			Number:     req.Queue.Number,
 			Customer:   customer,
 			PromisedAt: promisedAtMicro,
 			CreatedAt:  createdAt.UnixMicro(),
@@ -269,6 +274,7 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 // Domain to DTO
 func orderDomainToDTO_upsertActiveOrder(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 	resp.UUID = data.UUID
+	resp.BranchUUID = data.BranchUUID
 	resp.CreatedBy = data.CreatedBy
 
 	resp.Tax = data.Tax
@@ -332,6 +338,7 @@ func orderDomainToDTO_upsertActiveOrder(resp *dto.OrderGroupResponse, data *doma
 		createdAt := time.UnixMicro(data.Queue.CreatedAt)
 		resp.Queue = &dto.Queue{
 			UUID:       data.Queue.UUID,
+			Number:     data.Queue.Number,
 			Customer:   customer,
 			PromisedAt: promisedAt,
 			CreatedAt:  createdAt.Format(time.RFC3339Nano),
@@ -342,7 +349,7 @@ func orderDomainToDTO_upsertActiveOrder(resp *dto.OrderGroupResponse, data *doma
 	resp.SpaceUUID = data.SpaceUUID
 
 	// orders
-	var orders []dto.Order
+	var orders []dto.OrderResponse
 	for _, order := range data.Orders {
 		var waiter *dto.WaiterOrder
 		if order.Waiter != nil {
@@ -364,6 +371,10 @@ func orderDomainToDTO_upsertActiveOrder(resp *dto.OrderGroupResponse, data *doma
 			})
 		}
 
+		if len(modifiers) == 0 {
+			modifiers = make([]dto.ModifierOrder, 0)
+		}
+
 		// item
 		var item dto.ItemOrder
 		item.UUID = order.Item.UUID
@@ -373,22 +384,34 @@ func orderDomainToDTO_upsertActiveOrder(resp *dto.OrderGroupResponse, data *doma
 		item.Quantity = order.Item.Quantity
 
 		// append order
-		orders = append(orders, dto.Order{
+		var orderUpdatedAt *time.Time
+		var orderDeletedAt *time.Time
+		if order.UpdatedAt != nil {
+			updatedAt := time.UnixMicro(*order.UpdatedAt).UTC()
+			orderUpdatedAt = &updatedAt
+		}
+		if order.DeletedAt != nil {
+			deletedAt := time.UnixMicro(*order.DeletedAt).UTC()
+			orderDeletedAt = &deletedAt
+		}
+		orders = append(orders, dto.OrderResponse{
 			UUID:      order.UUID,
 			Item:      item,
 			Modifiers: modifiers,
 			Waiter:    waiter,
 			CreatedAt: time.UnixMicro(order.CreatedAt).Format(time.RFC3339Nano),
+			UpdatedAt: orderUpdatedAt,
+			DeletedAt: orderDeletedAt,
 		})
 	}
 	resp.Orders = orders
 
 	resp.CreatedAt = time.UnixMicro(data.CreatedAt).UTC()
-	if resp.UpdatedAt != nil {
+	if data.UpdatedAt != nil {
 		dataUpdatedAt := time.UnixMicro(*data.UpdatedAt).UTC()
 		resp.UpdatedAt = &dataUpdatedAt
 	}
-	if resp.DeletedAt != nil {
+	if data.DeletedAt != nil {
 		dataDeletedAt := time.UnixMicro(*data.DeletedAt).UTC()
 		resp.DeletedAt = &dataDeletedAt
 	}

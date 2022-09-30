@@ -50,8 +50,9 @@ func (repo *spaceGroupMongoRepository) FindSpaceGroups(ctx context.Context, bran
 				"code":        1,
 				"shape":       1,
 				"pax":         1,
-				"floor":       1,
-				"smooking":    1,
+				"length":      1,
+				"reservable":  1,
+				"disabled":    1,
 				"spaces": bson.M{"$filter": bson.M{
 					"input": "$spaces",
 					"as":    "space",

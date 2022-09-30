@@ -16,7 +16,7 @@ import (
 func (repo *orderRepository) UpsertActiveOrder(ctx context.Context, branchId string, data *domain.OrderGroup) (*domain.OrderGroup, int, error) {
 	filter := bson.M{
 		"$and": []bson.M{
-			{"branch_id": branchId},
+			{"branch_uuid": branchId},
 			{"uuid": data.UUID},
 		},
 	}
@@ -40,7 +40,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 
 	filter := bson.M{
 		"$and": []bson.M{
-			{"branch_id": data.BranchUUID},
+			{"branch_uuid": data.BranchUUID},
 			{"uuid": data.UUID},
 		},
 	}
@@ -52,7 +52,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 		return nil, http.StatusInternalServerError, err
 	}
 
-	// if delivery, update delivery data
+	// delivery, update delivery data
 	if data.Delivery != nil && db.Delivery != nil {
 		db.Delivery = data.Delivery
 		deliveryUpdatedAt := time.Now().UTC().UnixMicro()
@@ -64,7 +64,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 		db.Delivery.DeletedAt = &deliveryDeletedAt
 	}
 
-	// if queue, update queue data
+	// queue, update queue data
 	if data.Queue != nil && db.Queue != nil {
 		db.Queue = data.Queue
 		queueUpdatedAt := time.Now().UTC().UnixMicro()
@@ -76,7 +76,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 		db.Queue.DeletedAt = &queueDeletedAt
 	}
 
-	// if space, update space data
+	// space, update space data
 	if data.SpaceUUID != nil && db.SpaceUUID != nil {
 		db.SpaceUUID = data.SpaceUUID
 	}
@@ -101,23 +101,38 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 		if !helper.ContainString(dataOrderUUID, dbOrder.UUID) { // if order not exist in data, delete it
 			dbOrderDeletedAt := time.Now().UTC().UnixMicro()
 			dbOrder.DeletedAt = &dbOrderDeletedAt
+			updatedOrders = append(updatedOrders, dbOrder)
 		} else { // if order exist in data, update it
 			var updatedOrder domain.Order
 			for _, dataOrder := range data.Orders {
 				if dataOrder.UUID == dbOrder.UUID {
 					updatedOrder = dataOrder
+					updatedAt := time.Now().UTC().UnixMicro()
+					updatedOrder.UpdatedAt = &updatedAt
 					break
 				}
 			}
-
 			updatedOrders = append(updatedOrders, updatedOrder)
 		}
 	}
 
 	db.Orders = updatedOrders
+	dbUpdatedAt := time.Now().UTC().UnixMicro()
+	db.UpdatedAt = &dbUpdatedAt
 
-	// updated order
+	// updating order
 	err = repo.CollActive.FindOneAndReplace(ctx, filter, db).Decode(&db)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			logger.Log(logrus.Fields{}).Error(err)
+			return nil, http.StatusNotFound, err
+		}
+
+		logger.Log(logrus.Fields{}).Error(err)
+		return nil, http.StatusInternalServerError, err
+	}
+
+	err = repo.CollActive.FindOne(ctx, filter).Decode(&db)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			logger.Log(logrus.Fields{}).Error(err)

@@ -9,7 +9,7 @@ type OrderGroupResponse struct {
 	SpaceUUID  *string           `json:"space_uuid"`
 	Delivery   *DeliveryResponse `json:"delivery"`
 	Queue      *Queue            `json:"queue"`
-	Orders     []Order           `json:"orders"`
+	Orders     []OrderResponse   `json:"orders"`
 	CreatedBy  string            `json:"created_by"`
 	Tax        float32           `json:"tax"`
 	Tip        float32           `json:"tip"`
@@ -29,6 +29,17 @@ type DeliveryResponse struct {
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
+}
+
+type OrderResponse struct {
+	UUID        string          `json:"uuid"`
+	Item        ItemOrder       `json:"item"`
+	Modifiers   []ModifierOrder `json:"modifiers"`
+	Waiter      *WaiterOrder    `json:"waiter"`
+	RefundedQty int32           `json:"refunded_qty"`
+	CreatedAt   string          `json:"created_at"`
+	UpdatedAt   *time.Time      `json:"updated_at"`
+	DeletedAt   *time.Time      `json:"deleted_at"`
 }
 
 // requests
@@ -54,6 +65,8 @@ type Order struct {
 	Waiter      *WaiterOrder    `json:"waiter"`
 	RefundedQty int32           `json:"refunded_qty"`
 	CreatedAt   string          `json:"created_at"`
+	UpdatedAt   *string         `json:"updated_at"`
+	DeletedAt   *string         `json:"deleted_at"`
 }
 
 type ItemOrder struct {
@@ -88,6 +101,7 @@ type Delivery struct {
 
 type Queue struct {
 	UUID       string   `json:"uuid"`
+	Number     string   `json:"number"`
 	Customer   Customer `json:"customer"`
 	PromisedAt *string  `json:"promised_at"`
 	CreatedAt  string   `json:"created_at"`
