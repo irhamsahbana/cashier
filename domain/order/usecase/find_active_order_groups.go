@@ -17,7 +17,7 @@ func (u *orderUsecase) FindActiveOrders(c context.Context, branchId string) ([]d
 
 	for _, v := range result {
 		var orderGroup dto.OrderGroupResponse
-		orderDomainToDTO_upsertActiveOrder(&orderGroup, &v)
+		orderDomainToDTO(&orderGroup, &v)
 		resp = append(resp, orderGroup)
 	}
 
