@@ -5,6 +5,7 @@ import (
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/logger"
 	"net/http"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -52,6 +53,45 @@ func (repo *userRepository) RemoveToken(ctx context.Context, userId, tokenId str
 	}
 
 	user.Tokens = []string{tokenId}
+
+	return user, http.StatusOK, nil
+}
+
+func (repo *userRepository) UpsertUser(ctx context.Context, user *domain.User) (*domain.User, int, error) {
+	filter := bson.D{
+		{Key: "$and", Value: bson.A{
+			bson.D{{Key: "uuid", Value: user.UUID}},
+			bson.D{{Key: "branch_uuid", Value: user.BranchUUID}},
+		}},
+	}
+
+	countUser, err := repo.Collection.CountDocuments(ctx, filter)
+	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
+	}
+
+	if countUser == 0 { // insert
+		_, err := repo.Collection.InsertOne(ctx, user)
+		if err != nil {
+			logger.Log(logrus.Fields{}).Error(err)
+		}
+	} else { // update
+		updatedAt := time.Now().UnixMicro()
+		user.UpdatedAt = &updatedAt
+
+		db, code, err := repo.FindUserBy(ctx, "uuid", user.UUID, true)
+		if err != nil {
+			logger.Log(logrus.Fields{}).Error(err)
+			return nil, code, err
+		}
+		user.CreatedAt = db.CreatedAt
+		update := bson.M{"$set": user}
+
+		_, err = repo.Collection.UpdateOne(ctx, filter, update)
+		if err != nil {
+			logger.Log(logrus.Fields{}).Error(err)
+		}
+	}
 
 	return user, http.StatusOK, nil
 }

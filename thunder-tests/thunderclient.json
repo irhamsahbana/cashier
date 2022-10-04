@@ -504,17 +504,17 @@
     "_id": "b71e6159-b90f-491d-b363-23eb4027c9f7",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "97a169fd-cf1d-42f2-bf00-937d25adbb7c",
-    "name": "create delivery order",
+    "name": "upsert delivery order",
     "url": "{{base_url}}/order-groups",
     "method": "PUT",
     "sortNum": 380000,
     "created": "2022-09-21T06:18:23.194Z",
-    "modified": "2022-09-21T06:19:58.757Z",
+    "modified": "2022-10-04T08:02:26.832Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"delivery\": {\n    \"uuid\": \"1e203151-ab93-4d02-8415-b3344aff15ed\",\n    \"number\": \"GOFOO-0001\",\n    \"partner\": \"go-food\",\n    \"driver\": \"Hermawan\",\n    \"recipient\": \"Safrin\", \n    \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n  },\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"9c5db234-0703-456d-9023-e64f1a4889d9\",\n        \"name\": \"Kopi Kenangan\",\n        \"label\": \"Mantan\",\n        \"price\": 38000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"c5d8d41d-17f2-4851-9da6-c347bee176d0\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        },\n        {\n          \"uuid\": \"479f5bbd-8a90-4397-8d7f-3526d952de61\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        }\n      ],\n      \"waiter\": {\n        \"uuid\": \"de1d661d-49d8-49a2-a513-cce248db2890\",\n        \"branch_uuid\": \"601a2d5c-c950-4741-818d-12fc98555cdd\",\n        \"name\": \"Fahri\"\n      }\n    }\n  ],\n  \"created_by\": \"Fahri\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
+      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"delivery\": {\n    \"uuid\": \"1e203151-ab93-4d02-8415-b3344aff15ed\",\n    \"number\": \"GOFOO-0001\",\n    \"partner\": \"go-food\",\n    \"driver\": \"Hermawan\",\n    \"customer\": {\n      \"name\": \"safrin\"\n    },\n    \"scheduled_at\": null,\n    \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n  },\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"b67a71bb-1a3a-4e14-9701-60a173e383b6\",\n        \"name\": \"Tim Tuna\",\n        \"label\": \"Kuah\",\n        \"price\": 33000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [],\n      \"waiter\": {\n        \"uuid\": \"de1d661d-49d8-49a2-a513-cce248db2890\",\n        \"branch_uuid\": \"601a2d5c-c950-4741-818d-12fc98555cdd\",\n        \"name\": \"Fahri\"\n      },\n      \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n    },\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077218\",\n      \"item\": {\n        \"uuid\": \"427bba53-66a0-4a16-a402-a7b81e2b8b41\",\n        \"name\": \"Cappuccino\",\n        \"label\": \"\",\n        \"price\": 23000,\n        \"quantity\": 1\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"8d76153a-dadd-42d4-9238-b57a25547d17\",\n          \"name\": \"Regal\",\n          \"quantity\": 1,\n          \"price\": 5000\n        }\n      ],\n      \"waiter\": {\n        \"uuid\": \"de1d661d-49d8-49a2-a513-cce248db2890\",\n        \"branch_uuid\": \"601a2d5c-c950-4741-818d-12fc98555cdd\",\n        \"name\": \"Fahri\"\n      },\n      \"created_at\": \"2022-12-12T08:20:53.523987Z\"\n    }\n  ],\n  \"created_by\": \"Steve Rogers\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
       "form": []
     },
     "tests": []
@@ -528,12 +528,12 @@
     "method": "PUT",
     "sortNum": 390000,
     "created": "2022-09-22T02:43:14.164Z",
-    "modified": "2022-09-22T02:56:34.806Z",
+    "modified": "2022-10-04T08:02:04.008Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"queue\": {\n    \"uuid\": \"1e203151-ab93-4d02-8415-b3344aff15ed\",\n    \"number\": \"QUEUE-0001\",\n    \"customer\": {\n      \"name\": \"Hermawan Safrin\",\n      \"phone\": \"082188449289\"\n    },\n    \"promised_at\": null,\n    \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n  },\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"9c5db234-0703-456d-9023-e64f1a4889d9\",\n        \"name\": \"Kopi Kenangan\",\n        \"label\": \"Mantan\",\n        \"price\": 38000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"c5d8d41d-17f2-4851-9da6-c347bee176d0\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        },\n        {\n          \"uuid\": \"479f5bbd-8a90-4397-8d7f-3526d952de61\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        }\n      ]\n    }\n  ],\n  \"created_by\": \"Fahri\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
+      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"queue\": {\n    \"uuid\": \"1e203151-ab93-4d02-8415-b3344aff15ed\",\n    \"number\": \"QUEUE-0001\",\n    \"customer\": {\n      \"name\": \"Hermawan Safrin\",\n      \"phone\": \"082188449289\"\n    },\n    \"scheduled_at\": null,\n    \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n  },\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"9c5db234-0703-456d-9023-e64f1a4889d9\",\n        \"name\": \"Kopi Kenangan\",\n        \"label\": \"Mantan\",\n        \"price\": 38000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"c5d8d41d-17f2-4851-9da6-c347bee176d0\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        },\n        {\n          \"uuid\": \"479f5bbd-8a90-4397-8d7f-3526d952de61\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        }\n      ]\n    }\n  ],\n  \"created_by\": \"Fahri\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
       "form": []
     },
     "tests": []
@@ -575,17 +575,17 @@
     "_id": "1f4dc12f-4ada-4318-88bc-710267d01e59",
     "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
     "containerId": "97a169fd-cf1d-42f2-bf00-937d25adbb7c",
-    "name": "create quick order",
+    "name": "upsert quick order",
     "url": "{{base_url}}/order-groups",
     "method": "PUT",
     "sortNum": 385000,
     "created": "2022-09-26T03:09:29.806Z",
-    "modified": "2022-09-26T03:09:56.871Z",
+    "modified": "2022-10-04T06:03:17.099Z",
     "headers": [],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"orders\": [\n    {\n      \"uuid\": \"6c1107cb-b38d-4400-9e75-6e9681077217\",\n      \"item\": {\n        \"uuid\": \"9c5db234-0703-456d-9023-e64f1a4889d9\",\n        \"name\": \"Kopi Kenangan\",\n        \"label\": \"Mantan\",\n        \"price\": 38000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [\n        {\n          \"uuid\": \"c5d8d41d-17f2-4851-9da6-c347bee176d0\",\n          \"name\": \"regal\",\n          \"price\": 5000\n        },\n        {\n          \"uuid\": \"479f5bbd-8a90-4397-8d7f-3526d952de61\",\n          \"name\": \"rum\",\n          \"price\": 7000\n        }\n      ],\n      \"waiter\": {\n        \"uuid\": \"de1d661d-49d8-49a2-a513-cce248db2890\",\n        \"branch_uuid\": \"601a2d5c-c950-4741-818d-12fc98555cdd\",\n        \"name\": \"Fahri\"\n      }\n    }\n  ],\n  \"created_by\": \"Fahri\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
+      "raw": "{\n  \"uuid\": \"b0098379-6521-41d0-a001-9271a3c92304\",\n  \"orders\": [\n    {\n      \"uuid\": \"1e3a50cd-74e0-4399-a198-0104c74ff87c\",\n      \"item\": {\n        \"uuid\": \"b67a71bb-1a3a-4e14-9701-60a173e383b6\",\n        \"name\": \"Tim Tuna\",\n        \"label\": \"Kuah\",\n        \"price\": 33000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [],\n      \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n    }\n  ],\n  \"created_by\": \"Steve Rogers\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
       "form": []
     },
     "tests": []
@@ -624,6 +624,50 @@
     "body": {
       "type": "json",
       "raw": "{\n  \"email\": \"steve@rogers.com\",\n  \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "381dd34d-e075-42c6-85a1-b93d8ddc908c",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "53658d17-9bd3-43b5-adb5-8d5441bc3781",
+    "name": "upsert customer",
+    "url": "{{base_url}}/customers",
+    "method": "GET",
+    "sortNum": 420000,
+    "created": "2022-10-04T06:00:44.029Z",
+    "modified": "2022-10-04T07:03:15.296Z",
+    "headers": [
+      {
+        "name": "Accept",
+        "value": "*/*",
+        "isDisabled": true
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"8ab81cd2-798c-42f3-86d8-47e6229c5a5f\",\n  \"branch_uuid\": \"1f4cd6e1-9717-4da2-97a6-1debea9a2790\",\n  \"name\": \"Monkey D. Luffy\",\n  \"date_of_birth\": \"1998-06-04T00:00:00.000000Z\",\n  \"email\": \"luffy@monkey.d\",\n  \"phone\": \"082188449289\",\n  \"address\": \"1711 Brighton Circle Road, Annandale, MN, 55302\",\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "e3f4c7fd-889b-4180-8c46-829b28af16f4",
+    "colId": "0c4941f9-da4c-41f0-88d8-98b6afa8298b",
+    "containerId": "97a169fd-cf1d-42f2-bf00-937d25adbb7c",
+    "name": "upsert dine-in order",
+    "url": "{{base_url}}/order-groups",
+    "method": "PUT",
+    "sortNum": 440000,
+    "created": "2022-10-04T07:59:11.162Z",
+    "modified": "2022-10-04T08:13:16.369Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"uuid\": \"b0098379-6521-41d0-a001-9271a3c92307\",\n\t\"space_uuid\":\"b0098379-6521-41d0-a001-9271a3c92305\",\n  \"orders\": [\n    {\n      \"uuid\": \"1e3a50cd-74e0-4399-a198-0104c74ff87c\",\n      \"item\": {\n        \"uuid\": \"b67a71bb-1a3a-4e14-9701-60a173e383b6\",\n        \"name\": \"Tim Tuna\",\n        \"label\": \"Kuah\",\n        \"price\": 33000,\n        \"quantity\": 2\n      },\n      \"modifiers\": [],\n\t\t\t\"created_at\": \"2022-12-12T08:20:50.523987Z\"\n    }\n  ],\n  \"created_by\": \"Steve Rogers\",\n  \"completed\": false,\n  \"created_at\": \"2022-12-12T08:20:50.523987Z\"\n}",
       "form": []
     },
     "tests": []

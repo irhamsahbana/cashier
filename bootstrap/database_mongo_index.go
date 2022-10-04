@@ -4,22 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"lucy/cashier/lib/helper"
 
 	"github.com/fatih/color"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-
-	return false
-}
 
 func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName string) {
 	var collections []string = []string{
@@ -45,14 +36,16 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 	// get all collections
 	collNames, err := client.Database(dbName).ListCollectionNames(ctx, bson.M{})
 	if err != nil {
+		App.Log.Error(err)
 		log.Fatal(err)
 	}
 
 	// create collection if not exists
 	for _, collName := range collections {
-		if !contains(collNames, collName) {
+		if !helper.ContainString(collNames, collName) {
 			err = client.Database(dbName).CreateCollection(ctx, collName)
 			if err != nil {
+				App.Log.Error(err)
 				log.Fatal(err)
 			}
 			color.Cyan(fmt.Sprintf("Collection %s created", collName))
@@ -65,6 +58,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		_, err := client.Database(dbName).Collection(collection).Indexes().DropAll(ctx)
 		if err != nil {
 			color.Red("MongoDB: " + err.Error() + " on collection " + collection)
+			App.Log.Error(err)
 			log.Fatal(err)
 		}
 	}
@@ -83,7 +77,10 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					Options: options.Index().SetUnique(true),
 				},
 				{
-					Keys:    bson.M{"email": 1},
+					Keys: bson.D{
+						{Key: "branch_uuid", Value: 1},
+						{Key: "email", Value: 1},
+					},
 					Options: options.Index().SetUnique(true),
 				},
 			})
@@ -183,6 +180,7 @@ func createCollectionIndex(collection string) {
 func errCollectionIndexingCheck(err error, collection string) {
 	if err != nil {
 		color.Red("MongoDB: " + err.Error() + " on collection " + collection)
+		App.Log.Error(err)
 		log.Fatal(err)
 	}
 }

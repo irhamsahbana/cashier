@@ -25,3 +25,28 @@ type UserResponse struct {
 	UpdatedAt    *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt    *time.Time      `json:"deleted_at,omitempty"`
 }
+
+type CustomerResponse struct {
+	UUID       string     `json:"uuid"`
+	BranchUUID string     `json:"branch_uuid"`
+	Name       string     `json:"name"`
+	Email      string     `json:"email"`
+	Phone      string     `json:"phone"`
+	Address    string     `json:"address"`
+	CreatedAt  time.Time  `json:"created_at"`
+	UpdatedAt  *time.Time `json:"updated_at"`
+	DeletedAt  *time.Time `json:"deleted_at"`
+}
+
+// Requests
+
+type CustomerUpserRequest struct {
+	UUID       string `json:"uuid"`
+	BranchUUID string `json:"branch_uuid"`
+	Name       string `json:"name"`
+	Dob        string `json:"date_of_birth"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	Address    string `json:"address"`
+	CreatedAt  string `json:"created_at"`
+}

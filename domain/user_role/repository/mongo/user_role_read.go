@@ -49,6 +49,33 @@ func (repo *userRoleReposiotry) FindUserRole(ctx context.Context, id string, wit
 	return &userRole, http.StatusOK, nil
 }
 
+func (repo *userRoleReposiotry) FindUserRoleByName(ctx context.Context, name string, withTrashed bool) (*domain.UserRole, int, error) {
+	var userRole domain.UserRole
+	var filter bson.M
+
+	if withTrashed {
+		filter = bson.M{"name": name}
+	} else {
+		filter = bson.M{
+			"$and": bson.A{
+				bson.M{"name": name},
+				bson.M{"deleted_at": nil},
+			},
+		}
+	}
+
+	err := repo.Collection.FindOne(ctx, filter).Decode(&userRole)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, http.StatusNotFound, errors.New("user role not found")
+		}
+
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return &userRole, http.StatusOK, nil
+}
+
 func (repo *userRoleReposiotry) FindUserRoleBy(ctx context.Context, key string, val interface{}) (*domain.UserRole, int, error) {
 	var userRole domain.UserRole
 

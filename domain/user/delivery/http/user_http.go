@@ -8,6 +8,7 @@ import (
 	jwthandler "lucy/cashier/lib/jwt_handler"
 	"lucy/cashier/lib/middleware"
 	"net/http"
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,7 +25,18 @@ func NewUserHandler(router *gin.Engine, usecase domain.UserUsecaseContract) {
 		UserUsecase: usecase,
 	}
 
+	var permittedRoles = []middleware.UserRole{
+		middleware.UserRole_OWNER,
+		middleware.UserRole_BRANCH_OWNER,
+		middleware.UserRole_MANAGER,
+		middleware.UserRole_ADMIN_CASHIER,
+		middleware.UserRole_CASHIER,
+	}
+
 	authorized := router.Group("/", middleware.Auth)
+	permitted := router.Group("/", middleware.Auth, middleware.Authorization(permittedRoles))
+	permitted.PUT("/customers", handler.UpsertCustomer)
+	permitted.GET("/customers", handler.FindCustomers)
 	authorized.GET("/user-infos", handler.Profile)
 	authorized.GET("/auth/logout", handler.Logout)
 
@@ -111,4 +123,54 @@ func (h *UserHandler) Logout(c *gin.Context) {
 	}
 
 	http_response.ReturnResponse(c, httpcode, "Logout", nil)
+}
+
+func (h *UserHandler) UpsertCustomer(c *gin.Context) {
+	var request dto.CustomerUpserRequest
+
+	if err := c.BindJSON(&request); err != nil {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	ctx := context.Background()
+	result, httpcode, err := h.UserUsecase.UpsertCustomer(ctx, &request)
+	if err != nil {
+		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpcode, "Customer upserted", result)
+}
+
+func (h *UserHandler) FindCustomers(c *gin.Context) {
+	branchId := c.GetString("branch_uuid")
+
+	limit := c.DefaultQuery("limit", "10")
+	page := c.DefaultQuery("page", "0")
+	withTrashed := c.DefaultQuery("with_trashed", "false")
+
+	// convert limit and page to int
+	limitInt, err := strconv.Atoi(limit)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusBadRequest, "limit must be integer", nil)
+		return
+	}
+
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		http_response.ReturnResponse(c, http.StatusBadRequest, "page must be integer", nil)
+		return
+	}
+
+	withTrashedBool, _ := strconv.ParseBool(withTrashed)
+
+	ctx := context.Background()
+	result, httpcode, err := h.UserUsecase.FindCustomers(ctx, branchId, limitInt, pageInt, withTrashedBool)
+	if err != nil {
+		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		return
+	}
+
+	http_response.ReturnResponse(c, httpcode, "Customers found", result)
 }

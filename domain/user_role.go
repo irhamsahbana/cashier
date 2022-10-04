@@ -31,6 +31,7 @@ type UserRoleUsecaseContract interface {
 
 type UserRoleRepositoryContract interface {
 	FindUserRole(ctx context.Context, id string, withTrashed bool) (*UserRole, int, error)
+	FindUserRoleByName(ctx context.Context, name string, withTrashed bool) (*UserRole, int, error)
 	UpsertUserRole(ctx context.Context, userRole *UserRole) (*UserRole, int, error)
 	DeleteUserRole(ctx context.Context, id string) (*UserRole, int, error)
 }
