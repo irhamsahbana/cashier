@@ -97,7 +97,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 	// updated order
 	updatedOrders := make([]domain.Order, 0)
 	for _, dbOrder := range db.Orders {
-		if !helper.ContainString(dataOrderUUID, dbOrder.UUID) { // if order not exist in data, delete it
+		if !helper.Contain(dataOrderUUID, dbOrder.UUID) { // if order not exist in data, delete it
 			dbOrderDeletedAt := time.Now().UTC().UnixMicro()
 			dbOrder.DeletedAt = &dbOrderDeletedAt
 			updatedOrders = append(updatedOrders, dbOrder)
@@ -156,6 +156,7 @@ func (repo *orderRepository) createNewOrderGroup(ctx context.Context, data *doma
 	var db domain.OrderGroup
 
 	data.CreatedAt = time.Now().UnixMicro()
+	data.Taxes = make([]domain.TaxOrderGroup, 0)
 
 	_, err := repo.CollActive.InsertOne(ctx, data)
 	if err != nil {

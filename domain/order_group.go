@@ -40,13 +40,13 @@ type ItemOrder struct {
 	Name     string  `bson:"name"`
 	Label    string  `bson:"label"`
 	Price    float32 `bson:"price"`
-	Quantity int     `bson:"quantity"`
+	Quantity uint    `bson:"quantity"`
 }
 
 type ModifierOrder struct {
 	UUID     string  `bson:"uuid"`
 	Name     string  `bson:"name"`
-	Quantity int     `bson:"quantity"`
+	Quantity uint    `bson:"quantity"`
 	Price    float32 `bson:"price"`
 }
 

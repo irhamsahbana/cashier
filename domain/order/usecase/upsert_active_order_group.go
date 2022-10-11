@@ -2,23 +2,14 @@ package usecase
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
-	"lucy/cashier/lib/validator"
-	"net/http"
 	"time"
 )
 
 func (u *orderUsecase) UpsertActiveOrder(c context.Context, branchId string, req *dto.OrderGroupUpsertRequest) (*dto.OrderGroupResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
-
-	err := validateUpsertActiveOrderRequest(req)
-	if err != nil {
-		return nil, http.StatusUnprocessableEntity, err
-	}
 
 	var data domain.OrderGroup
 	data.BranchUUID = branchId
@@ -33,141 +24,6 @@ func (u *orderUsecase) UpsertActiveOrder(c context.Context, branchId string, req
 	orderDomainToDTO(&resp, result)
 
 	return &resp, code, nil
-}
-
-// validate request
-func validateUpsertActiveOrderRequest(req *dto.OrderGroupUpsertRequest) error {
-	// validate if order group is not double type (must be either delivery, queue, space, or none of them(quick order))
-	var typeCount int
-
-	if req.Delivery != nil {
-		typeCount++
-	}
-	if req.Queue != nil {
-		typeCount++
-	}
-	if req.SpaceUUID != nil {
-		typeCount++
-	}
-
-	if typeCount > 1 {
-		return errors.New("order group type is double")
-	}
-
-	err := validator.IsUUID(req.UUID)
-	if err != nil {
-		return errors.New("order group uuid is not valid")
-	}
-
-	if len(req.Orders) == 0 {
-		return errors.New("order group must have at least one order")
-	}
-
-	// validate delivery
-	if req.Delivery != nil {
-		err = validator.IsUUID(req.Delivery.UUID)
-		if err != nil {
-			return errors.New("invalid delivery uuid")
-		}
-
-		if req.Delivery.Number == "" {
-			return errors.New("delivery number is required")
-		}
-
-		if req.Delivery.Partner == "" {
-			return errors.New("delivery partner is required")
-		}
-
-		if req.Delivery.Driver == "" {
-			return errors.New("delivery driver is required")
-		}
-
-		if _, err := time.Parse(time.RFC3339Nano, req.Delivery.CreatedAt); err != nil {
-			return errors.New(fmt.Sprintf("invalid delivery created at: %s", err.Error()))
-		}
-
-		if req.Delivery.ScheduledAt != nil {
-			if _, err := time.Parse(time.RFC3339Nano, *req.Delivery.ScheduledAt); err != nil {
-				return errors.New(fmt.Sprintf("invalid delivery scheduled at: %s", err.Error()))
-			}
-		}
-
-		if req.Delivery.Customer.Name == "" {
-			return errors.New("delivery customer name is required")
-		}
-	}
-
-	// validate queue
-	if req.Queue != nil {
-		err = validator.IsUUID(req.Queue.UUID)
-		if err != nil {
-			return errors.New("invalid queue uuid")
-		}
-
-		if req.Queue.Number == "" {
-			return errors.New("queue number is required")
-		}
-
-		if req.Queue.Customer.Name == "" {
-			return errors.New("queue customer name is required")
-		}
-
-		if req.Queue.ScheduledAt != nil {
-			_, err := time.Parse(time.RFC3339, *req.Queue.ScheduledAt)
-			if err != nil {
-				return errors.New("invalid queue scheduled at")
-			}
-		}
-	}
-
-	// validate order
-	for orderIndex, order := range req.Orders {
-		err = validator.IsUUID(order.UUID)
-		if err != nil {
-			return errors.New(fmt.Sprintf("order %d uuid is not valid", orderIndex))
-		}
-
-		err = validator.IsUUID(order.Item.UUID)
-		if err != nil {
-			return errors.New(fmt.Sprintf("order %d item uuid is not valid", orderIndex))
-		}
-
-		if order.Item.Quantity <= 0 {
-			return errors.New(fmt.Sprintf("order %d item quantity is not valid, must be 0 or more", orderIndex))
-		}
-
-		_, err := time.Parse(time.RFC3339Nano, order.CreatedAt)
-		if err != nil {
-			return errors.New(fmt.Sprintf("order %d created at is not valid: %v", orderIndex, err))
-		}
-
-		// order modifiers
-		for modIndex, modifier := range order.Modifiers {
-			err = validator.IsUUID(modifier.UUID)
-			if err != nil {
-				return errors.New(fmt.Sprintf("order %d modifier %d uuid is not valid: %v", orderIndex, modIndex, err))
-			}
-
-			if modifier.Quantity < 0 {
-				return errors.New(fmt.Sprintf("order %d modifier %d quantity is not valid: %v", orderIndex, modIndex, err))
-			}
-		}
-
-		// order waiter
-		if order.Waiter != nil {
-			err = validator.IsUUID(order.Waiter.UUID)
-			if err != nil {
-				return errors.New(fmt.Sprintf("order %d waiter uuid is not valid: %v", orderIndex, err))
-			}
-
-			err = validator.IsUUID(order.Waiter.BranchUUID)
-			if err != nil {
-				return errors.New(fmt.Sprintf("order %d waiter branch uuid is not valid: %v", orderIndex, err))
-			}
-		}
-	}
-
-	return nil
 }
 
 // DTO to Domain

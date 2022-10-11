@@ -42,7 +42,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 
 	// create collection if not exists
 	for _, collName := range collections {
-		if !helper.ContainString(collNames, collName) {
+		if !helper.Contain(collNames, collName) {
 			err = client.Database(dbName).CreateCollection(ctx, collName)
 			if err != nil {
 				App.Log.Error(err)

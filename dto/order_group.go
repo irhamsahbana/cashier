@@ -87,13 +87,13 @@ type ItemOrder struct {
 	Name     string  `json:"name"`
 	Label    string  `json:"label"`
 	Price    float32 `json:"price"`
-	Quantity int     `json:"quantity"`
+	Quantity uint    `json:"quantity"`
 }
 
 type ModifierOrder struct {
 	UUID     string  `json:"uuid"`
 	Name     string  `json:"name"`
-	Quantity int     `json:"quantity"`
+	Quantity uint    `json:"quantity"`
 	Price    float32 `json:"price"`
 }
 

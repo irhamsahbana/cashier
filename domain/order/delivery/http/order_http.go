@@ -43,6 +43,12 @@ func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 		return
 	}
 
+	errMsg := validateUpserOrderRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
 	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
