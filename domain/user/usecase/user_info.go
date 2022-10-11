@@ -12,7 +12,64 @@ func (u *userUsecase) UserBranchInfo(c context.Context, id string, withTrashed b
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
+	// user
 	user, code, err := u.userRepo.FindUserBy(ctx, "uuid", id, withTrashed)
+	if err != nil {
+		return nil, code, err
+	}
+
+	// user role
+	roles, code, err := u.userRoleRepo.FindUserRoles(ctx, true)
+	if err != nil {
+		return nil, code, err
+	}
+
+	// employees that will showed
+	employeeRoleIds := []string{}
+	for _, role := range roles {
+		if role.UUID != user.RoleUUID {
+			continue
+		}
+		rn := role.Name
+
+		if rn == "Owner" || rn == "Branch Owner" || rn == "Manager" {
+			for _, r := range roles {
+				if r.Name == "Customer" {
+					continue
+				}
+				employeeRoleIds = append(employeeRoleIds, r.UUID)
+			}
+		}
+
+		if rn == "Head Accountant" || rn == "Accountant" {
+			for _, r := range roles {
+				if r.Name == "Owner" || r.Name == "Branch Owner" || r.Name == "Manager" || r.Name == "Head Accountant" || rn == "Accountant" {
+					employeeRoleIds = append(employeeRoleIds, r.UUID)
+				}
+			}
+		}
+
+		if rn == "Admin Cashier" || rn == "Cashier" {
+			for _, r := range roles {
+				if r.Name == "Owner" || r.Name == "Branch Owner" || r.Name == "Manager" || r.Name == "Admin Cashier" || r.Name == "Cashier" {
+					employeeRoleIds = append(employeeRoleIds, r.UUID)
+				}
+			}
+		}
+
+		if rn == "Stock Overseer" || rn == "Stock Keeper" {
+			for _, r := range roles {
+				if r.Name == "Owner" || r.Name == "Branch Owner" || r.Name == "Manager" || r.Name == "Stock Overseer" || r.Name == "Stock Keeper" {
+					employeeRoleIds = append(employeeRoleIds, r.UUID)
+				}
+			}
+		}
+
+		break
+	}
+
+	// employees
+	employees, code, err := u.userRepo.FindUsers(ctx, user.BranchUUID, employeeRoleIds, 1000, 0, true)
 	if err != nil {
 		return nil, code, err
 	}
@@ -21,12 +78,12 @@ func (u *userUsecase) UserBranchInfo(c context.Context, id string, withTrashed b
 	branchDiscounts, _, _ := u.branchDiscountRepo.FindBranchDiscounts(ctx, user.BranchUUID)
 
 	var resp dto.BranchResponse
-	userDomainToDTO_UserBranchInfo(&resp, user, company, branchDiscounts)
+	userDomainToDTO_UserBranchInfo(&resp, user, company, branchDiscounts, employees, roles)
 
 	return &resp, http.StatusOK, nil
 }
 
-func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c *domain.Company, bd []domain.BranchDiscount) {
+func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c *domain.Company, bd []domain.BranchDiscount, emp []domain.User, roles []domain.UserRole) {
 	// branch
 	for _, branch := range c.Branches {
 		if branch.UUID != u.BranchUUID {
@@ -68,7 +125,7 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 		}
 
 		// discount
-		var discounts []dto.BranchDiscountResponse
+		discounts := []dto.BranchDiscountResponse{}
 		for _, discount := range bd {
 			var discountDTO dto.BranchDiscountResponse
 
@@ -78,12 +135,10 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			discountDTO.Fixed = discount.Fixed
 			discountDTO.Percentage = discount.Percentage
 			discountDTO.CreatedAt = time.UnixMicro(discount.CreatedAt).UTC()
-
 			if discount.UpdatedAt != nil {
 				bdUpdatedAt := time.UnixMicro(*discount.UpdatedAt).UTC()
 				discountDTO.UpdatedAt = &bdUpdatedAt
 			}
-
 			if discount.DeletedAt != nil {
 				bdDeletedAt := time.UnixMicro(*discount.DeletedAt).UTC()
 				discountDTO.DeletedAt = &bdDeletedAt
@@ -92,12 +147,9 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			discounts = append(discounts, discountDTO)
 		}
 		resp.Discounts = discounts
-		if len(discounts) == 0 {
-			resp.Discounts = make([]dto.BranchDiscountResponse, 0)
-		}
 
 		// taxes
-		var respTaxes []dto.TaxResponse
+		respTaxes := []dto.TaxResponse{}
 		for _, tax := range branch.Taxes {
 			var taxResp dto.TaxResponse
 
@@ -105,6 +157,7 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			taxResp.Name = tax.Name
 			taxResp.Value = tax.Value
 			taxResp.Description = tax.Description
+			taxResp.IsDefault = tax.IsDefault
 			taxResp.CreatedAt = time.UnixMicro(tax.CreatedAt).UTC()
 			if tax.UpdatedAt != nil {
 				taxRespUpdatedAt := time.UnixMicro(*tax.UpdatedAt).UTC()
@@ -118,18 +171,16 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			respTaxes = append(respTaxes, taxResp)
 		}
 		resp.Taxes = respTaxes
-		if len(respTaxes) == 0 {
-			resp.Taxes = make([]dto.TaxResponse, 0)
-		}
 
 		// tips
-		var respTips []dto.TipResponse
+		respTips := []dto.TipResponse{}
 		for _, tip := range branch.Tips {
 			var tipResp dto.TipResponse
 			tipResp.UUID = tip.UUID
 			tipResp.Name = tip.Name
 			tipResp.Value = tip.Value
 			tipResp.Description = tip.Description
+			tipResp.IsDefault = tip.IsDefault
 			tipResp.CreatedAt = time.UnixMicro(tip.CreatedAt).UTC()
 			if tip.UpdatedAt != nil {
 				tipRespUpdatedAt := time.UnixMicro(*tip.UpdatedAt).UTC()
@@ -143,12 +194,9 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			respTips = append(respTips, tipResp)
 		}
 		resp.Tips = respTips
-		if len(respTips) == 0 {
-			resp.Tips = make([]dto.TipResponse, 0)
-		}
 
 		// payment methods
-		var respPaymentMethods []dto.PaymentMethodResponse
+		respPaymentMethods := []dto.PaymentMethodResponse{}
 		for _, paymentMethod := range branch.PaymentMethods {
 			var paymentMethodResp dto.PaymentMethodResponse
 			paymentMethodResp.UUID = paymentMethod.UUID
@@ -171,11 +219,6 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			respPaymentMethods = append(respPaymentMethods, paymentMethodResp)
 		}
 		resp.PaymentMethods = respPaymentMethods
-		if len(respPaymentMethods) == 0 {
-			resp.PaymentMethods = make([]dto.PaymentMethodResponse, 0)
-		}
-
-		//
 
 		// fee preferences
 		resp.FeePreference.Service.Nominal = branch.FeePreference.Service.Nominal
@@ -201,5 +244,36 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 
 		// employees
 		resp.Employees = make([]dto.UserResponse, 0)
+		for _, employee := range emp {
+			var empResp dto.UserResponse
+			empResp.UUID = employee.UUID
+			empResp.BranchUUID = employee.BranchUUID
+			roleUUID := employee.RoleUUID
+			empResp.RoleUUID = &roleUUID
+			empResp.Name = employee.Name
+			empResp.Email = &employee.Email
+			empResp.Phone = employee.Phone
+
+			for _, role := range roles {
+				if role.UUID == employee.RoleUUID {
+					empResp.Role = role.Name
+					break
+				}
+			}
+
+			createdAt := time.UnixMicro(employee.CreatedAt).UTC()
+			empResp.CreatedAt = &createdAt
+			if employee.UpdatedAt != nil {
+				empRespUpdatedAt := time.UnixMicro(*employee.UpdatedAt).UTC()
+				empResp.UpdatedAt = &empRespUpdatedAt
+			}
+			if employee.DeletedAt != nil {
+				empRespDeletedAt := time.UnixMicro(*employee.DeletedAt).UTC()
+				empResp.DeletedAt = &empRespDeletedAt
+			}
+
+			resp.Employees = append(resp.Employees, empResp)
+		}
+
 	}
 }

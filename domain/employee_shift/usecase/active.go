@@ -15,7 +15,7 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dom
 		return nil, code, err
 	}
 
-	var resp []domain.EmployeeShiftResponse
+	resp := []domain.EmployeeShiftResponse{}
 	for _, r := range result {
 		var e domain.EmployeeShiftResponse
 
@@ -39,7 +39,8 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dom
 			e.DeletedAt = &deletedAt
 		}
 
-		var supporters []domain.EmployeeShiftSupporterResponse
+		// supporters
+		supporters := []domain.EmployeeShiftSupporterResponse{}
 		for _, s := range r.Supporters {
 			var supporter domain.EmployeeShiftSupporterResponse
 

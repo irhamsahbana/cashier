@@ -89,6 +89,7 @@ type Tax struct {
 	Name        string  `bson:"name"`
 	Description string  `bson:"description"`
 	Value       float32 `bson:"value"`
+	IsDefault   bool    `bson:"is_default"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at"`
 	DeletedAt   *int64  `bson:"deleted_at"`
@@ -99,6 +100,7 @@ type Tip struct {
 	Name        string  `bson:"name"`
 	Description string  `bson:"description"`
 	Value       float32 `bson:"value"`
+	IsDefault   bool    `bson:"is_default"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at"`
 	DeletedAt   *int64  `bson:"deleted_at"`

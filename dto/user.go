@@ -11,6 +11,7 @@ type UserLoginRequest struct {
 type UserResponse struct {
 	UUID         string          `json:"uuid"`
 	BranchUUID   string          `json:"branch_uuid"`
+	RoleUUID     *string         `json:"role_uuid"`
 	Branch       *BranchResponse `json:"branch,omitempty"`
 	Name         string          `json:"name"`
 	Role         string          `json:"role"`

@@ -163,6 +163,7 @@ func (h *UserHandler) FindCustomers(c *gin.Context) {
 		return
 	}
 
+	// withTrashed boolean
 	withTrashedBool, _ := strconv.ParseBool(withTrashed)
 
 	ctx := context.Background()

@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/logger"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type userRepository struct {
@@ -42,9 +44,7 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 	err := repo.Collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			logger.Log(logrus.Fields{
-				"error": err,
-			}).Error("user not found")
+			logger.Log(logrus.Fields{}).Error(err)
 			return nil, http.StatusNotFound, errors.New("user not found")
 		}
 
@@ -60,6 +60,9 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 func (repo *userRepository) FindUsers(ctx context.Context, branchId string, roles []string, limit, page int, withTrashed bool) ([]domain.User, int, error) {
 	var users []domain.User
 	var filter bson.M
+	fmt.Println("limit", limit)
+	fmt.Println("page", page)
+	opts := *options.Find().SetLimit(int64(limit)).SetSkip(int64(page * limit))
 
 	if withTrashed {
 		filter = bson.M{
@@ -70,11 +73,7 @@ func (repo *userRepository) FindUsers(ctx context.Context, branchId string, role
 		}
 
 		if len(roles) == 0 {
-			filter = bson.M{
-				"$and": bson.A{
-					bson.M{"branch_uuid": branchId},
-				},
-			}
+			filter = bson.M{"branch_uuid": branchId}
 		}
 	} else {
 		filter = bson.M{
@@ -95,7 +94,7 @@ func (repo *userRepository) FindUsers(ctx context.Context, branchId string, role
 		}
 	}
 
-	cursor, err := repo.Collection.Find(ctx, filter)
+	cursor, err := repo.Collection.Find(ctx, filter, &opts)
 	if err != nil {
 		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err

@@ -81,6 +81,7 @@ type TaxResponse struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Value       float32    `json:"value"`
+	IsDefault   bool       `json:"is_default"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
@@ -91,6 +92,7 @@ type TipResponse struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	Value       float32    `json:"value"`
+	IsDefault   bool       `json:"is_default"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`

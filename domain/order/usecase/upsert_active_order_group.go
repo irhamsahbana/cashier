@@ -174,9 +174,6 @@ func validateUpsertActiveOrderRequest(req *dto.OrderGroupUpsertRequest) error {
 func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderGroupUpsertRequest) {
 	data.UUID = req.UUID
 	data.CreatedBy = req.CreatedBy
-
-	data.Tax = req.Tax
-	data.Tip = req.Tip
 	data.Completed = req.Completed
 
 	// delivery
@@ -234,8 +231,9 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 	data.SpaceUUID = req.SpaceUUID
 
 	// orders
-	var orders []domain.Order
+	orders := []domain.Order{}
 	for _, order := range req.Orders {
+		// waiters
 		var waiter *domain.WaiterOrder
 		if order.Waiter != nil {
 			waiter = &domain.WaiterOrder{
@@ -246,7 +244,7 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 		}
 
 		// order modifiers
-		var modifiers []domain.ModifierOrder
+		modifiers := []domain.ModifierOrder{}
 		for _, modifier := range order.Modifiers {
 			modifiers = append(modifiers, domain.ModifierOrder{
 				UUID:     modifier.UUID,
@@ -254,10 +252,6 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 				Price:    modifier.Price,
 				Quantity: modifier.Quantity,
 			})
-		}
-
-		if len(modifiers) == 0 {
-			modifiers = make([]domain.ModifierOrder, 0)
 		}
 
 		// item
@@ -269,11 +263,24 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 			Quantity: order.Item.Quantity,
 		}
 
+		// discount
+		discounts := []domain.DiscountOrder{}
+		for _, discount := range order.Discounts {
+			var discountOrder domain.DiscountOrder
+			discountOrder.UUID = discount.UUID
+			discountOrder.Name = discount.Name
+			discountOrder.Fixed = discount.Fixed
+			discountOrder.Percent = discount.Percent
+
+			discounts = append(discounts, discountOrder)
+		}
+
 		createdAt, _ := time.Parse(time.RFC3339Nano, order.CreatedAt)
 		orders = append(orders, domain.Order{
 			UUID:      order.UUID,
 			Item:      item,
 			Modifiers: modifiers,
+			Discounts: discounts,
 			Waiter:    waiter,
 			CreatedAt: createdAt.UnixMicro(),
 		})
@@ -290,8 +297,6 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 	resp.BranchUUID = data.BranchUUID
 	resp.CreatedBy = data.CreatedBy
 
-	resp.Tax = data.Tax
-	resp.Tip = data.Tip
 	resp.Completed = data.Completed
 	resp.CreatedAt = time.UnixMicro(data.CreatedAt).UTC()
 	resp.CancelReason = data.CancelReason
@@ -369,7 +374,7 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 	resp.SpaceUUID = data.SpaceUUID
 
 	// orders
-	var orders []dto.OrderResponse
+	orders := []dto.OrderResponse{}
 	for _, order := range data.Orders {
 		var waiter *dto.WaiterOrder
 		if order.Waiter != nil {
@@ -381,7 +386,7 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 		}
 
 		// order modifiers
-		var modifiers []dto.ModifierOrder
+		modifiers := []dto.ModifierOrder{}
 		for _, modifier := range order.Modifiers {
 			modifiers = append(modifiers, dto.ModifierOrder{
 				UUID:     modifier.UUID,
@@ -391,8 +396,15 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			})
 		}
 
-		if len(modifiers) == 0 {
-			modifiers = make([]dto.ModifierOrder, 0)
+		// order discounts
+		discounts := []dto.DiscountOrder{}
+		for _, discount := range order.Discounts {
+			discounts = append(discounts, dto.DiscountOrder{
+				UUID:    discount.UUID,
+				Name:    discount.Name,
+				Fixed:   discount.Fixed,
+				Percent: discount.Percent,
+			})
 		}
 
 		// item
@@ -418,6 +430,7 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			UUID:      order.UUID,
 			Item:      item,
 			Modifiers: modifiers,
+			Discounts: discounts,
 			Waiter:    waiter,
 			CreatedAt: time.UnixMicro(order.CreatedAt).Format(time.RFC3339Nano),
 			UpdatedAt: orderUpdatedAt,
@@ -425,6 +438,17 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 		})
 	}
 	resp.Orders = orders
+
+	// taxes
+	taxes := []dto.TaxOrderGroup{}
+	for _, tax := range data.Taxes {
+		taxes = append(taxes, dto.TaxOrderGroup{
+			UUID:  tax.UUID,
+			Name:  tax.Name,
+			Value: tax.Value,
+		})
+	}
+	resp.Taxes = taxes
 
 	resp.CreatedAt = time.UnixMicro(data.CreatedAt).UTC()
 	if data.UpdatedAt != nil {

@@ -25,7 +25,7 @@ func initMongoDatabaseDummyData(ctx context.Context, client *mongo.Client, dbNam
 		"zones",
 		"waiters",
 
-		"employee_shifts",
+		// "employee_shifts",
 
 		"files",
 	}

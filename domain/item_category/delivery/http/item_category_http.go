@@ -24,6 +24,8 @@ func NewItemCategoryHandler(router *gin.Engine, usecase domain.ItemCategoryUseca
 	permitted := []middleware.UserRole{
 		middleware.UserRole_OWNER,
 		middleware.UserRole_BRANCH_OWNER,
+		middleware.UserRole_ADMIN_CASHIER,
+		middleware.UserRole_CASHIER,
 	}
 
 	r := router.Group("/", middleware.Auth, middleware.Authorization(permitted))

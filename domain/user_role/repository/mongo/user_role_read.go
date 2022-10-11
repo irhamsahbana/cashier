@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
 	"net/http"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -74,6 +76,30 @@ func (repo *userRoleReposiotry) FindUserRoleByName(ctx context.Context, name str
 	}
 
 	return &userRole, http.StatusOK, nil
+}
+
+func (repo *userRoleReposiotry) FindUserRoles(ctx context.Context, withTrashed bool) ([]domain.UserRole, int, error) {
+	var roles []domain.UserRole
+	var filter bson.M
+	if withTrashed {
+		filter = bson.M{"deleted_at": nil}
+	} else {
+		filter = bson.M{}
+	}
+
+	cursor, err := repo.Collection.Find(ctx, filter)
+	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
+		return nil, http.StatusInternalServerError, err
+	}
+
+	err = cursor.All(ctx, &roles)
+	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return roles, http.StatusOK, nil
 }
 
 func (repo *userRoleReposiotry) FindUserRoleBy(ctx context.Context, key string, val interface{}) (*domain.UserRole, int, error) {

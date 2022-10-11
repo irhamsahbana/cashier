@@ -9,10 +9,9 @@ type OrderGroupResponse struct {
 	SpaceUUID    *string           `json:"space_uuid"`
 	Delivery     *DeliveryResponse `json:"delivery"`
 	Queue        *Queue            `json:"queue"`
-	Orders       []OrderResponse   `json:"orders"`
 	CreatedBy    string            `json:"created_by"`
-	Tax          float32           `json:"tax"`
-	Tip          float32           `json:"tip"`
+	Orders       []OrderResponse   `json:"orders"`
+	Taxes        []TaxOrderGroup   `json:"taxes"`
 	CancelReason *string           `json:"cancel_reason,omitempty"`
 	Pending      *bool             `json:"pending"`
 	Completed    bool              `json:"completed"`
@@ -37,6 +36,7 @@ type OrderResponse struct {
 	UUID        string          `json:"uuid"`
 	Item        ItemOrder       `json:"item"`
 	Modifiers   []ModifierOrder `json:"modifiers"`
+	Discounts   []DiscountOrder `json:"discounts"`
 	Waiter      *WaiterOrder    `json:"waiter"`
 	RefundedQty int32           `json:"refunded_qty"`
 	CreatedAt   string          `json:"created_at"`
@@ -44,30 +44,37 @@ type OrderResponse struct {
 	DeletedAt   *time.Time      `json:"deleted_at"`
 }
 
-// requests
+type TaxOrderGroup struct {
+	UUID  string  `json:"uuid"`
+	Name  string  `json:"name"`
+	Value float32 `json:"value"`
+}
 
+// requests
 type OrderGroupUpsertRequest struct {
-	UUID      string    `json:"uuid"`
-	SpaceUUID *string   `json:"space_uuid"`
-	Delivery  *Delivery `json:"delivery"`
-	Queue     *Queue    `json:"queue"`
-	Orders    []Order   `json:"orders"`
-	CreatedBy string    `json:"created_by"`
-	Tax       float32   `json:"tax"`
-	Tip       float32   `json:"tip"`
-	Pending   *bool     `json:"pending"`
-	Completed bool      `json:"completed"`
-	CreatedAt string    `json:"created_at"`
+	UUID      string          `json:"uuid"`
+	SpaceUUID *string         `json:"space_uuid"`
+	Delivery  *Delivery       `json:"delivery"`
+	Queue     *Queue          `json:"queue"`
+	Orders    []Order         `json:"orders"`
+	Taxes     []TaxOrderGroup `json:"taxes"`
+	CreatedBy string          `json:"created_by"`
+	Pending   *bool           `json:"pending"`
+	Completed bool            `json:"completed"`
+	CreatedAt string          `json:"created_at"`
 }
 
 type OrderGroupDeleteRequest struct {
 	CancelReason string `json:"cancel_reason"`
 }
 
+// -- requests
+
 type Order struct {
 	UUID        string          `json:"uuid"`
 	Item        ItemOrder       `json:"item"`
 	Modifiers   []ModifierOrder `json:"modifiers"`
+	Discounts   []DiscountOrder `json:"discounts"`
 	Waiter      *WaiterOrder    `json:"waiter"`
 	RefundedQty int32           `json:"refunded_qty"`
 	CreatedAt   string          `json:"created_at"`
@@ -88,6 +95,13 @@ type ModifierOrder struct {
 	Name     string  `json:"name"`
 	Quantity int     `json:"quantity"`
 	Price    float32 `json:"price"`
+}
+
+type DiscountOrder struct {
+	UUID    string  `json:"uuid"`
+	Name    string  `json:"name"`
+	Fixed   float32 `json:"fixed"`
+	Percent float32 `json:"percent"`
 }
 
 type WaiterOrder struct {

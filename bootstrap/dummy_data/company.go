@@ -27,7 +27,7 @@ func collectionCompany(coll *mongo.Collection) {
 						{Key: "postal_code", Value: "90245"},
 					}},
 					{Key: "preferences", Value: bson.A{
-						"takeaways", "deliveries", "spaces",
+						"queues", "deliveries", "spaces",
 					}},
 					{Key: "social_media", Value: bson.D{
 						{Key: "facebook", Value: "https://www.facebook.com/starkindustry"},
@@ -47,6 +47,7 @@ func collectionCompany(coll *mongo.Collection) {
 							{Key: "name", Value: "Pajak Restoran"},
 							{Key: "description", Value: "Pajak Restoran"},
 							{Key: "value", Value: 11},
+							{Key: "is_default", Value: true},
 							{Key: "created_at", Value: 1660403045123456},
 							{Key: "updated_at", Value: 1660403045123456},
 							{Key: "deleted_at", Value: nil},
@@ -58,6 +59,7 @@ func collectionCompany(coll *mongo.Collection) {
 							{Key: "name", Value: "Tip Waiter"},
 							{Key: "description", Value: "Tip Waiter"},
 							{Key: "value", Value: 11},
+							{Key: "is_default", Value: false},
 							{Key: "created_at", Value: 1660403045123456},
 							{Key: "updated_at", Value: 1660403045123456},
 							{Key: "deleted_at", Value: nil},

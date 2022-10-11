@@ -17,7 +17,13 @@ func Auth(c *gin.Context) {
 
 	authHeader := c.GetHeader("Authorization")
 
-	if authHeader == "" || authHeader[:len(BEARER_SCHEMA)] != BEARER_SCHEMA {
+	if len(authHeader) < len(BEARER_SCHEMA) {
+		http_response.ReturnResponse(c, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized), nil)
+		c.Abort()
+		return
+	}
+
+	if authHeader[:len(BEARER_SCHEMA)] != BEARER_SCHEMA {
 		http_response.ReturnResponse(c, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized), nil)
 		c.Abort()
 		return

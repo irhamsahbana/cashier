@@ -81,7 +81,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 		db.SpaceUUID = data.SpaceUUID
 	}
 
-	// ============================================================
+	// -- meta data ============================================================
 
 	// update order
 	dbOrderUUID := make([]string, 0)
@@ -96,7 +96,6 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 
 	// updated order
 	updatedOrders := make([]domain.Order, 0)
-
 	for _, dbOrder := range db.Orders {
 		if !helper.ContainString(dataOrderUUID, dbOrder.UUID) { // if order not exist in data, delete it
 			dbOrderDeletedAt := time.Now().UTC().UnixMicro()
@@ -113,6 +112,13 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 				}
 			}
 			updatedOrders = append(updatedOrders, updatedOrder)
+		}
+
+		for _, dataOrder := range data.Orders {
+			if dataOrder.UUID == dbOrder.UUID {
+				dbOrder.Discounts = dataOrder.Discounts
+				break
+			}
 		}
 	}
 

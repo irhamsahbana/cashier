@@ -6,27 +6,28 @@ import (
 )
 
 type OrderGroup struct {
-	UUID         string    `bson:"uuid"`
-	BranchUUID   string    `bson:"branch_uuid"`
-	SpaceUUID    *string   `bson:"space_uuid"`
-	Delivery     *Delivery `bson:"delivery"`
-	Queue        *Queue    `bson:"queue"`
-	Orders       []Order   `bson:"orders"`
-	CreatedBy    string    `bson:"created_by"`
-	Tax          float32   `bson:"tax"`
-	Tip          float32   `bson:"tip"`
-	CancelReason *string   `bson:"cancel_reason"`
-	Pending      *bool     `bson:"pending"`
-	Completed    bool      `bson:"completed"`
-	CreatedAt    int64     `bson:"created_at"`
-	UpdatedAt    *int64    `bson:"updated_at"`
-	DeletedAt    *int64    `bson:"deleted_at"`
+	UUID         string          `bson:"uuid"`
+	BranchUUID   string          `bson:"branch_uuid"`
+	SpaceUUID    *string         `bson:"space_uuid"`
+	Delivery     *Delivery       `bson:"delivery"`
+	Queue        *Queue          `bson:"queue"`
+	Discounts    []DiscountOrder `bson:"discounts"`
+	Orders       []Order         `bson:"orders"`
+	Taxes        []TaxOrderGroup `bson:"taxes"`
+	CreatedBy    string          `bson:"created_by"`
+	CancelReason *string         `bson:"cancel_reason"`
+	Pending      *bool           `bson:"pending"`
+	Completed    bool            `bson:"completed"`
+	CreatedAt    int64           `bson:"created_at"`
+	UpdatedAt    *int64          `bson:"updated_at"`
+	DeletedAt    *int64          `bson:"deleted_at"`
 }
 
 type Order struct {
 	UUID        string          `bson:"uuid"`
 	Item        ItemOrder       `bson:"item"`
 	Modifiers   []ModifierOrder `bson:"modifiers"`
+	Discounts   []DiscountOrder `bson:"discounts"`
 	Waiter      *WaiterOrder    `bson:"waiter"`
 	RefundedQty int32           `bson:"refunded_qty"`
 	CreatedAt   int64           `bson:"created_at"`
@@ -47,6 +48,19 @@ type ModifierOrder struct {
 	Name     string  `bson:"name"`
 	Quantity int     `bson:"quantity"`
 	Price    float32 `bson:"price"`
+}
+
+type DiscountOrder struct {
+	UUID    string  `bson:"uuid"`
+	Name    string  `bson:"name"`
+	Fixed   float32 `bson:"fixed"`
+	Percent float32 `bson:"percent"`
+}
+
+type TaxOrderGroup struct {
+	UUID  string  `bson:"uuid"`
+	Name  string  `bson:"name"`
+	Value float32 `bson:"value"`
 }
 
 type WaiterOrder struct {
