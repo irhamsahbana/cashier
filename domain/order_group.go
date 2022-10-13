@@ -71,7 +71,7 @@ type WaiterOrder struct {
 
 type Delivery struct {
 	UUID        string   `bson:"uuid"`
-	Number      string   `bson:"number"`
+	Number      uint     `bson:"number"`
 	Partner     string   `bson:"partner"`
 	Driver      string   `bson:"driver"`
 	Customer    Customer `bson:"customer"`
@@ -83,7 +83,7 @@ type Delivery struct {
 
 type Queue struct {
 	UUID        string   `bson:"uuid"`
-	Number      string   `bson:"number"`
+	Number      uint     `bson:"number"`
 	Customer    Customer `bson:"customer"`
 	ScheduledAt *int64   `bson:"scheduled_at"`
 	CreatedAt   int64    `bson:"created_at"`

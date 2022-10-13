@@ -22,7 +22,7 @@ type OrderGroupResponse struct {
 
 type DeliveryResponse struct {
 	UUID        string     `json:"uuid"`
-	Number      string     `json:"number"`
+	Number      uint       `json:"number"`
 	Partner     string     `json:"partner"`
 	Driver      string     `json:"driver"`
 	Customer    Customer   `json:"customer"`
@@ -112,7 +112,7 @@ type WaiterOrder struct {
 
 type Delivery struct {
 	UUID        string   `json:"uuid"`
-	Number      string   `json:"number"`
+	Number      uint     `json:"number"`
 	Partner     string   `json:"partner"`
 	Driver      string   `json:"driver"`
 	Customer    Customer `json:"customer"`
@@ -122,7 +122,7 @@ type Delivery struct {
 
 type Queue struct {
 	UUID        string   `json:"uuid"`
-	Number      string   `json:"number"`
+	Number      uint     `json:"number"`
 	Customer    Customer `json:"customer"`
 	ScheduledAt *string  `json:"scheduled_at"`
 	CreatedAt   string   `json:"created_at"`

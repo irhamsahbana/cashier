@@ -101,11 +101,12 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 			dbOrderDeletedAt := time.Now().UTC().UnixMicro()
 			dbOrder.DeletedAt = &dbOrderDeletedAt
 			updatedOrders = append(updatedOrders, dbOrder)
-		} else { // if order exist in data, update it
+		} else { // if order exist in data, update it,
 			var updatedOrder domain.Order
 			for _, dataOrder := range data.Orders {
 				if dataOrder.UUID == dbOrder.UUID {
 					updatedOrder = dataOrder
+					updatedOrder.CreatedAt = dbOrder.CreatedAt
 					updatedAt := time.Now().UTC().UnixMicro()
 					updatedOrder.UpdatedAt = &updatedAt
 					break
@@ -119,6 +120,13 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 				dbOrder.Discounts = dataOrder.Discounts
 				break
 			}
+		}
+	}
+
+	// new order
+	for _, dataOrder := range data.Orders {
+		if !helper.Contain(dbOrderUUID, dataOrder.UUID) {
+			updatedOrders = append(updatedOrders, dataOrder)
 		}
 	}
 

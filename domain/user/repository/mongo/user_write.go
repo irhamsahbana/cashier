@@ -68,12 +68,14 @@ func (repo *userRepository) UpsertUser(ctx context.Context, user *domain.User) (
 	countUser, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
 		logger.Log(logrus.Fields{}).Error(err)
+		return nil, http.StatusInternalServerError, err
 	}
 
 	if countUser == 0 { // insert
 		_, err := repo.Collection.InsertOne(ctx, user)
 		if err != nil {
 			logger.Log(logrus.Fields{}).Error(err)
+			return nil, http.StatusInternalServerError, err
 		}
 	} else { // update
 		updatedAt := time.Now().UnixMicro()
@@ -90,6 +92,7 @@ func (repo *userRepository) UpsertUser(ctx context.Context, user *domain.User) (
 		_, err = repo.Collection.UpdateOne(ctx, filter, update)
 		if err != nil {
 			logger.Log(logrus.Fields{}).Error(err)
+			return nil, http.StatusInternalServerError, err
 		}
 	}
 

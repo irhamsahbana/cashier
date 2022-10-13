@@ -23,8 +23,8 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 		typeCount++
 	}
 
-	if typeCount > 1 {
-		msg["type"] = []string{"order group type must be either delivery, queue, space, or none of them(quick order)"}
+	if typeCount > 1 || typeCount == 0 {
+		msg["type"] = []string{"order group type must be either delivery, queue, or space"}
 	}
 
 	err := validator.IsUUID(req.UUID)
@@ -43,9 +43,9 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 			msg["delivery.uuid"] = []string{"delivery uuid is not valid"}
 		}
 
-		if req.Delivery.Number == "" {
-			msg["delivery.number"] = []string{"delivery number must not be empty"}
-		}
+		// if req.Delivery.Number == "" {
+		// 	msg["delivery.number"] = []string{"delivery number must not be empty"}
+		// }
 
 		if req.Delivery.Partner == "" {
 			msg["delivery.partner"] = []string{"delivery partner must not be empty"}
@@ -77,9 +77,9 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 			msg["queue.uuid"] = []string{"queue uuid is not valid"}
 		}
 
-		if req.Queue.Number == "" {
-			msg["queue.number"] = []string{"queue number must not be empty"}
-		}
+		// if req.Queue.Number == "" {
+		// 	msg["queue.number"] = []string{"queue number must not be empty"}
+		// }
 
 		if req.Queue.Customer.Name == "" {
 			msg["queue.customer.name"] = []string{"queue customer name must not be empty"}
@@ -121,8 +121,8 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 				msg[fmt.Sprintf("orders.%d.modifiers.%d.uuid", orderIndex, modIndex)] = []string{"order modifier uuid is not valid"}
 			}
 
-			if modifier.Quantity < 0 {
-				msg[fmt.Sprintf("orders.%d.modifiers.%d.quantity", orderIndex, modIndex)] = []string{"order modifier quantity must not be negative"}
+			if modifier.Quantity < 1 {
+				msg[fmt.Sprintf("orders.%d.modifiers.%d.quantity", orderIndex, modIndex)] = []string{"order modifier quantity must more than 0"}
 			}
 		}
 

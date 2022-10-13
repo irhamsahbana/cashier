@@ -12,21 +12,24 @@ import (
 )
 
 func (u *userUsecase) UpsertCustomer(c context.Context, req *dto.CustomerUpserRequest) (*dto.CustomerResponse, int, error) {
+	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
+	defer cancel()
+
 	err := validateUpsertCustomerRequest(req)
 	if err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
 	// find user role with name customer
-	userRole, code, err := u.userRoleRepo.FindUserRoleByName(c, "Customer", false)
+	role, code, err := u.userRoleRepo.FindUserRoleByName(c, "Customer", false)
 	if err != nil {
 		return nil, code, err
 	}
 
 	var data domain.User
-	data.RoleUUID = userRole.UUID
+	data.RoleUUID = role.UUID
 	userDTOtoDomain_UpsertCustomer(&data, req)
-	result, code, err := u.userRepo.UpsertUser(c, &data)
+	result, code, err := u.userRepo.UpsertUser(ctx, &data)
 	if err != nil {
 		return nil, code, err
 	}
