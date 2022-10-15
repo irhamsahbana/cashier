@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
 	"lucy/cashier/lib/middleware"
 	"net/http"
@@ -33,6 +34,8 @@ func NewEmployeeShiftHandler(router *gin.Engine, usecase domain.EmployeeShiftUse
 	r.PATCH("/employee-shifts/clock-out", handler.ClockOut)
 	r.GET("/employee-shifts/history", handler.History)
 	r.GET("/employee-shifts/active", handler.Active)
+
+	r.POST("/employee-shifts/entry-cash", handler.EntryCash)
 }
 
 func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
@@ -40,7 +43,7 @@ func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -49,11 +52,11 @@ func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.ClockIn(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, http.StatusOK, "success to clock in", result)
+	http_response.JSON(c, http.StatusOK, "success to clock in", result)
 }
 
 func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
@@ -61,7 +64,7 @@ func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -70,11 +73,11 @@ func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.ClockOut(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, http.StatusOK, "success to clock out", result)
+	http_response.JSON(c, http.StatusOK, "success to clock out", result)
 }
 
 func (h *EmployeeShiftHandler) History(c *gin.Context) {
@@ -86,24 +89,24 @@ func (h *EmployeeShiftHandler) History(c *gin.Context) {
 	// convert limit and page to int
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, "limit must be integer", nil)
+		http_response.JSON(c, http.StatusBadRequest, "limit must be integer", nil)
 		return
 	}
 
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, "page must be integer", nil)
+		http_response.JSON(c, http.StatusBadRequest, "page must be integer", nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.History(ctx, branchId, limitInt, pageInt)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "success to get employee shift history", result)
+	http_response.JSON(c, httpCode, "success to get employee shift history", result)
 }
 
 func (h *EmployeeShiftHandler) Active(c *gin.Context) {
@@ -112,9 +115,21 @@ func (h *EmployeeShiftHandler) Active(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.Active(ctx, branchId)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "success to get active employee shift", result)
+	http_response.JSON(c, httpCode, "success to get active employee shift", result)
+}
+
+func (h *EmployeeShiftHandler) EntryCash(c *gin.Context) {
+	// var request domain.EmployeeShiftEntryCashRequest
+	var request dto.EntryCashInsertRequest
+
+	if err := c.BindJSON(&request); err != nil {
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to entry cash", request)
 }

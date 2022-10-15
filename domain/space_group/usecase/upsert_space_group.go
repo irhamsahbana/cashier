@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/validator"
 	"net/http"
@@ -26,7 +25,6 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
-	fmt.Println(branchId)
 	var data domain.SpaceGroup
 	data.UUID = req.UUID
 	data.BranchUUID = branchId

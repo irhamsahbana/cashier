@@ -15,7 +15,7 @@ type Response struct {
 	Data       interface{} `json:"data"`
 }
 
-func ReturnResponse(c *gin.Context, statusCode int, message interface{}, data interface{}) {
+func JSON(c *gin.Context, statusCode int, message interface{}, data interface{}) {
 	c.JSON(statusCode, Response{
 		StatusCode: statusCode,
 		Status:     http.StatusText(statusCode),

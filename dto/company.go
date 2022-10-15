@@ -41,7 +41,7 @@ type PaymentMethodResponse struct {
 	EntryUUID   *string                       `json:"entry_uuid"`
 	Group       customtype.PaymentMethodGroup `json:"group"`
 	Name        string                        `json:"name"`
-	Fee         float32                       `json:"fee"`
+	Fee         float64                       `json:"fee"`
 	Description string                        `json:"description"`
 	Disabled    bool                          `json:"disabled"`
 	CreatedAt   time.Time                     `json:"created_at"`
@@ -53,8 +53,8 @@ type BranchDiscountResponse struct {
 	UUID        string     `json:"uuid"`
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
-	Fixed       float32    `json:"fixed"`
-	Percentage  float32    `json:"percentage"`
+	Fixed       float64    `json:"fixed"`
+	Percentage  float64    `json:"percentage"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
@@ -80,7 +80,7 @@ type TaxResponse struct {
 	UUID        string     `json:"uuid"`
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
-	Value       float32    `json:"value"`
+	Value       float64    `json:"value"`
 	IsDefault   bool       `json:"is_default"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
@@ -91,7 +91,7 @@ type TipResponse struct {
 	UUID        string     `json:"uuid"`
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
-	Value       float32    `json:"value"`
+	Value       float64    `json:"value"`
 	IsDefault   bool       `json:"is_default"`
 	CreatedAt   time.Time  `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
@@ -110,8 +110,8 @@ type FeePreferenceResponse struct {
 }
 
 type FeeResponse struct {
-	Nominal    *float32 `json:"nominal"`
-	Percentage *float32 `json:"percentage"`
+	Nominal    *float64 `json:"nominal"`
+	Percentage *float64 `json:"percentage"`
 }
 
 type WhatsappResponse struct {

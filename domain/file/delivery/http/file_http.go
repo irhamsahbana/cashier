@@ -41,14 +41,14 @@ func (h *FileUploadHandler) UploadFile(c *gin.Context) {
 
 	file, err := c.FormFile("file")
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error(), nil)
+		http_response.JSON(c, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.FileUsecase.UploadFile(ctx, branchId, file, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
@@ -58,23 +58,23 @@ func (h *FileUploadHandler) UploadFile(c *gin.Context) {
 
 	if exists, err := exists(relativePath); !exists {
 		if err != nil {
-			http_response.ReturnResponse(c, http.StatusInternalServerError, err.Error(), nil)
+			http_response.JSON(c, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
 
 		if err := os.MkdirAll(relativePath, os.ModePerm); err != nil {
-			http_response.ReturnResponse(c, http.StatusInternalServerError, err.Error(), nil)
+			http_response.JSON(c, http.StatusInternalServerError, err.Error(), nil)
 			return
 		}
 	}
 
 	if err := c.SaveUploadedFile(file, dst); err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, err.Error(), nil)
+		http_response.JSON(c, http.StatusBadRequest, err.Error(), nil)
 		return
 	}
 
 	result.Url = h.appStorageURL + "/" + string(result.FileableType) + "/" + filename
-	http_response.ReturnResponse(c, httpCode, "File uploaded successfully", result)
+	http_response.JSON(c, httpCode, "File uploaded successfully", result)
 }
 
 // exists returns whether the given file or directory exists

@@ -83,6 +83,18 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					},
 					Options: options.Index().SetUnique(true),
 				},
+				{
+					Keys: bson.D{
+						{Key: "branch_uuid", Value: 1},
+						{Key: "phone", Value: 1},
+					},
+					// set unique index to non null phone
+					Options: options.Index().SetUnique(true).SetPartialFilterExpression(
+						bson.D{
+							{Key: "phone", Value: bson.D{{Key: "$type", Value: "string"}}},
+						},
+					),
+				},
 			})
 			errCollectionIndexingCheck(err, collection)
 			notifyCollectionIndexesCreated(res)

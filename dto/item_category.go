@@ -15,7 +15,7 @@ type ItemCategoryResponse struct {
 type ItemResponse struct {
 	UUID        string            `json:"uuid"`
 	Name        string            `json:"name"`
-	Price       float32           `json:"price"`
+	Price       float64           `json:"price"`
 	Description string            `json:"description"`
 	Label       string            `json:"label"`
 	Public      bool              `json:"public"`
@@ -28,7 +28,7 @@ type ItemResponse struct {
 type VariantResponse struct {
 	UUID      string    `json:"uuid"`
 	Label     string    `json:"label"`
-	Price     float32   `json:"price"`
+	Price     float64   `json:"price"`
 	Public    bool      `json:"public"`
 	ImagePath *string   `json:"image_path"`
 	CreatedAt time.Time `json:"created_at"`
@@ -47,7 +47,7 @@ type ModifierGroupResponse struct {
 type ModifierResponse struct {
 	UUID      string     `json:"uuid"`
 	Name      string     `json:"name"`
-	Price     float32    `json:"price"`
+	Price     float64    `json:"price"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
@@ -71,13 +71,13 @@ type ModifierGroupRequest struct {
 type ModifierRequest struct {
 	UUID  string  `json:"uuid"`
 	Name  string  `json:"name"`
-	Price float32 `json:"price"`
+	Price float64 `json:"price"`
 }
 
 type ItemAndVariantsUpsertRequest struct {
 	UUID        string           `json:"uuid"`
 	Name        string           `json:"name"`
-	Price       float32          `json:"price"`
+	Price       float64          `json:"price"`
 	Label       string           `json:"label"`
 	Variants    []VariantRequest `json:"variants"`
 	Description string           `json:"description"`
@@ -88,7 +88,7 @@ type ItemAndVariantsUpsertRequest struct {
 type VariantRequest struct {
 	UUID      string  `json:"uuid"`
 	Label     string  `json:"label"`
-	Price     float32 `json:"price"`
+	Price     float64 `json:"price"`
 	Public    bool    `json:"public"`
 	ImagePath *string `json:"image_path"`
 }

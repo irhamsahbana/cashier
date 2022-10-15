@@ -48,18 +48,18 @@ func (h *UserHandler) Login(c *gin.Context) {
 	var request dto.UserLoginRequest
 
 	if err := c.BindJSON(&request); err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.UserUsecase.Login(ctx, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Authenticated", result)
+	http_response.JSON(c, httpCode, "Authenticated", result)
 }
 
 func (h *UserHandler) Profile(c *gin.Context) {
@@ -69,15 +69,15 @@ func (h *UserHandler) Profile(c *gin.Context) {
 	result, httpcode, err := h.UserUsecase.UserBranchInfo(ctx, userId, true)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			http_response.ReturnResponse(c, http.StatusNotFound, err.Error(), nil)
+			http_response.JSON(c, http.StatusNotFound, err.Error(), nil)
 			return
 		}
 
-		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		http_response.JSON(c, httpcode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpcode, "Profile", result)
+	http_response.JSON(c, httpcode, "Profile", result)
 }
 
 func (h *UserHandler) RefreshToken(c *gin.Context) {
@@ -90,25 +90,25 @@ func (h *UserHandler) RefreshToken(c *gin.Context) {
 
 		if v.Errors == jwt.ValidationErrorExpired {
 		} else {
-			http_response.ReturnResponse(c, http.StatusUnauthorized, err.Error(), nil)
+			http_response.JSON(c, http.StatusUnauthorized, err.Error(), nil)
 			return
 		}
 	}
 
 	claimsRT, err := jwthandler.ValidateToken(refreshToken)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnauthorized, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.UserUsecase.RefreshToken(ctx, accessToken, refreshToken, claimsRT.UserUUID)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Token refreshed", result)
+	http_response.JSON(c, httpCode, "Token refreshed", result)
 }
 
 func (h *UserHandler) Logout(c *gin.Context) {
@@ -118,29 +118,37 @@ func (h *UserHandler) Logout(c *gin.Context) {
 	ctx := context.Background()
 	_, httpcode, err := h.UserUsecase.Logout(ctx, userId, AT)
 	if err != nil {
-		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		http_response.JSON(c, httpcode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpcode, "Logout", nil)
+	http_response.JSON(c, httpcode, "Logout", nil)
 }
 
 func (h *UserHandler) UpsertCustomer(c *gin.Context) {
 	var request dto.CustomerUpserRequest
 
 	if err := c.BindJSON(&request); err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
+
+	errMsg := validateUpsertCustomerRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
+	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
-	result, httpcode, err := h.UserUsecase.UpsertCustomer(ctx, &request)
+	result, httpcode, err := h.UserUsecase.UpsertCustomer(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		http_response.JSON(c, httpcode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpcode, "Customer upserted", result)
+	http_response.JSON(c, httpcode, "Customer upserted", result)
 }
 
 func (h *UserHandler) FindCustomers(c *gin.Context) {
@@ -153,13 +161,13 @@ func (h *UserHandler) FindCustomers(c *gin.Context) {
 	// convert limit and page to int
 	limitInt, err := strconv.Atoi(limit)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, "limit must be integer", nil)
+		http_response.JSON(c, http.StatusBadRequest, "limit must be integer", nil)
 		return
 	}
 
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusBadRequest, "page must be integer", nil)
+		http_response.JSON(c, http.StatusBadRequest, "page must be integer", nil)
 		return
 	}
 
@@ -169,9 +177,9 @@ func (h *UserHandler) FindCustomers(c *gin.Context) {
 	ctx := context.Background()
 	result, httpcode, err := h.UserUsecase.FindCustomers(ctx, branchId, limitInt, pageInt, withTrashedBool)
 	if err != nil {
-		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		http_response.JSON(c, httpcode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpcode, "Customers found", result)
+	http_response.JSON(c, httpcode, "Customers found", result)
 }

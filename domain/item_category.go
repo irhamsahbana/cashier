@@ -28,7 +28,7 @@ type ModifierGroup struct {
 type Modifier struct {
 	UUID      string  `bson:"uuid"`
 	Name      string  `bson:"name"`
-	Price     float32 `bson:"price"`
+	Price     float64 `bson:"price"`
 	CreatedAt int64   `bson:"created_at"`
 	UpdatedAt *int64  `bson:"updated_at"`
 }
@@ -36,7 +36,7 @@ type Modifier struct {
 type Item struct {
 	UUID        string    `bson:"uuid"`
 	Name        string    `bson:"name"`
-	Price       float32   `bson:"price"`
+	Price       float64   `bson:"price"`
 	Label       string    `bson:"label"`
 	Public      bool      `bson:"public"`
 	ImagePath   *string   `bson:"image_path"`
@@ -48,7 +48,7 @@ type Item struct {
 
 type Variant struct {
 	UUID      string  `bson:"uuid"`
-	Price     float32 `bson:"price"`
+	Price     float64 `bson:"price"`
 	Label     string  `bson:"label"`
 	Public    bool    `bson:"public"`
 	ImagePath *string `bson:"image_path"`

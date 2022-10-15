@@ -44,7 +44,7 @@ type PaymentMethod struct {
 	EntryUUID   *string                       `bson:"entry_uuid"`
 	Group       customtype.PaymentMethodGroup `bson:"group"`
 	Name        string                        `bson:"name"`
-	Fee         float32                       `bson:"fee"`
+	Fee         float64                       `bson:"fee"`
 	Description string                        `bson:"description"`
 	Disabled    bool                          `bson:"disabled"`
 	CreatedAt   int64                         `bson:"created_at"`
@@ -71,8 +71,8 @@ type FeePreference struct {
 }
 
 type Fee struct {
-	Nominal    *float32 `bson:"nominal"`
-	Percentage *float32 `bson:"percentage"`
+	Nominal    *float64 `bson:"nominal"`
+	Percentage *float64 `bson:"percentage"`
 }
 
 type SocialMedia struct {
@@ -88,7 +88,7 @@ type Tax struct {
 	UUID        string  `bson:"uuid"`
 	Name        string  `bson:"name"`
 	Description string  `bson:"description"`
-	Value       float32 `bson:"value"`
+	Value       float64 `bson:"value"`
 	IsDefault   bool    `bson:"is_default"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at"`
@@ -99,7 +99,7 @@ type Tip struct {
 	UUID        string  `bson:"uuid"`
 	Name        string  `bson:"name"`
 	Description string  `bson:"description"`
-	Value       float32 `bson:"value"`
+	Value       float64 `bson:"value"`
 	IsDefault   bool    `bson:"is_default"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at"`

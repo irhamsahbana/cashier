@@ -26,17 +26,17 @@ func NewUserRoleHandler(router *gin.Engine, usecase domain.UserRoleUsecaseContra
 func (h *UserRoleHandler) UpsertUserRole(c *gin.Context) {
 	var request domain.UserRoleUpsertrequest
 	if err := c.BindJSON(&request); err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.userRoleUsecase.UpsertUserRole(ctx, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		c.Abort()
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "User Role Created", result)
+	http_response.JSON(c, httpCode, "User Role Created", result)
 }

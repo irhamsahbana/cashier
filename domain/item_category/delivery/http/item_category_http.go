@@ -50,7 +50,7 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -59,11 +59,11 @@ func (h *ItemCategoryHandler) UpsertItemCategory(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemCategoryAndModifiers(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item category upsert successfully", result)
+	http_response.JSON(c, httpCode, "Item category upsert successfully", result)
 }
 
 func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
@@ -72,11 +72,11 @@ func (h *ItemCategoryHandler) FindItemCategories(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.FindItemCategories(ctx, branchId)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "OK", result)
+	http_response.JSON(c, httpCode, "OK", result)
 }
 
 func (h *ItemCategoryHandler) DeleteItemCategory(c *gin.Context) {
@@ -86,11 +86,11 @@ func (h *ItemCategoryHandler) DeleteItemCategory(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.DeleteItemCategory(ctx, branchId, id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item category Deleted successfully", result)
+	http_response.JSON(c, httpCode, "Item category Deleted successfully", result)
 }
 
 // Item and its variants
@@ -103,18 +103,18 @@ func (h *ItemCategoryHandler) UpsertItemAndVariants(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemAndVariants(ctx, branchId, itemCategoryId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item and variants upsert successfully", result)
+	http_response.JSON(c, httpCode, "Item and variants upsert successfully", result)
 }
 
 func (h *ItemCategoryHandler) FindItemAndVariants(c *gin.Context) {
@@ -124,11 +124,11 @@ func (h *ItemCategoryHandler) FindItemAndVariants(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.FindItemAndVariants(ctx, branchId, id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item and variants upsert successfully", result)
+	http_response.JSON(c, httpCode, "Item and variants upsert successfully", result)
 }
 
 func (h *ItemCategoryHandler) DeleteItemAndVariants(c *gin.Context) {
@@ -138,9 +138,9 @@ func (h *ItemCategoryHandler) DeleteItemAndVariants(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.DeleteItemAndVariants(ctx, branchId, id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Item and variants deleted successfully", result)
+	http_response.JSON(c, httpCode, "Item and variants deleted successfully", result)
 }

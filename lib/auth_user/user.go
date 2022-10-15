@@ -14,7 +14,7 @@ import (
 
 func FindUser(id string) (*dto.UserResponse, int, error) {
 	c := context.Background()
-	ctx, cancel := context.WithTimeout(c, 10*time.Second)
+	ctx, cancel := context.WithTimeout(c, bootstrap.App.Config.GetDuration("context.timeout")*time.Second)
 	defer cancel()
 
 	DB := bootstrap.App.Mongo.Database(bootstrap.App.Config.GetString("mongo.name"))

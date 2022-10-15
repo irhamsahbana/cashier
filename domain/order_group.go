@@ -39,7 +39,7 @@ type ItemOrder struct {
 	UUID     string  `bson:"uuid"`
 	Name     string  `bson:"name"`
 	Label    string  `bson:"label"`
-	Price    float32 `bson:"price"`
+	Price    float64 `bson:"price"`
 	Quantity uint    `bson:"quantity"`
 }
 
@@ -47,20 +47,20 @@ type ModifierOrder struct {
 	UUID     string  `bson:"uuid"`
 	Name     string  `bson:"name"`
 	Quantity uint    `bson:"quantity"`
-	Price    float32 `bson:"price"`
+	Price    float64 `bson:"price"`
 }
 
 type DiscountOrder struct {
 	UUID    string  `bson:"uuid"`
 	Name    string  `bson:"name"`
-	Fixed   float32 `bson:"fixed"`
-	Percent float32 `bson:"percent"`
+	Fixed   float64 `bson:"fixed"`
+	Percent float64 `bson:"percent"`
 }
 
 type TaxOrderGroup struct {
 	UUID  string  `bson:"uuid"`
 	Name  string  `bson:"name"`
-	Value float32 `bson:"value"`
+	Value float64 `bson:"value"`
 }
 
 type WaiterOrder struct {

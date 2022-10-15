@@ -36,7 +36,7 @@ func (handler *ZoneHandler) UpsertZones(ctx *gin.Context) {
 
 	err := ctx.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(ctx, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(ctx, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -44,11 +44,11 @@ func (handler *ZoneHandler) UpsertZones(ctx *gin.Context) {
 
 	result, httpCode, err := handler.ZoneUsecase.UpsertZones(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(ctx, httpCode, err.Error(), nil)
+		http_response.JSON(ctx, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(ctx, http.StatusOK, "success to upsert zones", result)
+	http_response.JSON(ctx, http.StatusOK, "success to upsert zones", result)
 }
 
 func (handler *ZoneHandler) GetZones(ctx *gin.Context) {
@@ -56,9 +56,9 @@ func (handler *ZoneHandler) GetZones(ctx *gin.Context) {
 
 	result, httpCode, err := handler.ZoneUsecase.Zones(ctx, branchId)
 	if err != nil {
-		http_response.ReturnResponse(ctx, httpCode, err.Error(), nil)
+		http_response.JSON(ctx, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(ctx, http.StatusOK, "success to get zones", result.Zones)
+	http_response.JSON(ctx, http.StatusOK, "success to get zones", result.Zones)
 }

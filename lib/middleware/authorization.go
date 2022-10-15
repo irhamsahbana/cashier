@@ -32,7 +32,7 @@ func Authorization(permittedRoles []UserRole) gin.HandlerFunc {
 			}
 		}
 
-		http_response.ReturnResponse(c, http.StatusForbidden, http.StatusText(http.StatusForbidden), nil)
+		http_response.JSON(c, http.StatusForbidden, http.StatusText(http.StatusForbidden), nil)
 		c.Abort()
 	}
 }

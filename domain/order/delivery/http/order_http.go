@@ -39,13 +39,13 @@ func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	errMsg := validateUpserOrderRequest(&request)
 	if len(errMsg) > 0 {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, errMsg, nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
 
@@ -54,11 +54,11 @@ func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.orderUsecase.UpsertActiveOrder(ctx, branchId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, http.StatusOK, "success to upsert active order", result)
+	http_response.JSON(c, http.StatusOK, "success to upsert active order", result)
 }
 
 func (h *orderHandler) FindActiveOrders(c *gin.Context) {
@@ -67,11 +67,11 @@ func (h *orderHandler) FindActiveOrders(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.orderUsecase.FindActiveOrders(ctx, branchId)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, http.StatusOK, "success to find active orders", result)
+	http_response.JSON(c, http.StatusOK, "success to find active orders", result)
 }
 
 func (h *orderHandler) DeleteActiveOrder(c *gin.Context) {
@@ -82,16 +82,16 @@ func (h *orderHandler) DeleteActiveOrder(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.orderUsecase.DeleteActiveOrder(ctx, branchId, orderId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, http.StatusOK, "success to delete active order", result)
+	http_response.JSON(c, http.StatusOK, "success to delete active order", result)
 }

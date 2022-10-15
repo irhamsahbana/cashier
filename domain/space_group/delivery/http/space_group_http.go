@@ -43,18 +43,18 @@ func (h *SpaceGroupHandler) UpsertSpaceGroup(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.SpaceGroupUsecase.UpsertSpaceGroup(ctx, c.GetString("branch_uuid"), &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space group upsert successfully", result)
+	http_response.JSON(c, httpCode, "Space group upsert successfully", result)
 }
 
 func (h *SpaceGroupHandler) FindSpaceGroup(c *gin.Context) {
@@ -67,11 +67,11 @@ func (h *SpaceGroupHandler) FindSpaceGroup(c *gin.Context) {
 
 	result, httpCode, err := h.SpaceGroupUsecase.FindSpaceGroup(ctx, branchId, id, withTrashed)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space group found", result)
+	http_response.JSON(c, httpCode, "Space group found", result)
 }
 
 func (h *SpaceGroupHandler) DeleteSpaceGroup(c *gin.Context) {
@@ -80,11 +80,11 @@ func (h *SpaceGroupHandler) DeleteSpaceGroup(c *gin.Context) {
 
 	result, httpCode, err := h.SpaceGroupUsecase.DeleteSpaceGroup(ctx, c.GetString("branch_uuid"), id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space group delete successfully", result)
+	http_response.JSON(c, httpCode, "Space group delete successfully", result)
 }
 
 func (h *SpaceGroupHandler) FindSpaceGroups(c *gin.Context) {
@@ -96,11 +96,11 @@ func (h *SpaceGroupHandler) FindSpaceGroups(c *gin.Context) {
 
 	result, httpCode, err := h.SpaceGroupUsecase.FindSpaceGroups(ctx, branchId, withTrashed)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space groups found", result)
+	http_response.JSON(c, httpCode, "Space groups found", result)
 }
 
 // space
@@ -110,7 +110,7 @@ func (h *SpaceGroupHandler) CreateSpace(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
@@ -120,11 +120,11 @@ func (h *SpaceGroupHandler) CreateSpace(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.SpaceGroupUsecase.CreateSpace(ctx, branchId, spaceGroupId, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space created successfully", result)
+	http_response.JSON(c, httpCode, "Space created successfully", result)
 }
 
 func (h *SpaceGroupHandler) FindSpace(c *gin.Context) {
@@ -137,11 +137,11 @@ func (h *SpaceGroupHandler) FindSpace(c *gin.Context) {
 
 	result, httpCode, err := h.SpaceGroupUsecase.FindSpace(ctx, branchId, id, withTrashed)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space found", result)
+	http_response.JSON(c, httpCode, "Space found", result)
 }
 
 func (h *SpaceGroupHandler) DeleteSpace(c *gin.Context) {
@@ -151,11 +151,11 @@ func (h *SpaceGroupHandler) DeleteSpace(c *gin.Context) {
 
 	result, httpCode, err := h.SpaceGroupUsecase.DeleteSpace(ctx, branchId, id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space delete successfully", result)
+	http_response.JSON(c, httpCode, "Space delete successfully", result)
 }
 
 func (h *SpaceGroupHandler) UpdateSpace(c *gin.Context) {
@@ -165,16 +165,16 @@ func (h *SpaceGroupHandler) UpdateSpace(c *gin.Context) {
 
 	err := c.BindJSON(&request)
 	if err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpCode, err := h.SpaceGroupUsecase.UpdateSpace(ctx, branchId, id, &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Space update successfully", result)
+	http_response.JSON(c, httpCode, "Space update successfully", result)
 }

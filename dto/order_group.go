@@ -47,7 +47,7 @@ type OrderResponse struct {
 type TaxOrderGroup struct {
 	UUID  string  `json:"uuid"`
 	Name  string  `json:"name"`
-	Value float32 `json:"value"`
+	Value float64 `json:"value"`
 }
 
 // requests
@@ -86,7 +86,7 @@ type ItemOrder struct {
 	UUID     string  `json:"uuid"`
 	Name     string  `json:"name"`
 	Label    string  `json:"label"`
-	Price    float32 `json:"price"`
+	Price    float64 `json:"price"`
 	Quantity uint    `json:"quantity"`
 }
 
@@ -94,14 +94,14 @@ type ModifierOrder struct {
 	UUID     string  `json:"uuid"`
 	Name     string  `json:"name"`
 	Quantity uint    `json:"quantity"`
-	Price    float32 `json:"price"`
+	Price    float64 `json:"price"`
 }
 
 type DiscountOrder struct {
 	UUID    string  `json:"uuid"`
 	Name    string  `json:"name"`
-	Fixed   float32 `json:"fixed"`
-	Percent float32 `json:"percent"`
+	Fixed   float64 `json:"fixed"`
+	Percent float64 `json:"percent"`
 }
 
 type WaiterOrder struct {

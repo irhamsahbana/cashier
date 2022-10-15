@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (u *userUsecase) UpsertCustomer(c context.Context, req *dto.CustomerUpserRequest) (*dto.CustomerResponse, int, error) {
+func (u *userUsecase) UpsertCustomer(c context.Context, branchId string, req *dto.CustomerUpserRequest) (*dto.CustomerResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -28,6 +28,7 @@ func (u *userUsecase) UpsertCustomer(c context.Context, req *dto.CustomerUpserRe
 
 	var data domain.User
 	data.RoleUUID = role.UUID
+	data.BranchUUID = branchId
 	userDTOtoDomain_UpsertCustomer(&data, req)
 	result, code, err := u.userRepo.UpsertUser(ctx, &data)
 	if err != nil {
@@ -45,12 +46,12 @@ func validateUpsertCustomerRequest(req *dto.CustomerUpserRequest) error {
 		return errors.New("invalid uuid")
 	}
 
-	if err := validator.IsUUID(req.BranchUUID); err != nil {
-		return errors.New("invalid branch uuid")
-	}
-
 	if req.Name == "" || len(req.Name) > 100 || len(req.Name) < 3 {
 		return errors.New("name is required and max length is 100 and min length is 3")
+	}
+
+	if req.Dob == "" {
+		return errors.New("date of birth is required")
 	}
 
 	if _, err := time.Parse(time.RFC3339Nano, req.Dob); err != nil {
@@ -70,11 +71,13 @@ func validateUpsertCustomerRequest(req *dto.CustomerUpserRequest) error {
 
 func userDTOtoDomain_UpsertCustomer(data *domain.User, req *dto.CustomerUpserRequest) {
 	data.UUID = req.UUID
-	data.BranchUUID = req.BranchUUID
 	data.Name = req.Name
 	data.Email = req.Email
 	data.Phone = &req.Phone
 	data.Address = &req.Address
+	dob, _ := time.Parse(time.RFC3339Nano, req.Dob)
+	dobUnix := dob.UnixMicro()
+	data.Dob = &dobUnix
 	createdAt, _ := time.Parse(time.RFC3339Nano, req.CreatedAt)
 	data.CreatedAt = createdAt.UnixMicro()
 }
@@ -86,6 +89,8 @@ func userDomainToDTO_UpsertCustomer(resp *dto.CustomerResponse, data *domain.Use
 	resp.Email = data.Email
 	resp.Phone = *data.Phone
 	resp.Address = *data.Address
+	dob := *data.Dob
+	resp.Dob = time.UnixMicro(dob)
 	resp.CreatedAt = time.UnixMicro(data.CreatedAt)
 	if data.UpdatedAt != nil {
 		updatedAt := time.UnixMicro(*data.UpdatedAt)

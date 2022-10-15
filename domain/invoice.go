@@ -8,8 +8,8 @@ type InvoiceOrderGroup struct {
 	CreditContracts []CreditContract `bson:"credit_contracts"`
 	Customer        Customer         `bson:"customer"`
 	CreatedBy       string           `bson:"created_by"`
-	Tax             float32          `bson:"tax"`
-	Tip             float32          `bson:"tip"`
+	Tax             float64          `bson:"tax"`
+	Tip             float64          `bson:"tip"`
 	Completed       bool             `bson:"completed"`
 	CreatedAt       int64            `bson:"created_at"`
 }
@@ -32,7 +32,7 @@ type PaymentMethodInvoice struct {
 	PaymentMethodUUID string  `bson:"payment_method_uuid"`
 	Group             string  `bson:"group"`
 	Name              string  `bson:"name"`
-	Fee               float32 `bson:"fee"`
+	Fee               float64 `bson:"fee"`
 }
 
 type EmployeeShiftInvoice struct {

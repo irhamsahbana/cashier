@@ -31,6 +31,7 @@ type CustomerResponse struct {
 	UUID       string     `json:"uuid"`
 	BranchUUID string     `json:"branch_uuid"`
 	Name       string     `json:"name"`
+	Dob        time.Time  `json:"date_of_birth"`
 	Email      string     `json:"email"`
 	Phone      string     `json:"phone"`
 	Address    string     `json:"address"`
@@ -42,12 +43,11 @@ type CustomerResponse struct {
 // Requests
 
 type CustomerUpserRequest struct {
-	UUID       string `json:"uuid"`
-	BranchUUID string `json:"branch_uuid"`
-	Name       string `json:"name"`
-	Dob        string `json:"date_of_birth"`
-	Email      string `json:"email"`
-	Phone      string `json:"phone"`
-	Address    string `json:"address"`
-	CreatedAt  string `json:"created_at"`
+	UUID      string `json:"uuid"`
+	Name      string `json:"name"`
+	Dob       string `json:"date_of_birth"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Address   string `json:"address"`
+	CreatedAt string `json:"created_at"`
 }

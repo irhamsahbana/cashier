@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"lucy/cashier/domain"
 	"net/http"
 
@@ -12,13 +11,13 @@ import (
 )
 
 type waiterMongoRepository struct {
-	DB			mongo.Database
-	Collection	mongo.Collection
+	DB         mongo.Database
+	Collection mongo.Collection
 }
 
-func NewWaiterMongoRepository(DB mongo.Database) domain.WaiterRepositoryContract{
+func NewWaiterMongoRepository(DB mongo.Database) domain.WaiterRepositoryContract {
 	return &waiterMongoRepository{
-		DB: DB,
+		DB:         DB,
 		Collection: *DB.Collection("waiters"),
 	}
 }
@@ -48,7 +47,6 @@ func (repo *waiterMongoRepository) FindWaiter(ctx context.Context, id string, wi
 	}
 
 	result := repo.Collection.FindOne(ctx, filter)
-	fmt.Println(result)
 
 	err = result.Decode(&waiter)
 	if err != nil {

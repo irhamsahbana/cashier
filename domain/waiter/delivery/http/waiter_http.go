@@ -37,18 +37,18 @@ func (h *WaiterHandler) UpsertWaiter(c *gin.Context) {
 	var request dto.WaiterUpsertrequest
 
 	if err := c.BindJSON(&request); err != nil {
-		http_response.ReturnResponse(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
 	ctx := context.Background()
 	result, httpcode, err := h.WaiterUsecase.UpsertWaiter(ctx, c.GetString("branch_uuid"), &request)
 	if err != nil {
-		http_response.ReturnResponse(c, httpcode, err.Error(), nil)
+		http_response.JSON(c, httpcode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpcode, "Waiter upsert successfully", result)
+	http_response.JSON(c, httpcode, "Waiter upsert successfully", result)
 }
 
 func (h *WaiterHandler) FindWaiter(c *gin.Context) {
@@ -59,11 +59,11 @@ func (h *WaiterHandler) FindWaiter(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.WaiterUsecase.FindWaiter(ctx, id, withTrashed)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "OK", result)
+	http_response.JSON(c, httpCode, "OK", result)
 }
 
 func (h *WaiterHandler) DeleteWaiter(c *gin.Context) {
@@ -72,9 +72,9 @@ func (h *WaiterHandler) DeleteWaiter(c *gin.Context) {
 	ctx := context.Background()
 	result, httpCode, err := h.WaiterUsecase.DeleteWaiter(ctx, id)
 	if err != nil {
-		http_response.ReturnResponse(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
 	}
 
-	http_response.ReturnResponse(c, httpCode, "Waiter deleted successfully", result)
+	http_response.JSON(c, httpCode, "Waiter deleted successfully", result)
 }

@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/logger"
 	"net/http"
@@ -60,8 +59,6 @@ func (repo *userRepository) FindUserBy(ctx context.Context, key string, val inte
 func (repo *userRepository) FindUsers(ctx context.Context, branchId string, roles []string, limit, page int, withTrashed bool) ([]domain.User, int, error) {
 	var users []domain.User
 	var filter bson.M
-	fmt.Println("limit", limit)
-	fmt.Println("page", page)
 	opts := *options.Find().SetLimit(int64(limit)).SetSkip(int64(page * limit))
 
 	if withTrashed {

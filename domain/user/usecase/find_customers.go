@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"fmt"
 	"lucy/cashier/dto"
 )
 
@@ -14,8 +13,6 @@ func (u *userUsecase) FindCustomers(c context.Context, branchId string, limit, p
 	if err != nil {
 		return nil, code, err
 	}
-
-	fmt.Println(withTrashed)
 
 	result, code, err := u.userRepo.FindUsers(ctx, branchId, []string{userRole.UUID}, limit, page, withTrashed)
 	if err != nil {

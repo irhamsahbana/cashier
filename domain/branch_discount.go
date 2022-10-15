@@ -7,8 +7,8 @@ type BranchDiscount struct {
 	BranchUUID  string  `bson:"branch_uuid"`
 	Name        string  `bson:"name"`
 	Description string  `bson:"description"`
-	Fixed       float32 `bson:"fixed"`
-	Percentage  float32 `bson:"percentage"`
+	Fixed       float64 `bson:"fixed"`
+	Percentage  float64 `bson:"percentage"`
 	CreatedAt   int64   `bson:"created_at"`
 	UpdatedAt   *int64  `bson:"updated_at"`
 	DeletedAt   *int64  `bson:"deleted_at"`
