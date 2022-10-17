@@ -66,7 +66,9 @@ func (repo *employeeShiftMongoRepository) Active(ctx context.Context, branchId s
 		},
 	}
 
-	cursor, err := repo.Collection.Find(ctx, filter)
+	opts := options.Find().SetSort(bson.M{"start_time": -1})
+
+	cursor, err := repo.Collection.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}

@@ -3,10 +3,11 @@ package usecase
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"time"
 )
 
-func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]domain.EmployeeShiftResponse, int, error) {
+func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dto.EmployeeShiftResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
@@ -15,9 +16,15 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dom
 		return nil, code, err
 	}
 
-	resp := []domain.EmployeeShiftResponse{}
+	resp := DomainToDTO_Active(result)
+
+	return resp, code, nil
+}
+
+func DomainToDTO_Active(result []domain.EmployeeShift) []dto.EmployeeShiftResponse {
+	resp := []dto.EmployeeShiftResponse{}
 	for _, r := range result {
-		var e domain.EmployeeShiftResponse
+		var e dto.EmployeeShiftResponse
 
 		e.UUID = r.UUID
 		e.BranchUUID = r.BranchUUID
@@ -40,11 +47,12 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dom
 		}
 
 		// supporters
-		supporters := []domain.EmployeeShiftSupporterResponse{}
+		supporters := []dto.EmployeeShiftSupporterResponse{}
 		for _, s := range r.Supporters {
-			var supporter domain.EmployeeShiftSupporterResponse
+			var supporter dto.EmployeeShiftSupporterResponse
 
 			supporter.UUID = s.UUID
+			supporter.UserUUID = s.UserUUID
 			supporter.StartTime = time.UnixMicro(s.StartTime).UTC()
 			if s.EndTime != nil {
 				endTime := time.UnixMicro(*s.EndTime).UTC()
@@ -64,8 +72,36 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dom
 		}
 		e.Supporters = supporters
 
+		// cash entries
+		cashEntries := []dto.CashEntryResponse{}
+		for _, c := range r.CashEntries {
+			var cashEntry dto.CashEntryResponse
+
+			cashEntry.Username = c.Username
+			cashEntry.Description = c.Description
+			cashEntry.Expense = c.Expense
+			cashEntry.Value = c.Value
+			cashEntry.CreatedAt = time.UnixMicro(c.CreatedAt).UTC()
+
+			cashEntries = append(cashEntries, cashEntry)
+		}
+		e.CashEntries = cashEntries
+
+		// summary
+		summary := dto.EmployeeShiftSummaryResponse{}
+		summary.TotalRefunds = 0
+		summary.Orders = []dto.EmployeeShiftSummaryOrder{}
+		summary.Payments = []dto.EmployeeShiftSummaryPayment{
+			{
+				UUID:  "981fddcb-8e10-42ba-a77a-850ae0169c56",
+				Qty:   12,
+				Total: 120000,
+			},
+		}
+		e.Summary = summary
+
 		resp = append(resp, e)
 	}
 
-	return resp, code, nil
+	return resp
 }

@@ -2,20 +2,15 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"lucy/cashier/domain"
-	"lucy/cashier/lib/validator"
+	"lucy/cashier/dto"
 	"net/http"
 	"time"
 )
 
-func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, req *domain.EmployeeShiftClockOutRequest) (*domain.EmployeeShiftResponse, int, error) {
+func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, req *dto.EmployeeShiftClockOutRequest) (*dto.EmployeeShiftResponse, int, error) {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
-
-	if err := validateClockOutRequest(req); err != nil {
-		return nil, http.StatusUnprocessableEntity, err
-	}
 
 	endTime, _ := time.Parse(time.RFC3339Nano, req.EndTime)
 
@@ -29,7 +24,13 @@ func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, re
 		return nil, code, err
 	}
 
-	var resp domain.EmployeeShiftResponse
+	var resp dto.EmployeeShiftResponse
+	DomainToDTO_ClockOut(&resp, result)
+
+	return &resp, http.StatusOK, nil
+}
+
+func DomainToDTO_ClockOut(resp *dto.EmployeeShiftResponse, result *domain.EmployeeShift) {
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.UserUUID = result.UserUUID
@@ -43,9 +44,10 @@ func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, re
 		resp.EndCash = result.EndCash
 	}
 
-	var supporters []domain.EmployeeShiftSupporterResponse
+	// supporters
+	supporters := []dto.EmployeeShiftSupporterResponse{}
 	for _, supporter := range result.Supporters {
-		var s domain.EmployeeShiftSupporterResponse
+		var s dto.EmployeeShiftSupporterResponse
 		s.UUID = supporter.UUID
 		s.StartTime = time.UnixMicro(supporter.StartTime).UTC()
 		s.CreatedAt = time.UnixMicro(supporter.CreatedAt).UTC()
@@ -66,6 +68,20 @@ func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, re
 	}
 	resp.Supporters = supporters
 
+	// cash entries
+	cashEntries := []dto.CashEntryResponse{}
+	for _, cashEntry := range result.CashEntries {
+		var c dto.CashEntryResponse
+		c.Username = cashEntry.Username
+		c.Description = cashEntry.Description
+		c.Expense = cashEntry.Expense
+		c.Value = cashEntry.Value
+		c.CreatedAt = time.UnixMicro(cashEntry.CreatedAt).UTC()
+
+		cashEntries = append(cashEntries, c)
+	}
+	resp.CashEntries = cashEntries
+
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.UpdatedAt != nil {
 		updatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
@@ -75,24 +91,4 @@ func (u *employeeShiftUsecase) ClockOut(ctx context.Context, branchId string, re
 		deletedAt := time.UnixMicro(*result.DeletedAt).UTC()
 		resp.DeletedAt = &deletedAt
 	}
-
-	return &resp, http.StatusOK, nil
-}
-
-func validateClockOutRequest(req *domain.EmployeeShiftClockOutRequest) error {
-	if err := validator.IsUUID(req.UUID); err != nil {
-		return errors.New("invalid uuid field")
-	}
-
-	if _, err := time.Parse(time.RFC3339Nano, req.EndTime); err != nil {
-		return errors.New("invalid end time field")
-	}
-
-	if req.EndCash != nil {
-		if *req.EndCash < 0 {
-			return errors.New("invalid end cash field")
-		}
-	}
-
-	return nil
 }

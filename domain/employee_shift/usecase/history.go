@@ -3,21 +3,27 @@ package usecase
 import (
 	"context"
 	"lucy/cashier/domain"
+	"lucy/cashier/dto"
 	"time"
 )
 
-func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit, page int) ([]domain.EmployeeShiftResponse, int, error) {
+func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit, page int) ([]dto.EmployeeShiftResponse, int, error) {
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
-
 	result, code, err := u.employeeShiftRepo.History(ctx, branchId, limit, page)
 	if err != nil {
 		return nil, code, err
 	}
 
-	var resp []domain.EmployeeShiftResponse
+	resp := DomainToDTO_History(result)
+
+	return resp, code, err
+}
+
+func DomainToDTO_History(result []domain.EmployeeShift) []dto.EmployeeShiftResponse {
+	resp := []dto.EmployeeShiftResponse{}
 	for _, r := range result {
-		var e domain.EmployeeShiftResponse
+		var e dto.EmployeeShiftResponse
 
 		e.UUID = r.UUID
 		e.BranchUUID = r.BranchUUID
@@ -39,9 +45,10 @@ func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit
 			e.DeletedAt = &deletedAt
 		}
 
-		var supporters []domain.EmployeeShiftSupporterResponse
+		// supporters
+		supporters := []dto.EmployeeShiftSupporterResponse{}
 		for _, s := range r.Supporters {
-			var supporter domain.EmployeeShiftSupporterResponse
+			var supporter dto.EmployeeShiftSupporterResponse
 
 			supporter.UUID = s.UUID
 			supporter.StartTime = time.UnixMicro(s.StartTime).UTC()
@@ -63,8 +70,35 @@ func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit
 		}
 		e.Supporters = supporters
 
+		// cash entries
+		cashEntries := []dto.CashEntryResponse{}
+		for _, c := range r.CashEntries {
+			var cashEntry dto.CashEntryResponse
+
+			cashEntry.Username = c.Username
+			cashEntry.Description = c.Description
+			cashEntry.Expense = c.Expense
+			cashEntry.Value = c.Value
+
+			cashEntries = append(cashEntries, cashEntry)
+		}
+		e.CashEntries = cashEntries
+
+		// summary
+		summary := dto.EmployeeShiftSummaryResponse{}
+		summary.TotalRefunds = 0
+		summary.Orders = []dto.EmployeeShiftSummaryOrder{}
+		summary.Payments = []dto.EmployeeShiftSummaryPayment{
+			{
+				UUID:  "981fddcb-8e10-42ba-a77a-850ae0169c56",
+				Qty:   12,
+				Total: 120000,
+			},
+		}
+		e.Summary = summary
+
 		resp = append(resp, e)
 	}
 
-	return resp, code, err
+	return resp
 }

@@ -49,6 +49,7 @@ func (u *userUsecase) RefreshToken(c context.Context, oldAT, oldRT, userId strin
 	var resp dto.UserResponse
 	resp.UUID = user.UUID
 	resp.BranchUUID = user.BranchUUID
+	resp.RoleUUID = &user.RoleUUID
 	resp.Name = user.Name
 	resp.Role = userRole.Name
 	resp.Token = &accesstoken

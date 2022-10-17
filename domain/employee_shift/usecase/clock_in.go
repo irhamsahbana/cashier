@@ -2,27 +2,21 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"lucy/cashier/domain"
-	"lucy/cashier/lib/validator"
+	"lucy/cashier/dto"
 	"net/http"
 	"time"
 )
 
-func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req *domain.EmployeeShiftClockInRequest) (*domain.EmployeeShiftResponse, int, error) {
+func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req *dto.EmployeeShiftClockInRequest) (*dto.EmployeeShiftResponse, int, error) {
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
-
-	if err := validateClockInRequest(req); err != nil {
-		return nil, http.StatusUnprocessableEntity, err
-	}
-
-	startTime, _ := time.Parse(time.RFC3339Nano, req.StartTime)
 
 	var data domain.EmployeeShiftClockInData
 	data.UUID = req.UUID
 	data.SupportingUUID = req.SupportingUUID
 	data.StartCash = req.StartCash
+	startTime, _ := time.Parse(time.RFC3339Nano, req.StartTime)
 	data.StartTime = startTime.UnixMicro()
 	data.UserUUID = req.UserUUID
 
@@ -31,16 +25,23 @@ func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req
 		return nil, code, err
 	}
 
-	var resp domain.EmployeeShiftResponse
+	var resp dto.EmployeeShiftResponse
+	DomainToDTO_ClockIn(&resp, result)
+
+	return &resp, http.StatusOK, nil
+}
+
+func DomainToDTO_ClockIn(resp *dto.EmployeeShiftResponse, result *domain.EmployeeShift) {
 	resp.UUID = result.UUID
 	resp.BranchUUID = result.BranchUUID
 	resp.UserUUID = result.UserUUID
 	resp.StartTime = time.UnixMicro(result.StartTime).UTC()
 	resp.StartCash = result.StartCash
 
-	var supporters []domain.EmployeeShiftSupporterResponse
+	// supporters
+	supporters := []dto.EmployeeShiftSupporterResponse{}
 	for _, supporter := range result.Supporters {
-		var s domain.EmployeeShiftSupporterResponse
+		var s dto.EmployeeShiftSupporterResponse
 		s.UUID = supporter.UUID
 		s.StartTime = time.UnixMicro(supporter.StartTime).UTC()
 		s.CreatedAt = time.UnixMicro(supporter.CreatedAt).UTC()
@@ -61,6 +62,20 @@ func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req
 	}
 	resp.Supporters = supporters
 
+	// cash entries
+	cashEntries := []dto.CashEntryResponse{}
+	for _, cashEntry := range result.CashEntries {
+		var c dto.CashEntryResponse
+		c.Username = cashEntry.Username
+		c.Description = cashEntry.Description
+		c.Expense = cashEntry.Expense
+		c.Value = cashEntry.Value
+		c.CreatedAt = time.UnixMicro(cashEntry.CreatedAt).UTC()
+
+		cashEntries = append(cashEntries, c)
+	}
+	resp.CashEntries = cashEntries
+
 	resp.CreatedAt = time.UnixMicro(result.CreatedAt).UTC()
 	if result.UpdatedAt != nil {
 		updatedAt := time.UnixMicro(*result.UpdatedAt).UTC()
@@ -70,37 +85,4 @@ func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req
 		deletedAt := time.UnixMicro(*result.DeletedAt).UTC()
 		resp.DeletedAt = &deletedAt
 	}
-
-	return &resp, http.StatusOK, nil
-}
-
-func validateClockInRequest(req *domain.EmployeeShiftClockInRequest) error {
-	if err := validator.IsUUID(req.UUID); err != nil {
-		return errors.New("invalid uuid field")
-	}
-
-	if err := validator.IsUUID(req.UserUUID); err != nil {
-		return errors.New("invalid user_uuid field")
-	}
-
-	if req.SupportingUUID != nil {
-		if err := validator.IsUUID(*req.SupportingUUID); err != nil {
-			return errors.New("supporting_uuid field is not valid")
-		}
-	}
-
-	if req.StartCash != nil && req.SupportingUUID != nil {
-		return errors.New("start_cash and supporting_uuid field cannot be set at the same time")
-	}
-
-	if req.SupportingUUID == nil && req.StartCash == nil {
-		return errors.New("start_cash field is required if supporting_uuid is null")
-	}
-
-	_, err := time.Parse(time.RFC3339Nano, req.StartTime)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

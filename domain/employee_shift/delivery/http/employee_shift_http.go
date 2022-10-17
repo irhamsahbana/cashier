@@ -35,15 +35,21 @@ func NewEmployeeShiftHandler(router *gin.Engine, usecase domain.EmployeeShiftUse
 	r.GET("/employee-shifts/history", handler.History)
 	r.GET("/employee-shifts/active", handler.Active)
 
-	r.POST("/employee-shifts/entry-cash", handler.EntryCash)
+	r.POST("/employee-shifts/entry-cash/:employee_shift_uuid", handler.InsertEntryCash)
 }
 
 func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
-	var request domain.EmployeeShiftClockInRequest
+	var request dto.EmployeeShiftClockInRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	errMsg := ValidateClockInRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
 
@@ -60,11 +66,17 @@ func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 }
 
 func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
-	var request domain.EmployeeShiftClockOutRequest
+	var request dto.EmployeeShiftClockOutRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	errMsg := validateClockOutRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
 
@@ -113,23 +125,32 @@ func (h *EmployeeShiftHandler) Active(c *gin.Context) {
 	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
-	result, httpCode, err := h.EmployeeShiftUsecase.Active(ctx, branchId)
+	result, code, err := h.EmployeeShiftUsecase.Active(ctx, branchId)
 	if err != nil {
-		http_response.JSON(c, httpCode, err.Error(), nil)
+		http_response.JSON(c, code, err.Error(), nil)
 		return
 	}
 
-	http_response.JSON(c, httpCode, "success to get active employee shift", result)
+	http_response.JSON(c, code, "success to get active employee shift", result)
 }
 
-func (h *EmployeeShiftHandler) EntryCash(c *gin.Context) {
-	// var request domain.EmployeeShiftEntryCashRequest
-	var request dto.EntryCashInsertRequest
+func (h *EmployeeShiftHandler) InsertEntryCash(c *gin.Context) {
+	var request dto.CashEntryInsertRequest
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
-	http_response.JSON(c, http.StatusOK, "success to entry cash", request)
+	branchId := c.GetString("branch_uuid")
+	shiftId := c.Param("employee_shift_uuid")
+
+	ctx := context.Background()
+	result, code, err := h.EmployeeShiftUsecase.InsertEntryCash(ctx, branchId, shiftId, &request)
+	if err != nil {
+		http_response.JSON(c, code, err.Error(), nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to insert entry cash", result)
 }
