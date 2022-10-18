@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"lucy/cashier/domain"
+	"lucy/cashier/lib/logger"
 
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -103,10 +105,11 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 
 	countItemCategory, err := repo.Collection.CountDocuments(ctx, filter)
 	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 
-	if countItemCategory > 0 {
+	if countItemCategory > 0 { // update item and its variants
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "items.$.name", Value: data.Name},
@@ -150,14 +153,17 @@ func (repo *itemCategoryMongoRepository) UpsertItemAndVariants(ctx context.Conte
 
 	_, err = repo.Collection.UpdateOne(ctx, filter, contents)
 	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&itemcategory); err != nil {
 		if err == mongo.ErrNoDocuments {
+			logger.Log(logrus.Fields{}).Warn(err)
 			return nil, http.StatusNotFound, errors.New("item category not found")
 		}
 
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 

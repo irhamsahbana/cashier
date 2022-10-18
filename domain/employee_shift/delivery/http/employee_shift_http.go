@@ -142,6 +142,12 @@ func (h *EmployeeShiftHandler) InsertEntryCash(c *gin.Context) {
 		return
 	}
 
+	errMsg := ValidateCashEntryInsertRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
 	branchId := c.GetString("branch_uuid")
 	shiftId := c.Param("employee_shift_uuid")
 

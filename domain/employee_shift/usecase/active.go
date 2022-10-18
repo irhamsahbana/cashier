@@ -85,12 +85,21 @@ func DomainToDTO_Active(result []domain.EmployeeShift) []dto.EmployeeShiftRespon
 
 			cashEntries = append(cashEntries, cashEntry)
 		}
+
 		e.CashEntries = cashEntries
 
 		// summary
 		summary := dto.EmployeeShiftSummaryResponse{}
 		summary.TotalRefunds = 0
-		summary.Orders = []dto.EmployeeShiftSummaryOrder{}
+		summary.Orders = []dto.EmployeeShiftSummaryOrder{
+			{
+				UUID:        "ee9a152f-ed71-4f18-a3fc-82a1dab7251b",
+				Name:        "Tuna Goreng [polos]",
+				Price:       33000,
+				Qty:         5,
+				RefundedQty: 0,
+			},
+		}
 		summary.Payments = []dto.EmployeeShiftSummaryPayment{
 			{
 				UUID:  "981fddcb-8e10-42ba-a77a-850ae0169c56",

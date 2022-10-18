@@ -53,14 +53,6 @@ type EmployeeShiftClockOutData struct {
 	EndCash *float64 `bson:"end_cash"`
 }
 
-type CashEntryData struct {
-	Username    string  `bson:"username"`
-	Description string  `bson:"description"`
-	Expense     bool    `bson:"expense"`
-	Value       float64 `bson:"value"`
-	CreatedAt   int64   `bson:"created_at"`
-}
-
 // -- data that are used to pass in to the repository
 
 type EmployeeShiftUsecaseContract interface {
@@ -79,5 +71,5 @@ type EmployeeShiftRepositoryContract interface {
 	History(c context.Context, branchId string, limit, page int) ([]EmployeeShift, int, error)
 	Active(c context.Context, branchId string) ([]EmployeeShift, int, error)
 
-	InsertEntryCash(c context.Context, branchId, shiftId string, data *CashEntryData) ([]CashEntryData, int, error)
+	InsertEntryCash(c context.Context, branchId, shiftId string, data *CashEntry) ([]CashEntry, int, error)
 }

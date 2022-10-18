@@ -96,9 +96,6 @@ func (h *ItemCategoryHandler) DeleteItemCategory(c *gin.Context) {
 // Item and its variants
 
 func (h *ItemCategoryHandler) UpsertItemAndVariants(c *gin.Context) {
-	branchId := c.GetString("branch_uuid")
-	itemCategoryId := c.Param("itemCategoryId")
-
 	var request dto.ItemAndVariantsUpsertRequest
 
 	err := c.BindJSON(&request)
@@ -106,6 +103,15 @@ func (h *ItemCategoryHandler) UpsertItemAndVariants(c *gin.Context) {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
+
+	errMsg := ValidateItemVariantsUpsertRequest(&request)
+	if len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
+	branchId := c.GetString("branch_uuid")
+	itemCategoryId := c.Param("itemCategoryId")
 
 	ctx := context.Background()
 	result, httpCode, err := h.ItemCategoryUsecase.UpsertItemAndVariants(ctx, branchId, itemCategoryId, &request)

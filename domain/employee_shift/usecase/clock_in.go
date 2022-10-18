@@ -13,12 +13,7 @@ func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req
 	defer cancel()
 
 	var data domain.EmployeeShiftClockInData
-	data.UUID = req.UUID
-	data.SupportingUUID = req.SupportingUUID
-	data.StartCash = req.StartCash
-	startTime, _ := time.Parse(time.RFC3339Nano, req.StartTime)
-	data.StartTime = startTime.UnixMicro()
-	data.UserUUID = req.UserUUID
+	DTOtoDomain_ClockIn(&data, req)
 
 	result, code, err := u.employeeShiftRepo.ClockIn(ctx, branchId, &data)
 	if err != nil {
@@ -29,6 +24,15 @@ func (u *employeeShiftUsecase) ClockIn(ctx context.Context, branchId string, req
 	DomainToDTO_ClockIn(&resp, result)
 
 	return &resp, http.StatusOK, nil
+}
+
+func DTOtoDomain_ClockIn(data *domain.EmployeeShiftClockInData, req *dto.EmployeeShiftClockInRequest) {
+	data.UUID = req.UUID
+	data.SupportingUUID = req.SupportingUUID
+	data.StartCash = req.StartCash
+	startTime, _ := time.Parse(time.RFC3339Nano, req.StartTime)
+	data.StartTime = startTime.UnixMicro()
+	data.UserUUID = req.UserUUID
 }
 
 func DomainToDTO_ClockIn(resp *dto.EmployeeShiftResponse, result *domain.EmployeeShift) {

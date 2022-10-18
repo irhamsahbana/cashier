@@ -63,7 +63,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 			{Key: "end_time", Value: nil},
 			{Key: "end_cash", Value: nil},
 			{Key: "supporters", Value: []domain.EmployeeShiftSupporter{}},
-			{Key: "cash_entries", Value: []domain.CashEntryData{}},
+			{Key: "cash_entries", Value: []domain.CashEntry{}},
 			{Key: "created_at", Value: time.Now().UnixMicro()},
 			{Key: "updated_at", Value: nil},
 			{Key: "deleted_at", Value: nil},
@@ -106,6 +106,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 		err := repo.Collection.FindOne(ctx, filter).Decode(&shift)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
+				logger.Log(logrus.Fields{}).Warn(err)
 				return nil, http.StatusNotFound, errors.New("main shift not found")
 			}
 
@@ -130,6 +131,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 
 		err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
 		if err != nil && err != mongo.ErrNoDocuments {
+			logger.Log(logrus.Fields{}).Warn(err)
 			return nil, http.StatusInternalServerError, err
 		}
 
@@ -187,6 +189,7 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 
 		err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
 		if err != nil {
+			logger.Log(logrus.Fields{}).Error(err)
 			return nil, http.StatusInternalServerError, err
 		}
 
@@ -218,9 +221,11 @@ func (repo *employeeShiftMongoRepository) ClockOut(ctx context.Context, branchId
 
 	if err := repo.Collection.FindOne(ctx, filter).Decode(&shift); err != nil {
 		if err == mongo.ErrNoDocuments {
+			logger.Log(logrus.Fields{}).Warn(err)
 			return nil, http.StatusNotFound, errors.New("shift not found")
 		}
 
+		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
 
@@ -289,7 +294,7 @@ func (repo *employeeShiftMongoRepository) ClockOut(ctx context.Context, branchId
 	return &shift, http.StatusOK, nil
 }
 
-func (repo *employeeShiftMongoRepository) InsertEntryCash(ctx context.Context, branchId, shiftId string, data *domain.CashEntryData) ([]domain.CashEntryData, int, error) {
+func (repo *employeeShiftMongoRepository) InsertEntryCash(ctx context.Context, branchId, shiftId string, data *domain.CashEntry) ([]domain.CashEntry, int, error) {
 	filter := bson.M{
 		"$and": []bson.M{
 			{"branch_uuid": branchId},
@@ -321,15 +326,34 @@ func (repo *employeeShiftMongoRepository) InsertEntryCash(ctx context.Context, b
 	}
 
 	update := bson.M{
-		"$push": bson.M{
-			"cash_entries": data,
+		"$set": bson.M{
+			"cash_entries": bson.M{
+				"$ifNull": bson.A{
+					bson.M{
+						"$concatArrays": bson.A{
+							"$cash_entries",
+							bson.A{data},
+						},
+					},
+					bson.A{data},
+				},
+			},
 		},
 	}
 
-	_, err := repo.Collection.UpdateOne(ctx, filter, update)
+	_, err := repo.Collection.UpdateOne(ctx, filter, bson.A{update})
 	if err != nil {
 		logger.Log(logrus.Fields{}).Error(err)
 		return nil, http.StatusInternalServerError, err
 	}
-	return nil, 200, nil
+
+	var shift domain.EmployeeShift
+
+	err = repo.Collection.FindOne(ctx, filter).Decode(&shift)
+	if err != nil {
+		logger.Log(logrus.Fields{}).Error(err)
+		return nil, http.StatusInternalServerError, err
+	}
+
+	return shift.CashEntries, http.StatusOK, nil
 }

@@ -4,8 +4,6 @@ import (
 	"context"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
-	"lucy/cashier/lib/validator"
-	"net/http"
 	"time"
 )
 
@@ -13,11 +11,21 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.UUID); err != nil {
-		return nil, http.StatusUnprocessableEntity, err
+	var data domain.Item
+	DTOtoDomain_UpsertItemAndVariants(&data, req)
+
+	result, code, err := u.itemCategoryRepo.UpsertItemAndVariants(ctx, branchId, itemCategoryId, &data)
+	if err != nil {
+		return nil, code, err
 	}
 
-	var data domain.Item
+	var resp dto.ItemResponse
+	DomainToDTO_UpsertItemAndVariants(&resp, result, req)
+
+	return &resp, code, nil
+}
+
+func DTOtoDomain_UpsertItemAndVariants(data *domain.Item, req *dto.ItemAndVariantsUpsertRequest) {
 	data.UUID = req.UUID
 	data.Name = req.Name
 	data.Price = req.Price
@@ -25,16 +33,11 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 	data.Description = req.Description
 	data.Public = req.Public
 	data.ImagePath = req.ImagePath
-	data.Description = req.Description
 	data.CreatedAt = time.Now().UnixMicro()
 
-	var variants []domain.Variant
+	variants := []domain.Variant{}
 	for _, v := range req.Variants {
 		var variant domain.Variant
-
-		if err := validator.IsUUID(v.UUID); err != nil {
-			return nil, http.StatusUnprocessableEntity, err
-		}
 
 		variant.UUID = v.UUID
 		variant.Label = v.Label
@@ -45,21 +48,11 @@ func (u *itemCategoryUsecase) UpsertItemAndVariants(c context.Context, branchId,
 		variants = append(variants, variant)
 	}
 	data.Variants = variants
-
-	result, code, err := u.itemCategoryRepo.UpsertItemAndVariants(ctx, branchId, itemCategoryId, &data)
-	if err != nil {
-		return nil, code, err
-	}
-
-	var resp dto.ItemResponse
-	itemCategoryDomainToDTO_UpsertItemAndVariants(&resp, result)
-
-	return &resp, code, nil
 }
 
-func itemCategoryDomainToDTO_UpsertItemAndVariants(resp *dto.ItemResponse, result *domain.ItemCategory) {
+func DomainToDTO_UpsertItemAndVariants(resp *dto.ItemResponse, result *domain.ItemCategory, req *dto.ItemAndVariantsUpsertRequest) {
 	for _, item := range result.Items {
-		if item.UUID != resp.UUID {
+		if item.UUID != req.UUID {
 			continue
 		}
 
@@ -76,7 +69,7 @@ func itemCategoryDomainToDTO_UpsertItemAndVariants(resp *dto.ItemResponse, resul
 			resp.UpdatedAt = &respUpdatedAt
 		}
 
-		var variants []dto.VariantResponse
+		variants := []dto.VariantResponse{}
 		for _, v := range item.Variants {
 			var variant dto.VariantResponse
 
@@ -90,9 +83,5 @@ func itemCategoryDomainToDTO_UpsertItemAndVariants(resp *dto.ItemResponse, resul
 			variants = append(variants, variant)
 		}
 		resp.Variants = variants
-
-		if len(resp.Variants) == 0 {
-			resp.Variants = make([]dto.VariantResponse, 0)
-		}
 	}
 }
