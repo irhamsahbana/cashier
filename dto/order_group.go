@@ -3,6 +3,24 @@ package dto
 import "time"
 
 // response
+type InvoiceResponse struct {
+	UUID            string                  `json:"uuid"`
+	Customer        *Customer               `json:"customer"`
+	OrderGroups     []OrderGroupResponse    `json:"order_groups"`
+	Payments        []InvoicePayment        `json:"payments"`
+	Refunds         []InvoiceRefund         `json:"refunds"`
+	CreditContracts []InvoiceCreditContract `json:"credit_contracts"`
+	TotalAmount     float64                 `json:"total_amount"`
+	TotalTax        float64                 `json:"total_tax"`
+	TotalDiscount   float64                 `json:"total_discount"`
+	TotalChange     float64                 `json:"total_change"`
+	TotalTip        float64                 `json:"total_tip"`
+	Note            *string                 `json:"note"`
+	CompletedAt     *time.Time              `json:"completed_at"`
+	CreatedAt       time.Time               `json:"created_at"`
+	UpdatedAt       *time.Time              `json:"updated_at"`
+}
+
 type OrderGroupResponse struct {
 	UUID         string            `json:"uuid"`
 	BranchUUID   string            `json:"branch_uuid"`
@@ -50,6 +68,68 @@ type TaxOrderGroup struct {
 }
 
 // requests
+type InvoiceInsertRequest struct {
+	UUID        string                    `json:"uuid"`
+	Customer    *Customer                 `json:"customer"`
+	OrderGroups []OrderGroupUpsertRequest `json:"order_groups"`
+	Payments    []InvoicePayment          `json:"payments"`
+	// Refunds         []InvoiceRefund           `json:"refunds"`
+	CreditContracts []InvoiceCreditContract `json:"credit_contracts"`
+	TotalAmount     float64                 `json:"total_amount"`
+	TotalTax        float64                 `json:"total_tax"`
+	TotalDiscount   float64                 `json:"total_discount"`
+	TotalChange     float64                 `json:"total_change"`
+	TotalTip        float64                 `json:"total_tip"`
+	Note            *string                 `json:"note"`
+	CompletedAt     *string                 `json:"completed_at"`
+	CreatedAt       string                  `json:"created_at"`
+	UpdatedAt       *string                 `json:"updated_at"`
+}
+
+type InvoicePayment struct {
+	UUID           string               `json:"uuid"`
+	OrderGroupUUID string               `json:"order_group_uuid"`
+	PaymentMethod  InvoicePaymentMethod `json:"payment_method"`
+	EmployeeShift  EmployeeShift        `json:"employee_shift"`
+	Total          float64              `json:"total"`
+	Fee            float64              `json:"fee"`
+	CreatedAt      string               `json:"created_at"`
+}
+
+type InvoicePaymentMethod struct {
+	PaymentMethodUUID string                  `json:"payment_method_uuid"`
+	Group             string                  `json:"group"`
+	Name              string                  `json:"name"`
+	Fee               InvoicePaymentMethodFee `json:"fee"`
+}
+
+type InvoicePaymentMethodFee struct {
+	Percent float64 `json:"percent"`
+	Fixed   float64 `json:"fixed"`
+}
+
+type InvoiceRefund struct {
+	UUID           string        `json:"uuid"`
+	OrderGroupUUID string        `json:"order_group_uuid"`
+	EmployeeShift  EmployeeShift `json:"employee_shift"`
+	Total          float64       `json:"total"`
+	CreatedAt      string        `json:"created_at"`
+}
+
+type InvoiceCreditContract struct {
+	UUID      string `json:"uuid"`
+	Number    string `json:"number"`
+	Note      string `json:"note"`
+	DueBy     string `json:"due_by"`
+	CreatedAt string `json:"created_at"`
+}
+
+type EmployeeShift struct {
+	EmployeeShiftUUID string `json:"employee_shift_uuid"`
+	UserUUID          string `json:"user_uuid"`
+	Name              string `json:"name"`
+}
+
 type OrderGroupUpsertRequest struct {
 	UUID      string          `json:"uuid"`
 	SpaceUUID *string         `json:"space_uuid"`

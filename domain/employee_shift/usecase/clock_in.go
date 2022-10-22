@@ -47,6 +47,7 @@ func DomainToDTO_ClockIn(resp *dto.EmployeeShiftResponse, result *domain.Employe
 	for _, supporter := range result.Supporters {
 		var s dto.EmployeeShiftSupporterResponse
 		s.UUID = supporter.UUID
+		s.UserUUID = supporter.UserUUID
 		s.StartTime = time.UnixMicro(supporter.StartTime).UTC()
 		s.CreatedAt = time.UnixMicro(supporter.CreatedAt).UTC()
 		if supporter.EndTime != nil {

@@ -1,42 +1,55 @@
 package domain
 
-type InvoiceOrderGroup struct {
-	UUID            string           `bson:"uuid"`
-	BranchUUID      string           `bson:"branch_uuid"`
-	Payments        []Payment        `bson:"payments"`
-	OrderGroups     []OrderGroup     `bson:"order_groups"`
-	CreditContracts []CreditContract `bson:"credit_contracts"`
-	Customer        Customer         `bson:"customer"`
-	CreatedBy       string           `bson:"created_by"`
-	Tax             float64          `bson:"tax"`
-	Tip             float64          `bson:"tip"`
-	Completed       bool             `bson:"completed"`
-	CreatedAt       int64            `bson:"created_at"`
+type Invoice struct {
+	UUID            string                  `bson:"uuid"`
+	BranchUUID      string                  `bson:"branch_uuid"`
+	Customer        *Customer               `bson:"customer"`
+	Payments        []InvoicePayment        `bson:"payments"`
+	OrderGroups     []OrderGroup            `bson:"order_groups"`
+	CreditContracts []InvoiceCreditContract `bson:"credit_contracts"`
+	TotalAmount     float64                 `bson:"total_amount"`
+	TotalTax        float64                 `bson:"total_tax"`
+	TotalDiscount   float64                 `bson:"total_discount"`
+	TotalChange     float64                 `bson:"total_change"`
+	TotalTip        float64                 `bson:"total_tip"`
+	Note            *string                 `bson:"note"`
+	CompletedAt     *int64                  `bson:"completed_at"`
+	CreatedAt       int64                   `bson:"created_at"`
+	UpdatedAt       *int64                  `bson:"updated_at"`
 }
 
-type CreditContract struct {
+type InvoicePayment struct {
+	UUID                 string               `bson:"uuid"`
+	OrderGroupUUID       string               `bson:"order_group_uuid"`
+	PaymentMethod        InvoicePaymentMethod `bson:"payment_method"`
+	EmployeeShiftInvoice InvoiceEmployeeShift `bson:"employee_shift"`
+	Total                float64              `bson:"total"`
+	Fee                  float64              `bson:"fee"`
+	CreatedAt            int64                `bson:"created_at"`
+}
+
+type InvoicePaymentMethod struct {
+	PaymentMethodUUID string                  `bson:"payment_method_uuid"`
+	Group             string                  `bson:"group"`
+	Name              string                  `bson:"name"`
+	Fee               InvoicePaymentMethodFee `bson:"fee"`
+}
+
+type InvoicePaymentMethodFee struct {
+	Percent float64 `bson:"percent"`
+	Fixed   float64 `bson:"fixed"`
+}
+
+type InvoiceEmployeeShift struct {
+	EmployeeShiftUUID string `bson:"employee_shift_uuid"`
+	UserUUID          string `bson:"user_uuid"`
+	Name              string `bson:"name"`
+}
+
+type InvoiceCreditContract struct {
 	UUID      string `bson:"uuid"`
 	Number    string `bson:"number"`
 	Note      string `bson:"note"`
 	DueBy     int64  `bson:"due_by"`
 	CreatedAt int64  `bson:"created_at"`
-}
-
-type Payment struct {
-	UUID                 string `bson:"uuid"`
-	PaymentMethod        `bson:"payment_method"`
-	EmployeeShiftInvoice `bson:"employee_shift"`
-}
-
-type PaymentMethodInvoice struct {
-	PaymentMethodUUID string  `bson:"payment_method_uuid"`
-	Group             string  `bson:"group"`
-	Name              string  `bson:"name"`
-	Fee               float64 `bson:"fee"`
-}
-
-type EmployeeShiftInvoice struct {
-	EmployeeShiftUUID string `bson:"employee_shift_uuid"`
-	UserUUID          string `bson:"user_uuid"`
-	Name              string `bson:"name"`
 }

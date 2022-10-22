@@ -32,19 +32,20 @@ func NewOrderHandler(router *gin.Engine, usecase domain.OrderUsecaseContract) {
 	r.PUT("/order-groups", handler.UpsertActiveOrder)
 	r.GET("/order-groups", handler.FindActiveOrders)
 	r.DELETE("/order-groups/:id", handler.DeleteActiveOrder)
+
+	r.POST("/invoices", handler.InsertInvoice)
+
 }
 
 func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 	var request dto.OrderGroupUpsertRequest
 
-	err := c.BindJSON(&request)
-	if err != nil {
+	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
-	errMsg := validateUpserOrderRequest(&request)
-	if len(errMsg) > 0 {
+	if errMsg := validateUpserOrderRequest(&request); len(errMsg) > 0 {
 		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
@@ -94,4 +95,20 @@ func (h *orderHandler) DeleteActiveOrder(c *gin.Context) {
 	}
 
 	http_response.JSON(c, http.StatusOK, "success to delete active order", result)
+}
+
+func (h *orderHandler) InsertInvoice(c *gin.Context) {
+	var request dto.InvoiceInsertRequest
+
+	if err := c.BindJSON(&request); err != nil {
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	if errMsg := ValidateInsertInvoiceRequest(&request); len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to upsert invoice", request)
 }

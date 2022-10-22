@@ -28,8 +28,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 		msg = helper.AddMessage("type", "order group type must be either delivery, queue, or space", msg)
 	}
 
-	err := validator.IsUUID(req.UUID)
-	if err != nil {
+	if err := validator.IsUUID(req.UUID); err != nil {
 		msg = helper.AddMessage("uuid", err.Error(), msg)
 	}
 
@@ -39,8 +38,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate delivery
 	if req.Delivery != nil {
-		err = validator.IsUUID(req.Delivery.UUID)
-		if err != nil {
+		if err := validator.IsUUID(req.Delivery.UUID); err != nil {
 			msg = helper.AddMessage("delivery.uuid", err.Error(), msg)
 		}
 
@@ -69,8 +67,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate queue
 	if req.Queue != nil {
-		err = validator.IsUUID(req.Queue.UUID)
-		if err != nil {
+		if err := validator.IsUUID(req.Queue.UUID); err != nil {
 			msg = helper.AddMessage("queue.uuid", err.Error(), msg)
 		}
 
@@ -79,8 +76,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 		}
 
 		if req.Queue.ScheduledAt != nil {
-			_, err := time.Parse(time.RFC3339, *req.Queue.ScheduledAt)
-			if err != nil {
+			if _, err := time.Parse(time.RFC3339, *req.Queue.ScheduledAt); err != nil {
 				msg = helper.AddMessage("queue.scheduled_at", err.Error(), msg)
 			}
 		}
@@ -88,13 +84,11 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate order
 	for orderIndex, order := range req.Orders {
-		err = validator.IsUUID(order.UUID)
-		if err != nil {
+		if err := validator.IsUUID(order.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.uuid", orderIndex), err.Error(), msg)
 		}
 
-		err = validator.IsUUID(order.Item.UUID)
-		if err != nil {
+		if err := validator.IsUUID(order.Item.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.item.uuid", orderIndex), err.Error(), msg)
 		}
 
@@ -102,15 +96,13 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.item.quantity", orderIndex), "order item quantity must not be negative", msg)
 		}
 
-		_, err := time.Parse(time.RFC3339Nano, order.CreatedAt)
-		if err != nil {
+		if _, err := time.Parse(time.RFC3339Nano, order.CreatedAt); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.created_at", orderIndex), err.Error(), msg)
 		}
 
 		// order modifiers
 		for modIndex, modifier := range order.Modifiers {
-			err = validator.IsUUID(modifier.UUID)
-			if err != nil {
+			if err := validator.IsUUID(modifier.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.modifiers.%d.uuid", orderIndex, modIndex), err.Error(), msg)
 			}
 
@@ -121,13 +113,11 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 		// order waiter
 		if order.Waiter != nil {
-			err = validator.IsUUID(order.Waiter.UUID)
-			if err != nil {
+			if err := validator.IsUUID(order.Waiter.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.waiter.uuid", orderIndex), err.Error(), msg)
 			}
 
-			err = validator.IsUUID(order.Waiter.BranchUUID)
-			if err != nil {
+			if err := validator.IsUUID(order.Waiter.BranchUUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.waiter.branch_uuid", orderIndex), err.Error(), msg)
 			}
 		}
@@ -135,7 +125,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate taxes
 	for taxIndex, tax := range req.Taxes {
-		if err = validator.IsUUID(tax.UUID); err != nil {
+		if err := validator.IsUUID(tax.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("taxes.%d.uuid", taxIndex), err.Error(), msg)
 		}
 
