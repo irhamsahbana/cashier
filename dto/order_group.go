@@ -6,15 +6,13 @@ import "time"
 type OrderGroupResponse struct {
 	UUID         string            `json:"uuid"`
 	BranchUUID   string            `json:"branch_uuid"`
+	CreatedBy    string            `json:"created_by"`
 	SpaceUUID    *string           `json:"space_uuid"`
 	Delivery     *DeliveryResponse `json:"delivery"`
 	Queue        *Queue            `json:"queue"`
-	CreatedBy    string            `json:"created_by"`
 	Orders       []OrderResponse   `json:"orders"`
 	Taxes        []TaxOrderGroup   `json:"taxes"`
 	CancelReason *string           `json:"cancel_reason,omitempty"`
-	Pending      *bool             `json:"pending"`
-	Completed    bool              `json:"completed"`
 	CreatedAt    time.Time         `json:"created_at"`
 	UpdatedAt    *time.Time        `json:"updated_at"`
 	DeletedAt    *time.Time        `json:"deleted_at"`
@@ -39,6 +37,7 @@ type OrderResponse struct {
 	Discounts   []DiscountOrder `json:"discounts"`
 	Waiter      *WaiterOrder    `json:"waiter"`
 	RefundedQty int32           `json:"refunded_qty"`
+	Note        *string         `json:"note"`
 	CreatedAt   string          `json:"created_at"`
 	UpdatedAt   *time.Time      `json:"updated_at"`
 	DeletedAt   *time.Time      `json:"deleted_at"`
@@ -59,8 +58,6 @@ type OrderGroupUpsertRequest struct {
 	Orders    []Order         `json:"orders"`
 	Taxes     []TaxOrderGroup `json:"taxes"`
 	CreatedBy string          `json:"created_by"`
-	Pending   *bool           `json:"pending"`
-	Completed bool            `json:"completed"`
 	CreatedAt string          `json:"created_at"`
 }
 
@@ -77,6 +74,7 @@ type Order struct {
 	Discounts   []DiscountOrder `json:"discounts"`
 	Waiter      *WaiterOrder    `json:"waiter"`
 	RefundedQty int32           `json:"refunded_qty"`
+	Note        *string         `json:"note"`
 	CreatedAt   string          `json:"created_at"`
 	UpdatedAt   *string         `json:"updated_at"`
 	DeletedAt   *string         `json:"deleted_at"`

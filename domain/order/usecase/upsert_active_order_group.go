@@ -30,7 +30,6 @@ func (u *orderUsecase) UpsertActiveOrder(c context.Context, branchId string, req
 func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderGroupUpsertRequest) {
 	data.UUID = req.UUID
 	data.CreatedBy = req.CreatedBy
-	data.Completed = req.Completed
 
 	// delivery
 	if req.Delivery != nil {
@@ -138,10 +137,22 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 			Modifiers: modifiers,
 			Discounts: discounts,
 			Waiter:    waiter,
+			Note:      order.Note,
 			CreatedAt: createdAt.UnixMicro(),
 		})
 	}
 	data.Orders = orders
+
+	// taxes
+	taxes := []domain.TaxOrderGroup{}
+	for _, tax := range req.Taxes {
+		taxes = append(taxes, domain.TaxOrderGroup{
+			UUID:  tax.UUID,
+			Name:  tax.Name,
+			Value: tax.Value,
+		})
+	}
+	data.Taxes = taxes
 
 	createdAt, _ := time.Parse(time.RFC3339Nano, req.CreatedAt)
 	data.CreatedAt = createdAt.UnixMicro()
@@ -153,7 +164,6 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 	resp.BranchUUID = data.BranchUUID
 	resp.CreatedBy = data.CreatedBy
 
-	resp.Completed = data.Completed
 	resp.CreatedAt = time.UnixMicro(data.CreatedAt).UTC()
 	resp.CancelReason = data.CancelReason
 	if data.UpdatedAt != nil {
@@ -288,6 +298,7 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			Modifiers: modifiers,
 			Discounts: discounts,
 			Waiter:    waiter,
+			Note:      order.Note,
 			CreatedAt: time.UnixMicro(order.CreatedAt).Format(time.RFC3339Nano),
 			UpdatedAt: orderUpdatedAt,
 			DeletedAt: orderDeletedAt,

@@ -131,6 +131,7 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 	}
 
 	db.Orders = updatedOrders
+	db.Taxes = data.Taxes
 	dbUpdatedAt := time.Now().UTC().UnixMicro()
 	db.UpdatedAt = &dbUpdatedAt
 

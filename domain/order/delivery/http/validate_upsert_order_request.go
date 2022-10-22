@@ -132,5 +132,21 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 			}
 		}
 	}
+
+	// validate taxes
+	for taxIndex, tax := range req.Taxes {
+		if err = validator.IsUUID(tax.UUID); err != nil {
+			msg = helper.AddMessage(fmt.Sprintf("taxes.%d.uuid", taxIndex), err.Error(), msg)
+		}
+
+		if tax.Value < 0 {
+			msg = helper.AddMessage(fmt.Sprintf("taxes.%d.value", taxIndex), "tax value must not be negative", msg)
+		}
+
+		if tax.Value > 100 {
+			msg = helper.AddMessage(fmt.Sprintf("taxes.%d.value", taxIndex), "tax value must not be more than 100", msg)
+		}
+	}
+
 	return msg
 }

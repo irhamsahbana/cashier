@@ -8,16 +8,14 @@ import (
 type OrderGroup struct {
 	UUID         string          `bson:"uuid"`
 	BranchUUID   string          `bson:"branch_uuid"`
+	CreatedBy    string          `bson:"created_by"`
 	SpaceUUID    *string         `bson:"space_uuid"`
 	Delivery     *Delivery       `bson:"delivery"`
 	Queue        *Queue          `bson:"queue"`
 	Discounts    []DiscountOrder `bson:"discounts"`
 	Orders       []Order         `bson:"orders"`
 	Taxes        []TaxOrderGroup `bson:"taxes"`
-	CreatedBy    string          `bson:"created_by"`
 	CancelReason *string         `bson:"cancel_reason"`
-	Pending      *bool           `bson:"pending"`
-	Completed    bool            `bson:"completed"`
 	CreatedAt    int64           `bson:"created_at"`
 	UpdatedAt    *int64          `bson:"updated_at"`
 	DeletedAt    *int64          `bson:"deleted_at"`
@@ -30,6 +28,7 @@ type Order struct {
 	Discounts   []DiscountOrder `bson:"discounts"`
 	Waiter      *WaiterOrder    `bson:"waiter"`
 	RefundedQty int32           `bson:"refunded_qty"`
+	Note        *string         `bson:"note"`
 	CreatedAt   int64           `bson:"created_at"`
 	UpdatedAt   *int64          `bson:"updated_at"`
 	DeletedAt   *int64          `bson:"deleted_at"`
