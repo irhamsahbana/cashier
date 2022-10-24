@@ -29,6 +29,7 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 		"employee_shifts",
 
 		"active_order_groups",
+		"invoices",
 
 		"files",
 	}
@@ -169,6 +170,20 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 			notifyCollectionIndexesCreated(res)
 
 		case "active_order_groups":
+			createCollectionIndex(collection)
+			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
+				{
+					Keys: bson.D{
+						{Key: "branch_uuid", Value: 1},
+						{Key: "uuid", Value: 1},
+					},
+					Options: options.Index().SetUnique(true),
+				},
+			})
+			errCollectionIndexingCheck(err, collection)
+			notifyCollectionIndexesCreated(res)
+
+		case "invoices":
 			createCollectionIndex(collection)
 			res, err := client.Database(dbName).Collection(collection).Indexes().CreateMany(ctx, []mongo.IndexModel{
 				{

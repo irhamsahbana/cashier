@@ -50,9 +50,9 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 			msg = helper.AddMessage("delivery.driver", "delivery driver must not be empty", msg)
 		}
 
-		if _, err := time.Parse(time.RFC3339Nano, req.Delivery.CreatedAt); err != nil {
-			msg = helper.AddMessage("delivery.created_at", err.Error(), msg)
-		}
+		// if _, err := time.Parse(time.RFC3339Nano, req.Delivery.CreatedAt); err != nil {
+		// 	msg = helper.AddMessage("delivery.created_at", err.Error(), msg)
+		// }
 
 		if req.Delivery.ScheduledAt != nil {
 			if _, err := time.Parse(time.RFC3339Nano, *req.Delivery.ScheduledAt); err != nil {

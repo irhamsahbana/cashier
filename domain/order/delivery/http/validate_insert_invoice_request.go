@@ -12,6 +12,10 @@ import (
 func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Message {
 	msg := customtype.Message{}
 
+	if err := validator.IsUUID(req.UUID); err != nil {
+		msg = helper.AddMessage("uuid", err.Error(), msg)
+	}
+
 	// customer
 	if req.Customer != nil {
 		if req.Customer.Name == "" {
@@ -158,9 +162,9 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.delivery.driver", ogIndex), "delivery driver must not be empty", msg)
 			}
 
-			if _, err := time.Parse(time.RFC3339Nano, og.Delivery.CreatedAt); err != nil {
-				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.delivery.created_at", ogIndex), err.Error(), msg)
-			}
+			// if _, err := time.Parse(time.RFC3339Nano, og.Delivery.CreatedAt); err != nil {
+			// 	msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.delivery.created_at", ogIndex), err.Error(), msg)
+			// }
 
 			if og.Delivery.ScheduledAt != nil {
 				if _, err := time.Parse(time.RFC3339Nano, *og.Delivery.ScheduledAt); err != nil {

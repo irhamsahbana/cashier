@@ -13,7 +13,7 @@ func (u *orderUsecase) UpsertActiveOrder(c context.Context, branchId string, req
 
 	var data domain.OrderGroup
 	data.BranchUUID = branchId
-	orderDTOToDomain_UpsertActiveOrder(&data, req)
+	DTOtoDomain_UpsertActiveOrder(&data, req)
 
 	result, code, err := u.orderRepo.UpsertActiveOrder(ctx, branchId, &data)
 	if err != nil {
@@ -21,50 +21,46 @@ func (u *orderUsecase) UpsertActiveOrder(c context.Context, branchId string, req
 	}
 
 	var resp dto.OrderGroupResponse
-	orderDomainToDTO(&resp, result)
+	DomainToDTO_UpsertActiveOrder(&resp, result)
 
 	return &resp, code, nil
 }
 
 // DTO to Domain
-func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderGroupUpsertRequest) {
+func DTOtoDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderGroupUpsertRequest) {
 	data.UUID = req.UUID
 	data.CreatedBy = req.CreatedBy
 
 	// delivery
 	if req.Delivery != nil {
-		customer := domain.Customer{
-			Name:    req.Delivery.Customer.Name,
-			Phone:   req.Delivery.Customer.Phone,
-			Address: req.Delivery.Customer.Address,
-		}
+		var customer domain.Customer
+		customer.Name = req.Delivery.Customer.Name
+		customer.Phone = req.Delivery.Customer.Phone
+		customer.Address = req.Delivery.Customer.Address
 
-		deliveryCreatedAt, _ := time.Parse(time.RFC3339Nano, req.Delivery.CreatedAt)
 		var schedludedAtTime *int64
 		if req.Delivery.ScheduledAt != nil {
 			scheduledAt, _ := time.Parse(time.RFC3339Nano, *req.Delivery.ScheduledAt)
-			scheduledAtUnix := scheduledAt.UnixMicro()
-			schedludedAtTime = &scheduledAtUnix
+			scheduledAtUnixMicro := scheduledAt.UnixMicro()
+			schedludedAtTime = &scheduledAtUnixMicro
 		}
 
-		data.Delivery = &domain.Delivery{
-			UUID:        req.Delivery.UUID,
-			Number:      req.Delivery.Number,
-			Partner:     req.Delivery.Partner,
-			Driver:      req.Delivery.Driver,
-			Customer:    customer,
-			ScheduledAt: schedludedAtTime,
-			CreatedAt:   deliveryCreatedAt.UnixMicro(),
-		}
+		var delivery domain.Delivery
+		data.Delivery = &delivery
+		data.Delivery.UUID = req.Delivery.UUID
+		data.Delivery.Number = req.Delivery.Number
+		data.Delivery.Partner = req.Delivery.Partner
+		data.Delivery.Driver = req.Delivery.Driver
+		data.Delivery.Customer = customer
+		data.Delivery.ScheduledAt = schedludedAtTime
 	}
 
 	// queue
 	if req.Queue != nil {
-		customer := domain.Customer{
-			Name:    req.Queue.Customer.Name,
-			Phone:   req.Queue.Customer.Phone,
-			Address: req.Queue.Customer.Address,
-		}
+		var customer domain.Customer
+		customer.Name = req.Queue.Customer.Name
+		customer.Phone = req.Queue.Customer.Phone
+		customer.Address = req.Queue.Customer.Address
 
 		var ScheduledAtMicro *int64
 		if req.Queue.ScheduledAt != nil {
@@ -72,14 +68,13 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 			scheduled := scheduledAt.UnixMicro()
 			ScheduledAtMicro = &scheduled
 		}
-		createdAt, _ := time.Parse(time.RFC3339Nano, req.Queue.CreatedAt)
-		data.Queue = &domain.Queue{
-			UUID:        req.Queue.UUID,
-			Number:      req.Queue.Number,
-			Customer:    customer,
-			ScheduledAt: ScheduledAtMicro,
-			CreatedAt:   createdAt.UnixMicro(),
-		}
+		var queue domain.Queue
+		data.Queue = &queue
+		data.Queue.UUID = req.Queue.UUID
+		data.Queue.Number = req.Queue.Number
+		data.Queue.Customer = customer
+		data.Queue.ScheduledAt = ScheduledAtMicro
+
 	}
 
 	// space
@@ -89,34 +84,33 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 	orders := []domain.Order{}
 	for _, order := range req.Orders {
 		// waiters
-		var waiter *domain.WaiterOrder
+		var waiter domain.WaiterOrder
 		if order.Waiter != nil {
-			waiter = &domain.WaiterOrder{
-				UUID:       order.Waiter.UUID,
-				BranchUUID: order.Waiter.BranchUUID,
-				Name:       order.Waiter.Name,
-			}
+			waiter.UUID = order.Waiter.UUID
+			waiter.BranchUUID = order.Waiter.BranchUUID
+			waiter.Name = order.Waiter.Name
 		}
 
 		// order modifiers
 		modifiers := []domain.ModifierOrder{}
 		for _, modifier := range order.Modifiers {
-			modifiers = append(modifiers, domain.ModifierOrder{
-				UUID:     modifier.UUID,
-				Name:     modifier.Name,
-				Price:    modifier.Price,
-				Quantity: modifier.Quantity,
-			})
+			var mod domain.ModifierOrder
+
+			mod.UUID = modifier.UUID
+			mod.Name = modifier.Name
+			mod.Price = modifier.Price
+			mod.Quantity = modifier.Quantity
+
+			modifiers = append(modifiers, mod)
 		}
 
 		// item
-		item := domain.ItemOrder{
-			UUID:     order.Item.UUID,
-			Name:     order.Item.Name,
-			Label:    order.Item.Label,
-			Price:    order.Item.Price,
-			Quantity: order.Item.Quantity,
-		}
+		var item domain.ItemOrder
+		item.UUID = order.Item.UUID
+		item.Name = order.Item.Name
+		item.Label = order.Item.Label
+		item.Price = order.Item.Price
+		item.Quantity = order.Item.Quantity
 
 		// discount
 		discounts := []domain.DiscountOrder{}
@@ -136,7 +130,7 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 			Item:      item,
 			Modifiers: modifiers,
 			Discounts: discounts,
-			Waiter:    waiter,
+			Waiter:    &waiter,
 			Note:      order.Note,
 			CreatedAt: createdAt.UnixMicro(),
 		})
@@ -146,11 +140,12 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 	// taxes
 	taxes := []domain.TaxOrderGroup{}
 	for _, tax := range req.Taxes {
-		taxes = append(taxes, domain.TaxOrderGroup{
-			UUID:  tax.UUID,
-			Name:  tax.Name,
-			Value: tax.Value,
-		})
+		var taxOrder domain.TaxOrderGroup
+		taxOrder.UUID = tax.UUID
+		taxOrder.Name = tax.Name
+		taxOrder.Value = tax.Value
+
+		taxes = append(taxes, taxOrder)
 	}
 	data.Taxes = taxes
 
@@ -159,7 +154,7 @@ func orderDTOToDomain_UpsertActiveOrder(data *domain.OrderGroup, req *dto.OrderG
 }
 
 // Domain to DTO
-func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
+func DomainToDTO_UpsertActiveOrder(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 	resp.UUID = data.UUID
 	resp.BranchUUID = data.BranchUUID
 	resp.CreatedBy = data.CreatedBy
@@ -188,16 +183,6 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			scheduledAt := time.UnixMicro(*data.Delivery.ScheduledAt).UTC()
 			deliveryScheduledAt = &scheduledAt
 		}
-		var deliveryUpdatedAt *time.Time
-		if data.Delivery.UpdatedAt != nil {
-			updatedAt := time.UnixMicro(*data.Delivery.UpdatedAt).UTC()
-			deliveryUpdatedAt = &updatedAt
-		}
-		var deliveryDeletedAt *time.Time
-		if data.Delivery.DeletedAt != nil {
-			deletedAt := time.UnixMicro(*data.Delivery.DeletedAt).UTC()
-			deliveryDeletedAt = &deletedAt
-		}
 
 		resp.Delivery = &dto.DeliveryResponse{
 			UUID:        data.Delivery.UUID,
@@ -206,9 +191,6 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			Driver:      data.Delivery.Driver,
 			Customer:    customer,
 			ScheduledAt: deliveryScheduledAt,
-			CreatedAt:   time.UnixMicro(data.Delivery.CreatedAt).UTC(),
-			UpdatedAt:   deliveryUpdatedAt,
-			DeletedAt:   deliveryDeletedAt,
 		}
 	}
 
@@ -226,13 +208,13 @@ func orderDomainToDTO(resp *dto.OrderGroupResponse, data *domain.OrderGroup) {
 			promisedAtStr := scheduledAtTime.Format(time.RFC3339Nano)
 			scheduledAt = &promisedAtStr
 		}
-		createdAt := time.UnixMicro(data.Queue.CreatedAt)
+		// createdAt := time.UnixMicro(data.Queue.CreatedAt)
 		resp.Queue = &dto.Queue{
 			UUID:        data.Queue.UUID,
 			Number:      data.Queue.Number,
 			Customer:    customer,
 			ScheduledAt: scheduledAt,
-			CreatedAt:   createdAt.Format(time.RFC3339Nano),
+			// CreatedAt:   createdAt.Format(time.RFC3339Nano),
 		}
 	}
 

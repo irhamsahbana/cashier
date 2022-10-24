@@ -23,7 +23,7 @@ func (u *orderUsecase) DeleteActiveOrder(c context.Context, branchId, orderId st
 		return &resp, code, err
 	}
 
-	orderDomainToDTO(&resp, result)
+	DomainToDTO_UpsertActiveOrder(&resp, result)
 
 	return &resp, code, nil
 }

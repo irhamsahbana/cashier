@@ -55,26 +55,26 @@ func (repo *orderRepository) updateActiveOrderGroup(ctx context.Context, data *d
 	// delivery, update delivery data
 	if data.Delivery != nil && db.Delivery != nil {
 		db.Delivery = data.Delivery
-		deliveryUpdatedAt := time.Now().UTC().UnixMicro()
-		db.Delivery.UpdatedAt = &deliveryUpdatedAt
+		// deliveryUpdatedAt := time.Now().UTC().UnixMicro()
+		// db.Delivery.UpdatedAt = &deliveryUpdatedAt
 	}
 
-	if data.Delivery == nil && db.Delivery != nil {
-		deliveryDeletedAt := time.Now().UTC().UnixMicro()
-		db.Delivery.DeletedAt = &deliveryDeletedAt
-	}
+	// if data.Delivery == nil && db.Delivery != nil {
+	// 	deliveryDeletedAt := time.Now().UTC().UnixMicro()
+	// 	db.Delivery.DeletedAt = &deliveryDeletedAt
+	// }
 
 	// queue, update queue data
-	if data.Queue != nil && db.Queue != nil {
-		db.Queue = data.Queue
-		queueUpdatedAt := time.Now().UTC().UnixMicro()
-		db.Queue.UpdatedAt = &queueUpdatedAt
-	}
+	// if data.Queue != nil && db.Queue != nil {
+	// 	db.Queue = data.Queue
+	// 	queueUpdatedAt := time.Now().UTC().UnixMicro()
+	// 	db.Queue.UpdatedAt = &queueUpdatedAt
+	// }
 
-	if data.Queue == nil && db.Queue != nil {
-		queueDeletedAt := time.Now().UTC().UnixMicro()
-		db.Queue.DeletedAt = &queueDeletedAt
-	}
+	// if data.Queue == nil && db.Queue != nil {
+	// 	queueDeletedAt := time.Now().UTC().UnixMicro()
+	// 	db.Queue.DeletedAt = &queueDeletedAt
+	// }
 
 	// space, update space data
 	if data.SpaceUUID != nil && db.SpaceUUID != nil {

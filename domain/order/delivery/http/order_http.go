@@ -99,6 +99,7 @@ func (h *orderHandler) DeleteActiveOrder(c *gin.Context) {
 
 func (h *orderHandler) InsertInvoice(c *gin.Context) {
 	var request dto.InvoiceInsertRequest
+	branchId := c.GetString("branch_uuid")
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
@@ -110,5 +111,12 @@ func (h *orderHandler) InsertInvoice(c *gin.Context) {
 		return
 	}
 
-	http_response.JSON(c, http.StatusOK, "success to upsert invoice", request)
+	ctx := context.Background()
+	result, httpCode, err := h.orderUsecase.InsertInvoice(ctx, branchId, &request)
+	if err != nil {
+		http_response.JSON(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to insert invoice", result)
 }

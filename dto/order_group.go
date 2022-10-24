@@ -3,24 +3,6 @@ package dto
 import "time"
 
 // response
-type InvoiceResponse struct {
-	UUID            string                  `json:"uuid"`
-	Customer        *Customer               `json:"customer"`
-	OrderGroups     []OrderGroupResponse    `json:"order_groups"`
-	Payments        []InvoicePayment        `json:"payments"`
-	Refunds         []InvoiceRefund         `json:"refunds"`
-	CreditContracts []InvoiceCreditContract `json:"credit_contracts"`
-	TotalAmount     float64                 `json:"total_amount"`
-	TotalTax        float64                 `json:"total_tax"`
-	TotalDiscount   float64                 `json:"total_discount"`
-	TotalChange     float64                 `json:"total_change"`
-	TotalTip        float64                 `json:"total_tip"`
-	Note            *string                 `json:"note"`
-	CompletedAt     *time.Time              `json:"completed_at"`
-	CreatedAt       time.Time               `json:"created_at"`
-	UpdatedAt       *time.Time              `json:"updated_at"`
-}
-
 type OrderGroupResponse struct {
 	UUID         string            `json:"uuid"`
 	BranchUUID   string            `json:"branch_uuid"`
@@ -38,14 +20,14 @@ type OrderGroupResponse struct {
 
 type DeliveryResponse struct {
 	UUID        string     `json:"uuid"`
-	Number      uint       `json:"number"`
+	Number      int        `json:"number"`
 	Partner     string     `json:"partner"`
 	Driver      string     `json:"driver"`
 	Customer    Customer   `json:"customer"`
 	ScheduledAt *time.Time `json:"scheduled_at"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at"`
+	// CreatedAt   time.Time  `json:"created_at"`
+	// UpdatedAt   *time.Time `json:"updated_at"`
+	// DeletedAt   *time.Time `json:"deleted_at"`
 }
 
 type OrderResponse struct {
@@ -68,24 +50,6 @@ type TaxOrderGroup struct {
 }
 
 // requests
-type InvoiceInsertRequest struct {
-	UUID        string                    `json:"uuid"`
-	Customer    *Customer                 `json:"customer"`
-	OrderGroups []OrderGroupUpsertRequest `json:"order_groups"`
-	Payments    []InvoicePayment          `json:"payments"`
-	// Refunds         []InvoiceRefund           `json:"refunds"`
-	CreditContracts []InvoiceCreditContract `json:"credit_contracts"`
-	TotalAmount     float64                 `json:"total_amount"`
-	TotalTax        float64                 `json:"total_tax"`
-	TotalDiscount   float64                 `json:"total_discount"`
-	TotalChange     float64                 `json:"total_change"`
-	TotalTip        float64                 `json:"total_tip"`
-	Note            *string                 `json:"note"`
-	CompletedAt     *string                 `json:"completed_at"`
-	CreatedAt       string                  `json:"created_at"`
-	UpdatedAt       *string                 `json:"updated_at"`
-}
-
 type InvoicePayment struct {
 	UUID           string               `json:"uuid"`
 	OrderGroupUUID string               `json:"order_group_uuid"`
@@ -190,20 +154,20 @@ type WaiterOrder struct {
 
 type Delivery struct {
 	UUID        string   `json:"uuid"`
-	Number      uint     `json:"number"`
+	Number      int      `json:"number"`
 	Partner     string   `json:"partner"`
 	Driver      string   `json:"driver"`
 	Customer    Customer `json:"customer"`
 	ScheduledAt *string  `json:"scheduled_at"`
-	CreatedAt   string   `json:"created_at"`
+	// CreatedAt   string   `json:"created_at"`
 }
 
 type Queue struct {
 	UUID        string   `json:"uuid"`
-	Number      uint     `json:"number"`
+	Number      int      `json:"number"`
 	Customer    Customer `json:"customer"`
 	ScheduledAt *string  `json:"scheduled_at"`
-	CreatedAt   string   `json:"created_at"`
+	// CreatedAt   string   `json:"created_at"`
 }
 
 type Customer struct {

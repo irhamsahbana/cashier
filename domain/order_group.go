@@ -10,6 +10,7 @@ type OrderGroup struct {
 	BranchUUID   string          `bson:"branch_uuid"`
 	CreatedBy    string          `bson:"created_by"`
 	SpaceUUID    *string         `bson:"space_uuid"`
+	Space        *InvoiceSpace   `bson:"space"`
 	Delivery     *Delivery       `bson:"delivery"`
 	Queue        *Queue          `bson:"queue"`
 	Discounts    []DiscountOrder `bson:"discounts"`
@@ -70,24 +71,24 @@ type WaiterOrder struct {
 
 type Delivery struct {
 	UUID        string   `bson:"uuid"`
-	Number      uint     `bson:"number"`
+	Number      int      `bson:"number"`
 	Partner     string   `bson:"partner"`
 	Driver      string   `bson:"driver"`
 	Customer    Customer `bson:"customer"`
 	ScheduledAt *int64   `bson:"scheduled_at"`
-	CreatedAt   int64    `bson:"created_at"`
-	UpdatedAt   *int64   `bson:"updated_at"`
-	DeletedAt   *int64   `bson:"deleted_at"`
+	// CreatedAt   int64    `bson:"created_at"`
+	// UpdatedAt   *int64   `bson:"updated_at"`
+	// DeletedAt   *int64   `bson:"deleted_at"`
 }
 
 type Queue struct {
 	UUID        string   `bson:"uuid"`
-	Number      uint     `bson:"number"`
+	Number      int      `bson:"number"`
 	Customer    Customer `bson:"customer"`
 	ScheduledAt *int64   `bson:"scheduled_at"`
-	CreatedAt   int64    `bson:"created_at"`
-	UpdatedAt   *int64   `bson:"updated_at"`
-	DeletedAt   *int64   `bson:"deleted_at"`
+	// CreatedAt   int64    `bson:"created_at"`
+	// UpdatedAt   *int64   `bson:"updated_at"`
+	// DeletedAt   *int64   `bson:"deleted_at"`
 }
 
 type Customer struct {
@@ -100,10 +101,14 @@ type OrderRepositoryContract interface {
 	UpsertActiveOrder(ctx context.Context, branchId string, OrderGroup *OrderGroup) (*OrderGroup, int, error)
 	FindActiveOrders(ctx context.Context, branchId string) ([]OrderGroup, int, error)
 	DeleteActiveOrder(ctx context.Context, branchId, OrderId, reason string) (*OrderGroup, int, error)
+
+	InsertInvoice(ctx context.Context, branchId string, data *Invoice) (*Invoice, int, error)
 }
 
 type OrderUsecaseContract interface {
 	UpsertActiveOrder(ctx context.Context, branchId string, req *dto.OrderGroupUpsertRequest) (*dto.OrderGroupResponse, int, error)
 	FindActiveOrders(ctx context.Context, branchId string) ([]dto.OrderGroupResponse, int, error)
 	DeleteActiveOrder(ctx context.Context, branchId, OrderId string, req *dto.OrderGroupDeleteRequest) (*dto.OrderGroupResponse, int, error)
+
+	InsertInvoice(ctx context.Context, branchId string, req *dto.InvoiceInsertRequest) (*dto.InvoiceResponse, int, error)
 }

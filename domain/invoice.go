@@ -53,3 +53,9 @@ type InvoiceCreditContract struct {
 	DueBy     int64  `bson:"due_by"`
 	CreatedAt int64  `bson:"created_at"`
 }
+
+type InvoiceSpace struct {
+	ZoneName    string `bson:"zone_name"`
+	GroupCode   string `bson:"group_code"`
+	SpaceNumber int    `bson:"space_number"`
+}
