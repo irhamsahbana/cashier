@@ -2,11 +2,14 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
 	"lucy/cashier/lib/middleware"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,6 +37,7 @@ func NewOrderHandler(router *gin.Engine, usecase domain.OrderUsecaseContract) {
 	r.DELETE("/order-groups/:id", handler.DeleteActiveOrder)
 
 	r.POST("/invoices", handler.InsertInvoice)
+	r.GET("/invoices", handler.FindInvoiceHistories)
 
 }
 
@@ -119,4 +123,73 @@ func (h *orderHandler) InsertInvoice(c *gin.Context) {
 	}
 
 	http_response.JSON(c, http.StatusOK, "success to insert invoice", result)
+}
+
+func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
+	// cursor pagination
+	limitQ := c.DefaultQuery("limit", "15")
+	cursor := c.DefaultQuery("cursor", time.Now().UTC().Format(time.RFC3339Nano))
+	direction := c.DefaultQuery("direction", "next")
+	sortType := c.DefaultQuery("sort_type", "desc")
+
+	// filter
+	branchId := c.GetString("branch_uuid")
+	from := c.DefaultQuery("from", "")
+	to := c.DefaultQuery("to", "")
+
+	if direction != "prev" {
+		direction = "next"
+	}
+
+	if sortType != "asc" {
+		sortType = "desc"
+	}
+
+	// limit
+	limit, err := strconv.Atoi(limitQ)
+	if err != nil {
+		http_response.JSON(c, http.StatusUnprocessableEntity, "limit must be integer", nil)
+		return
+	}
+
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, "limit", limit)
+	ctx = context.WithValue(ctx, "cursor", cursor)
+	ctx = context.WithValue(ctx, "direction", direction)
+	ctx = context.WithValue(ctx, "sort_type", sortType)
+
+	ctx = context.WithValue(ctx, "branch_uuid", branchId)
+	ctx = context.WithValue(ctx, "from", from)
+	ctx = context.WithValue(ctx, "to", to)
+
+	fmt.Println("limit =>", limit)
+	fmt.Println("cursor =>", cursor)
+	fmt.Println("direction =>", direction)
+	fmt.Println("sort_type =>", sortType)
+
+	fmt.Println("branch_uuid =>", branchId)
+	fmt.Println("from =>", from)
+	fmt.Println("to =>", to)
+
+	result, nextCur, prevCur, httpCode, err := h.orderUsecase.FindInvoiceHistories(ctx)
+	if err != nil {
+		http_response.JSON(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	pagination := struct {
+		NextCursor any `json:"next_cursor"`
+		PrevCursor any `json:"prev_cursor"`
+	}{
+		NextCursor: nextCur,
+		PrevCursor: prevCur,
+	}
+
+	meta := struct {
+		Pagination any `json:"pagination"`
+	}{
+		Pagination: pagination,
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to find invoice histories", result, meta)
 }

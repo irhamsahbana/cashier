@@ -9,7 +9,7 @@ func (u *orderUsecase) FindActiveOrders(c context.Context, branchId string) ([]d
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	var resp []dto.OrderGroupResponse
+	resp := []dto.OrderGroupResponse{}
 	result, code, err := u.orderRepo.FindActiveOrders(ctx, branchId)
 	if err != nil {
 		return resp, code, err

@@ -76,9 +76,6 @@ type Delivery struct {
 	Driver      string   `bson:"driver"`
 	Customer    Customer `bson:"customer"`
 	ScheduledAt *int64   `bson:"scheduled_at"`
-	// CreatedAt   int64    `bson:"created_at"`
-	// UpdatedAt   *int64   `bson:"updated_at"`
-	// DeletedAt   *int64   `bson:"deleted_at"`
 }
 
 type Queue struct {
@@ -86,9 +83,6 @@ type Queue struct {
 	Number      int      `bson:"number"`
 	Customer    Customer `bson:"customer"`
 	ScheduledAt *int64   `bson:"scheduled_at"`
-	// CreatedAt   int64    `bson:"created_at"`
-	// UpdatedAt   *int64   `bson:"updated_at"`
-	// DeletedAt   *int64   `bson:"deleted_at"`
 }
 
 type Customer struct {
@@ -103,6 +97,7 @@ type OrderRepositoryContract interface {
 	DeleteActiveOrder(ctx context.Context, branchId, OrderId, reason string) (*OrderGroup, int, error)
 
 	InsertInvoice(ctx context.Context, branchId string, data *Invoice) (*Invoice, int, error)
+	FindInvoiceHistories(ctx context.Context) (invoices []Invoice, nextCur, prevCur *int64, code int, err error)
 }
 
 type OrderUsecaseContract interface {
@@ -111,4 +106,5 @@ type OrderUsecaseContract interface {
 	DeleteActiveOrder(ctx context.Context, branchId, OrderId string, req *dto.OrderGroupDeleteRequest) (*dto.OrderGroupResponse, int, error)
 
 	InsertInvoice(ctx context.Context, branchId string, req *dto.InvoiceInsertRequest) (*dto.InvoiceResponse, int, error)
+	FindInvoiceHistories(ctx context.Context) (invoices []dto.InvoiceResponse, nextCur, prevCur *int64, code int, err error)
 }

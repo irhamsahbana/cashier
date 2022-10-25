@@ -25,9 +25,6 @@ type DeliveryResponse struct {
 	Driver      string     `json:"driver"`
 	Customer    Customer   `json:"customer"`
 	ScheduledAt *time.Time `json:"scheduled_at"`
-	// CreatedAt   time.Time  `json:"created_at"`
-	// UpdatedAt   *time.Time `json:"updated_at"`
-	// DeletedAt   *time.Time `json:"deleted_at"`
 }
 
 type OrderResponse struct {
@@ -159,7 +156,6 @@ type Delivery struct {
 	Driver      string   `json:"driver"`
 	Customer    Customer `json:"customer"`
 	ScheduledAt *string  `json:"scheduled_at"`
-	// CreatedAt   string   `json:"created_at"`
 }
 
 type Queue struct {
@@ -167,7 +163,6 @@ type Queue struct {
 	Number      int      `json:"number"`
 	Customer    Customer `json:"customer"`
 	ScheduledAt *string  `json:"scheduled_at"`
-	// CreatedAt   string   `json:"created_at"`
 }
 
 type Customer struct {
