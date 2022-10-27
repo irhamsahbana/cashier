@@ -236,8 +236,8 @@ func paymentMethods() bson.A {
 			{Key: "name", Value: "GoPay"},
 			{Key: "description", Value: "Gojek Pay"},
 			{Key: "fee", Value: bson.D{
-				{Key: "fixed", Value: 0.00},
-				{Key: "percent", Value: 0.00},
+				{Key: "fixed", Value: 10000.00},
+				{Key: "percent", Value: 5.00},
 			}},
 			{Key: "disabled", Value: false},
 			{Key: "created_at", Value: 1660403045123456},
@@ -248,7 +248,7 @@ func paymentMethods() bson.A {
 			{Key: "uuid", Value: "5246ea32-fa8e-490a-bb85-e25a25a4fc26"},
 			{Key: "entry_uuid", Value: nil},
 			{Key: "group", Value: "e-wallet"},
-			{Key: "name", Value: "Shopee Pay"},
+			{Key: "name", Value: "ShopeePay"},
 			{Key: "description", Value: "Shopee E-Wallet"},
 			{Key: "fee", Value: bson.D{
 				{Key: "fixed", Value: 0.00},
