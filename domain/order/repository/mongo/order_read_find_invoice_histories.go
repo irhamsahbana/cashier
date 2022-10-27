@@ -2,7 +2,7 @@ package mongo
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/logger"
 	"net/http"
@@ -29,29 +29,38 @@ func (r *orderRepository) FindInvoiceHistories(ctx context.Context) ([]domain.In
 	sortTypeString := ctx.Value("sort_type").(string)
 
 	// validate cursor
-	if cursorTime, err := time.Parse(time.RFC3339, cursorString); err != nil {
+	if cursorTime, err := time.Parse(time.RFC3339, cursorString); err != nil && cursorString != "" {
 		logger.Log(logrus.Fields{}).Error(err)
-		return nil, nil, nil, http.StatusBadRequest, err
+		return nil, nil, nil, http.StatusUnprocessableEntity, errors.New("invalid cursor")
 	} else {
 		cursor = cursorTime.UnixMicro()
 	}
 
 	if sortTypeString == "desc" {
-		sortType = -1
-	} else {
-		sortType = 1
+		if directionString == "next" {
+			sortType = -1
+			operator = "$lt"
+		} else {
+			sortType = 1
+			operator = "$gt"
+		}
 	}
 
-	if directionString == "next" {
-		operator = "$gt"
-	} else {
-		operator = "$lt"
+	if sortTypeString == "asc" {
+		if directionString == "next" {
+			sortType = 1
+			operator = "$gt"
+		} else {
+			sortType = -1
+			operator = "$lt"
+		}
 	}
 
 	branchId := ctx.Value("branch_uuid").(string)
 	fromString := string(ctx.Value("from").(string))
 	toString := ctx.Value("to").(string)
 
+	// filter range date
 	if fromString == "" || toString == "" {
 		filter = bson.M{
 			"$and": []bson.M{
@@ -62,13 +71,13 @@ func (r *orderRepository) FindInvoiceHistories(ctx context.Context) ([]domain.In
 		fromTime, err := time.Parse(time.RFC3339, fromString)
 		if err != nil {
 			logger.Log(logrus.Fields{}).Error(err)
-			return nil, nil, nil, http.StatusInternalServerError, err
+			return nil, nil, nil, http.StatusInternalServerError, errors.New("invalid 'from' date")
 		}
 
 		toTime, err := time.Parse(time.RFC3339, toString)
 		if err != nil {
 			logger.Log(logrus.Fields{}).Error(err)
-			return nil, nil, nil, http.StatusInternalServerError, err
+			return nil, nil, nil, http.StatusInternalServerError, errors.New("invalid 'to' date")
 		}
 
 		filter = bson.M{
@@ -79,12 +88,22 @@ func (r *orderRepository) FindInvoiceHistories(ctx context.Context) ([]domain.In
 			},
 		}
 	}
+	// -- filter range date
 
 	pipeline := []bson.M{
 		{"$match": filter},
 		{"$sort": bson.M{"created_at": sortType}},
 		{"$match": bson.M{"created_at": bson.M{operator: cursor}}},
 		{"$limit": limit},
+	}
+
+	// if no cursor, then get the first page
+	if cursorString == "" {
+		pipeline = []bson.M{
+			{"$match": filter},
+			{"$sort": bson.M{"created_at": sortType}},
+			{"$limit": limit},
+		}
 	}
 
 	cursorMongo, err := r.CollInvoice.Aggregate(ctx, pipeline)
@@ -97,22 +116,40 @@ func (r *orderRepository) FindInvoiceHistories(ctx context.Context) ([]domain.In
 		logger.Log(logrus.Fields{}).Error(err)
 		return nil, nil, nil, http.StatusInternalServerError, err
 	}
-	fmt.Println("====================================")
-	fmt.Println("len(Invoices): ", len(invoices))
-	fmt.Println("limit: ", limit)
-	fmt.Println("cursor: ", cursor)
-	fmt.Println("operator: ", operator)
-	fmt.Println("sortType: ", sortType)
-	fmt.Println("directionString: ", directionString)
 
-	if len(invoices) == limit {
-		invoices = invoices[:len(invoices)-1]
-		if directionString == "next" {
-			nextCursor = &invoices[len(invoices)-1].CreatedAt
-			prevCursor = &cursor
+	if directionString == "next" {
+		// check if there is next page
+		if len(invoices) != limit {
+			nextCursor = nil
+		} else {
+			nextCursor = &invoices[limit-2].CreatedAt
+			invoices = invoices[:limit-1]
+		}
+
+		// check if there is prev page
+		if cursorString == "" {
+			prevCursor = nil
 		} else {
 			prevCursor = &invoices[0].CreatedAt
-			nextCursor = &cursor
+		}
+	} else if directionString == "prev" {
+		// check if there is prev page
+		if len(invoices) != limit-1 {
+			prevCursor = nil
+		} else {
+			prevCursor = &invoices[0].CreatedAt
+			invoices = invoices[:limit-1]
+		}
+
+		// check if there is next page
+		if cursorString == "" {
+			nextCursor = nil
+		} else {
+			if len(invoices) == 0 {
+				nextCursor = nil
+			} else {
+				nextCursor = &invoices[len(invoices)-1].CreatedAt
+			}
 		}
 	}
 

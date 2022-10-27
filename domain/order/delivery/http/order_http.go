@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
 	"lucy/cashier/lib/http_response"
@@ -128,7 +127,7 @@ func (h *orderHandler) InsertInvoice(c *gin.Context) {
 func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
 	// cursor pagination
 	limitQ := c.DefaultQuery("limit", "15")
-	cursor := c.DefaultQuery("cursor", time.Now().UTC().Format(time.RFC3339Nano))
+	cursor := c.DefaultQuery("cursor", "")
 	direction := c.DefaultQuery("direction", "next")
 	sortType := c.DefaultQuery("sort_type", "desc")
 
@@ -140,6 +139,9 @@ func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
 	if direction != "prev" {
 		direction = "next"
 	}
+
+	// direction make only next, not prev
+	direction = "next"
 
 	if sortType != "asc" {
 		sortType = "desc"
@@ -162,27 +164,31 @@ func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
 	ctx = context.WithValue(ctx, "from", from)
 	ctx = context.WithValue(ctx, "to", to)
 
-	fmt.Println("limit =>", limit)
-	fmt.Println("cursor =>", cursor)
-	fmt.Println("direction =>", direction)
-	fmt.Println("sort_type =>", sortType)
-
-	fmt.Println("branch_uuid =>", branchId)
-	fmt.Println("from =>", from)
-	fmt.Println("to =>", to)
-
 	result, nextCur, prevCur, httpCode, err := h.orderUsecase.FindInvoiceHistories(ctx)
 	if err != nil {
 		http_response.JSON(c, httpCode, err.Error(), nil)
 		return
+	}
+	var nextCurTime, prevCurTime *time.Time
+
+	if nextCur != nil {
+		nextCurInt64 := *nextCur
+		nextCurTimeSource := time.UnixMicro(nextCurInt64)
+		nextCurTime = &nextCurTimeSource
+	}
+
+	if prevCur != nil {
+		prevCurInt64 := *prevCur
+		prevCurTimeSource := time.UnixMicro(prevCurInt64)
+		prevCurTime = &prevCurTimeSource
 	}
 
 	pagination := struct {
 		NextCursor any `json:"next_cursor"`
 		PrevCursor any `json:"prev_cursor"`
 	}{
-		NextCursor: nextCur,
-		PrevCursor: prevCur,
+		NextCursor: nextCurTime,
+		PrevCursor: prevCurTime,
 	}
 
 	meta := struct {

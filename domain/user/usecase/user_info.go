@@ -203,7 +203,8 @@ func userDomainToDTO_UserBranchInfo(resp *dto.BranchResponse, u *domain.User, c 
 			paymentMethodResp.EntryUUID = paymentMethod.EntryUUID
 			paymentMethodResp.Group = paymentMethod.Group
 			paymentMethodResp.Name = paymentMethod.Name
-			paymentMethodResp.Fee = paymentMethod.Fee
+			paymentMethodResp.Fee.Fixed = paymentMethod.Fee.Fixed
+			paymentMethodResp.Fee.Percent = paymentMethod.Fee.Percent
 			paymentMethodResp.Description = paymentMethod.Description
 			paymentMethodResp.Disabled = paymentMethod.Disabled
 			paymentMethodResp.CreatedAt = time.UnixMicro(paymentMethod.CreatedAt).UTC()

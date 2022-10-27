@@ -44,12 +44,17 @@ type PaymentMethod struct {
 	EntryUUID   *string                       `bson:"entry_uuid"`
 	Group       customtype.PaymentMethodGroup `bson:"group"`
 	Name        string                        `bson:"name"`
-	Fee         float64                       `bson:"fee"`
+	Fee         PaymentMethodFee              `bson:"fee"`
 	Description string                        `bson:"description"`
 	Disabled    bool                          `bson:"disabled"`
 	CreatedAt   int64                         `bson:"created_at"`
 	UpdatedAt   *int64                        `bson:"updated_at"`
 	DeletedAt   *int64                        `bson:"deleted_at"`
+}
+
+type PaymentMethodFee struct {
+	Fixed   float64 `bson:"fixed"`
+	Percent float64 `bson:"percent"`
 }
 
 type Address struct {

@@ -22,6 +22,7 @@ func JSON(c *gin.Context, statusCode int, message interface{}, data interface{},
 		meta = v
 		break
 	}
+
 	c.JSON(statusCode, Response{
 		StatusCode: statusCode,
 		Status:     http.StatusText(statusCode),

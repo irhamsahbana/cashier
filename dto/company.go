@@ -41,12 +41,17 @@ type PaymentMethodResponse struct {
 	EntryUUID   *string                       `json:"entry_uuid"`
 	Group       customtype.PaymentMethodGroup `json:"group"`
 	Name        string                        `json:"name"`
-	Fee         float64                       `json:"fee"`
+	Fee         PaymentMethodFeeResponse      `json:"fee"`
 	Description string                        `json:"description"`
 	Disabled    bool                          `json:"disabled"`
 	CreatedAt   time.Time                     `json:"created_at"`
 	UpdatedAt   *time.Time                    `json:"updated_at"`
 	DeletedAt   *time.Time                    `json:"deleted_at"`
+}
+
+type PaymentMethodFeeResponse struct {
+	Fixed   float64 `json:"fixed"`
+	Percent float64 `json:"percent"`
 }
 
 type BranchDiscountResponse struct {
