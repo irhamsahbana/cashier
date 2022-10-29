@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
 	"time"
@@ -16,6 +18,23 @@ func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit
 	}
 
 	resp := DomainToDTO_History(result)
+
+	for i, r := range resp {
+		shiftIds := []string{r.UUID}
+
+		for _, s := range r.Supporters {
+			shiftIds = append(shiftIds, s.UUID)
+		}
+		fmt.Println("shift ids => ", shiftIds)
+		summary, code, err := u.employeeShiftRepo.Summary(ctx, branchId, shiftIds)
+		if err != nil {
+			return nil, code, errors.New(fmt.Sprintf("failed to get summary for shift %s => %s", r.UUID, err.Error()))
+		}
+
+		if summary != nil {
+			resp[i].Summary = *summary
+		}
+	}
 
 	return resp, code, err
 }
@@ -51,6 +70,7 @@ func DomainToDTO_History(result []domain.EmployeeShift) []dto.EmployeeShiftRespo
 			var supporter dto.EmployeeShiftSupporterResponse
 
 			supporter.UUID = s.UUID
+			supporter.UserUUID = s.UserUUID
 			supporter.StartTime = time.UnixMicro(s.StartTime).UTC()
 			if s.EndTime != nil {
 				endTime := time.UnixMicro(*s.EndTime).UTC()

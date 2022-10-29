@@ -11,14 +11,16 @@ import (
 )
 
 type employeeShiftMongoRepository struct {
-	DB         mongo.Database
-	Collection mongo.Collection
+	DB          mongo.Database
+	Collection  mongo.Collection
+	CollInvoice mongo.Collection
 }
 
 func NewEmployeeShiftMongoRepository(DB mongo.Database) domain.EmployeeShiftRepositoryContract {
 	return &employeeShiftMongoRepository{
-		DB:         DB,
-		Collection: *DB.Collection("employee_shifts"),
+		DB:          DB,
+		Collection:  *DB.Collection("employee_shifts"),
+		CollInvoice: *DB.Collection("invoices"),
 	}
 }
 

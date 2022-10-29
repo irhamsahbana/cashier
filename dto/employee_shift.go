@@ -41,11 +41,12 @@ type EmployeeShiftSummaryPayment struct {
 }
 
 type EmployeeShiftSummaryOrder struct {
-	UUID        string  `json:"uuid"`
-	Name        string  `json:"name"`
-	Price       float64 `json:"price"`
-	Qty         int64   `json:"quantity"`
-	RefundedQty int64   `json:"refunded_quantity"`
+	UUID        string  `json:"uuid" bson:"uuid"`
+	Category    string  `json:"category" bson:"category"`
+	Name        string  `json:"name" bson:"name"`
+	Price       float64 `json:"price" bson:"price"`
+	Qty         int64   `json:"quantity" bson:"quantity"`
+	RefundedQty int64   `json:"refunded_quantity" bson:"refunded_quantity"`
 }
 
 // requests

@@ -58,6 +58,7 @@ type EmployeeShiftClockOutData struct {
 type EmployeeShiftUsecaseContract interface {
 	ClockIn(c context.Context, branchId string, req *dto.EmployeeShiftClockInRequest) (*dto.EmployeeShiftResponse, int, error)
 	ClockOut(c context.Context, branchId string, req *dto.EmployeeShiftClockOutRequest) (*dto.EmployeeShiftResponse, int, error)
+
 	History(c context.Context, branchId string, limit, page int) ([]dto.EmployeeShiftResponse, int, error)
 	Active(c context.Context, branchId string) ([]dto.EmployeeShiftResponse, int, error)
 
@@ -70,6 +71,7 @@ type EmployeeShiftRepositoryContract interface {
 
 	History(c context.Context, branchId string, limit, page int) ([]EmployeeShift, int, error)
 	Active(c context.Context, branchId string) ([]EmployeeShift, int, error)
+	Summary(c context.Context, branchId string, shiftIds []string) (*dto.EmployeeShiftSummaryResponse, int, error)
 
 	InsertEntryCash(c context.Context, branchId, shiftId string, data *CashEntry) ([]CashEntry, int, error)
 }

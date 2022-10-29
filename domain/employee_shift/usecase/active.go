@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"lucy/cashier/domain"
 	"lucy/cashier/dto"
 	"time"
@@ -18,11 +20,28 @@ func (u *employeeShiftUsecase) Active(c context.Context, branchId string) ([]dto
 
 	resp := DomainToDTO_Active(result)
 
+	for i, r := range resp {
+		shiftIds := []string{r.UUID}
+		for _, s := range r.Supporters {
+			shiftIds = append(shiftIds, s.UUID)
+		}
+
+		summary, code, err := u.employeeShiftRepo.Summary(ctx, branchId, shiftIds)
+		if err != nil {
+			return nil, code, errors.New(fmt.Sprintf("failed to get summary for shift %s: %s", r.UUID, err.Error()))
+		}
+
+		if summary != nil {
+			resp[i].Summary = *summary
+		}
+	}
+
 	return resp, code, nil
 }
 
 func DomainToDTO_Active(result []domain.EmployeeShift) []dto.EmployeeShiftResponse {
 	resp := []dto.EmployeeShiftResponse{}
+
 	for _, r := range result {
 		var e dto.EmployeeShiftResponse
 
