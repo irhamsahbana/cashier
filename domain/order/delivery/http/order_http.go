@@ -37,6 +37,7 @@ func NewOrderHandler(router *gin.Engine, usecase domain.OrderUsecaseContract) {
 
 	r.POST("/invoices", handler.InsertInvoice)
 	r.GET("/invoices", handler.FindInvoiceHistories)
+	r.POST("/invoice-refunds", handler.MakeRefund)
 
 }
 
@@ -198,4 +199,20 @@ func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
 	}
 
 	http_response.JSON(c, http.StatusOK, "success to find invoice histories", result, meta)
+}
+
+func (h *orderHandler) MakeRefund(c *gin.Context) {
+	var request dto.RefundInsertRequest
+
+	if err := c.BindJSON(&request); err != nil {
+		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
+		return
+	}
+
+	if errMsg := ValidateInsertRefundRequest(&request); len(errMsg) > 0 {
+		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to make refund", request)
 }

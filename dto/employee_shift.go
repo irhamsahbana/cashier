@@ -2,6 +2,7 @@ package dto
 
 import "time"
 
+// Response
 type EmployeeShiftResponse struct {
 	UUID        string                           `json:"uuid"`
 	BranchUUID  string                           `json:"branch_uuid"`
@@ -34,10 +35,19 @@ type EmployeeShiftSummaryResponse struct {
 	Orders       []EmployeeShiftSummaryOrder   `json:"orders"`
 }
 
+type CashEntryResponse struct {
+	Username    string    `json:"username"`
+	Description string    `json:"description"`
+	Expense     bool      `json:"expense"`
+	Value       float64   `json:"value"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+// Requests
 type EmployeeShiftSummaryPayment struct {
-	UUID  string  `json:"uuid"`
-	Qty   int64   `json:"quantity"`
-	Total float64 `json:"total"`
+	UUID  string  `json:"uuid" bson:"uuid"`
+	Qty   int64   `json:"quantity" bson:"quantity"`
+	Total float64 `json:"total" bson:"total"`
 }
 
 type EmployeeShiftSummaryOrder struct {
@@ -73,10 +83,10 @@ type CashEntryInsertRequest struct {
 	CreatedAt   string  `json:"created_at"`
 }
 
-type CashEntryResponse struct {
-	Username    string    `json:"username"`
-	Description string    `json:"description"`
-	Expense     bool      `json:"expense"`
-	Value       float64   `json:"value"`
-	CreatedAt   time.Time `json:"created_at"`
+type RefundInsertRequest struct {
+	UUID           string        `json:"uuid"`
+	OrderGroupUUID string        `json:"order_group_uuid"`
+	Total          float64       `json:"total"`
+	EmployeeShift  EmployeeShift `json:"employee_shift"`
+	CreatedAt      string        `json:"created_at"`
 }

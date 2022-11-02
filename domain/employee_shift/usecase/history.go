@@ -25,7 +25,7 @@ func (u *employeeShiftUsecase) History(c context.Context, branchId string, limit
 		for _, s := range r.Supporters {
 			shiftIds = append(shiftIds, s.UUID)
 		}
-		fmt.Println("shift ids => ", shiftIds)
+
 		summary, code, err := u.employeeShiftRepo.Summary(ctx, branchId, shiftIds)
 		if err != nil {
 			return nil, code, errors.New(fmt.Sprintf("failed to get summary for shift %s => %s", r.UUID, err.Error()))
@@ -103,19 +103,6 @@ func DomainToDTO_History(result []domain.EmployeeShift) []dto.EmployeeShiftRespo
 			cashEntries = append(cashEntries, cashEntry)
 		}
 		e.CashEntries = cashEntries
-
-		// summary
-		summary := dto.EmployeeShiftSummaryResponse{}
-		summary.TotalRefunds = 0
-		summary.Orders = []dto.EmployeeShiftSummaryOrder{}
-		summary.Payments = []dto.EmployeeShiftSummaryPayment{
-			{
-				UUID:  "981fddcb-8e10-42ba-a77a-850ae0169c56",
-				Qty:   12,
-				Total: 120000,
-			},
-		}
-		e.Summary = summary
 
 		resp = append(resp, e)
 	}
