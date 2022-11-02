@@ -40,6 +40,7 @@ func NewEmployeeShiftHandler(router *gin.Engine, usecase domain.EmployeeShiftUse
 
 func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 	var request dto.EmployeeShiftClockInRequest
+	branchId := c.GetString("branch_uuid")
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -47,13 +48,10 @@ func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 		return
 	}
 
-	errMsg := ValidateClockInRequest(&request)
-	if len(errMsg) > 0 {
+	if errMsg := ValidateClockInRequest(&request); len(errMsg) > 0 {
 		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
-
-	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.ClockIn(ctx, branchId, &request)
@@ -67,6 +65,7 @@ func (h *EmployeeShiftHandler) ClockIn(c *gin.Context) {
 
 func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
 	var request dto.EmployeeShiftClockOutRequest
+	branchId := c.GetString("branch_uuid")
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -74,13 +73,10 @@ func (h *EmployeeShiftHandler) ClockOut(c *gin.Context) {
 		return
 	}
 
-	errMsg := validateClockOutRequest(&request)
-	if len(errMsg) > 0 {
+	if errMsg := validateClockOutRequest(&request); len(errMsg) > 0 {
 		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
-
-	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
 	result, httpCode, err := h.EmployeeShiftUsecase.ClockOut(ctx, branchId, &request)
@@ -136,20 +132,18 @@ func (h *EmployeeShiftHandler) Active(c *gin.Context) {
 
 func (h *EmployeeShiftHandler) InsertEntryCash(c *gin.Context) {
 	var request dto.CashEntryInsertRequest
+	branchId := c.GetString("branch_uuid")
+	shiftId := c.Param("employee_shift_uuid")
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
 		return
 	}
 
-	errMsg := ValidateCashEntryInsertRequest(&request)
-	if len(errMsg) > 0 {
+	if errMsg := ValidateCashEntryInsertRequest(&request); len(errMsg) > 0 {
 		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
-
-	branchId := c.GetString("branch_uuid")
-	shiftId := c.Param("employee_shift_uuid")
 
 	ctx := context.Background()
 	result, code, err := h.EmployeeShiftUsecase.InsertEntryCash(ctx, branchId, shiftId, &request)

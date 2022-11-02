@@ -38,6 +38,8 @@ type InvoiceRefundResponse struct {
 	EmployeeShift  EmployeeShift `json:"employee_shift"`
 	Total          float64       `json:"total"`
 	CreatedAt      time.Time     `json:"created_at"`
+	UpdatedAt      *time.Time    `json:"updated_at"`
+	DeletedAt      *time.Time    `json:"deleted_at"`
 }
 
 type InvoiceCreditContractResponse struct {

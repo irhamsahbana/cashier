@@ -203,6 +203,7 @@ func (h *orderHandler) FindInvoiceHistories(c *gin.Context) {
 
 func (h *orderHandler) MakeRefund(c *gin.Context) {
 	var request dto.RefundInsertRequest
+	branchId := c.GetString("branch_uuid")
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
@@ -214,5 +215,12 @@ func (h *orderHandler) MakeRefund(c *gin.Context) {
 		return
 	}
 
-	http_response.JSON(c, http.StatusOK, "success to make refund", request)
+	ctx := context.Background()
+	result, httpCode, err := h.orderUsecase.InsertRefund(ctx, branchId, &request)
+	if err != nil {
+		http_response.JSON(c, httpCode, err.Error(), nil)
+		return
+	}
+
+	http_response.JSON(c, http.StatusOK, "success to make refund", result)
 }

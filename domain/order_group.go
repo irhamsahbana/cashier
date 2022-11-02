@@ -98,6 +98,8 @@ type OrderRepositoryContract interface {
 
 	InsertInvoice(ctx context.Context, branchId string, data *Invoice) (*Invoice, int, error)
 	FindInvoiceHistories(ctx context.Context) (invoices []Invoice, nextCur, prevCur *int64, code int, err error)
+
+	InsertRefund(ctx context.Context, branchId string, data *Refund) ([]Refund, int, error)
 }
 
 type OrderUsecaseContract interface {
@@ -107,4 +109,6 @@ type OrderUsecaseContract interface {
 
 	InsertInvoice(ctx context.Context, branchId string, req *dto.InvoiceInsertRequest) (*dto.InvoiceResponse, int, error)
 	FindInvoiceHistories(ctx context.Context) (invoices []dto.InvoiceResponse, nextCur, prevCur *int64, code int, err error)
+
+	InsertRefund(ctx context.Context, branchId string, req *dto.RefundInsertRequest) ([]dto.InvoiceRefundResponse, int, error)
 }

@@ -6,6 +6,7 @@ type Invoice struct {
 	Customer        *Customer               `bson:"customer"`
 	Payments        []InvoicePayment        `bson:"payments"`
 	OrderGroups     []OrderGroup            `bson:"order_groups"`
+	Refunds         []Refund                `bson:"refunds"`
 	CreditContracts []InvoiceCreditContract `bson:"credit_contracts"`
 	TotalAmount     float64                 `bson:"total_amount"`
 	TotalTax        float64                 `bson:"total_tax"`
@@ -16,6 +17,16 @@ type Invoice struct {
 	CompletedAt     *int64                  `bson:"completed_at"`
 	CreatedAt       int64                   `bson:"created_at"`
 	UpdatedAt       *int64                  `bson:"updated_at"`
+}
+
+type Refund struct {
+	UUID           string               `bson:"uuid"`
+	OrderGroupUUID string               `bson:"order_group_uuid"`
+	EmployeeShift  InvoiceEmployeeShift `bson:"employee_shift"`
+	Total          float64              `bson:"total"`
+	CreatedAt      int64                `bson:"created_at"`
+	UpdatedAt      *int64               `bson:"updated_at"`
+	DeletedAt      *int64               `bson:"deleted_at"`
 }
 
 type InvoicePayment struct {
