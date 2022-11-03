@@ -113,9 +113,9 @@ func (repo *employeeShiftMongoRepository) ClockIn(ctx context.Context, branchId 
 			return nil, http.StatusInternalServerError, err
 		}
 
-		// deny if shift id same as supporting shift id
+		// deny if main shift id same as supporting shift id
 		if shift.UUID == data.UUID {
-			return nil, http.StatusConflict, errors.New("shift id same as supporting shift id")
+			return nil, http.StatusConflict, errors.New("main shift id same as supporting shift id")
 		}
 
 		// check if there is supporter shift in the same day and same main shift, if there is, return error
