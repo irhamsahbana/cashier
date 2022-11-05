@@ -10,7 +10,7 @@ import (
 
 func validateClockOutRequest(req *dto.EmployeeShiftClockOutRequest) customtype.Message {
 	msg := customtype.Message{}
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		helper.AddMessage("uuid", err.Error(), msg)
 	}
 

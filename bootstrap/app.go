@@ -29,7 +29,7 @@ func AppInit() {
 	App = &Application{}
 	App.Config = InitConfig()
 	App.Log = InitLogger()
-	App.Maria = InitMariaDatabase()
+	// App.Maria = InitMariaDatabase()
 	App.Mongo = InitMongoDatabase()
-	App.Redis = InitRedis()
+	// App.Redis = InitRedis()
 }

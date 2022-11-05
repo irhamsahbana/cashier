@@ -11,7 +11,7 @@ import (
 func ValidateItemVariantsUpsertRequest(req *dto.ItemAndVariantsUpsertRequest) customtype.Message {
 	msg := customtype.Message{}
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		msg = helper.AddMessage("uuid", err.Error(), msg)
 	}
 
@@ -25,7 +25,7 @@ func ValidateItemVariantsUpsertRequest(req *dto.ItemAndVariantsUpsertRequest) cu
 
 	// variants
 	for vi, v := range req.Variants {
-		if err := validator.IsUUID(v.UUID); err != nil {
+		if err := validator.Uuid(v.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("variants.%d.uuid", vi), err.Error(), msg)
 		}
 

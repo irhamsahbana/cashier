@@ -62,7 +62,31 @@ func NewHttpRoutes(r *gin.Engine) {
 	appStorageURL := bootstrap.App.Config.GetString("app.url") + bootstrap.App.Config.GetString("app.static_asssets_url")
 
 	r.Static(bootstrap.App.Config.GetString("app.static_asssets_url"), bootstrap.App.Config.GetString("app.static_assets"))
-	r.Use(cors.Default())
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"*"}
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "PATCH"}
+	corsConfig.AllowHeaders = []string{
+		"Origin",
+		"Content-Length",
+		"Content-Type",
+		"Authorization",
+		"X-Requested-With",
+		"Accept",
+		"Accept-Encoding",
+		"Accept-Language",
+		"Host",
+		"Referer",
+		"User-Agent",
+		"X-Forwarded-For",
+		"X-Forwarded-Host",
+		"X-Forwarded-Proto",
+		"X-Real-Ip",
+		"X-ACCESS-TOKEN",
+		"X-REFRESH-TOKEN",
+	}
+
+	r.Use(cors.New(corsConfig))
 
 	// user
 	tokenRepo := _tokenRepo.NewTokenMongoRepository(*mongoDatabase, domain.TokenableType_USER)

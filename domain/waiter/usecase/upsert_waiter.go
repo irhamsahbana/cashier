@@ -14,7 +14,7 @@ func (u *waiterUsecase) UpsertWaiter(c context.Context, branchId string, req *dt
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 

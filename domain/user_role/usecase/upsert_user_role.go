@@ -13,7 +13,7 @@ func (u *userRoleUsecase) UpsertUserRole(ctx context.Context, req *domain.UserRo
 	ctx, cancel := context.WithTimeout(ctx, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 

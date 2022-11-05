@@ -123,12 +123,12 @@ func validateUpsertZonesRequest(req domain.ZoneUpsertRequest) error {
 	spaceGroupIds := make(map[string]bool)
 
 	for _, request := range req.Zones {
-		if err := validator.IsUUID(request.UUID); err != nil {
+		if err := validator.Uuid(request.UUID); err != nil {
 			return errors.New("invalid uuid")
 		}
 
 		for index, spaceGroup := range request.SpaceGroups {
-			if err := validator.IsUUID(spaceGroup); err != nil {
+			if err := validator.Uuid(spaceGroup); err != nil {
 				return errors.New(fmt.Sprintf("invalid space group uuid at index %v (%v)", index, spaceGroup))
 			}
 

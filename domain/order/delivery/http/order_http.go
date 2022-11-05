@@ -43,6 +43,7 @@ func NewOrderHandler(router *gin.Engine, usecase domain.OrderUsecaseContract) {
 
 func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 	var request dto.OrderGroupUpsertRequest
+	branchId := c.GetString("branch_uuid")
 
 	if err := c.BindJSON(&request); err != nil {
 		http_response.JSON(c, http.StatusUnprocessableEntity, err.Error(), nil)
@@ -53,8 +54,6 @@ func (h *orderHandler) UpsertActiveOrder(c *gin.Context) {
 		http_response.JSON(c, http.StatusUnprocessableEntity, errMsg, nil)
 		return
 	}
-
-	branchId := c.GetString("branch_uuid")
 
 	ctx := context.Background()
 	result, httpCode, err := h.orderUsecase.UpsertActiveOrder(ctx, branchId, &request)
@@ -80,10 +79,9 @@ func (h *orderHandler) FindActiveOrders(c *gin.Context) {
 }
 
 func (h *orderHandler) DeleteActiveOrder(c *gin.Context) {
+	var request dto.OrderGroupDeleteRequest
 	branchId := c.GetString("branch_uuid")
 	orderId := c.Param("id")
-
-	var request dto.OrderGroupDeleteRequest
 
 	err := c.BindJSON(&request)
 	if err != nil {
@@ -216,7 +214,7 @@ func (h *orderHandler) MakeRefund(c *gin.Context) {
 	}
 
 	ctx := context.Background()
-	result, httpCode, err := h.orderUsecase.InsertRefund(ctx, branchId, &request)
+	result, httpCode, err := h.orderUsecase.InsertRefund(ctx, branchId, request.InvoiceUUID, &request)
 	if err != nil {
 		http_response.JSON(c, httpCode, err.Error(), nil)
 		return

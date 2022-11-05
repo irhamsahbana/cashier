@@ -84,9 +84,16 @@ type CashEntryInsertRequest struct {
 }
 
 type RefundInsertRequest struct {
-	UUID           string        `json:"uuid"`
-	OrderGroupUUID string        `json:"order_group_uuid"`
-	Total          float64       `json:"total"`
-	EmployeeShift  EmployeeShift `json:"employee_shift"`
-	CreatedAt      string        `json:"created_at"`
+	UUID          string        `json:"uuid"`
+	InvoiceUUID   string        `json:"invoice_uuid"`
+	Total         float64       `json:"total"`
+	EmployeeShift EmployeeShift `json:"employee_shift"`
+	OrderRefunds  []OrderRefund `json:"order_refunds"`
+	CreatedAt     string        `json:"created_at"`
+}
+
+type OrderRefund struct {
+	OrderGroupUUID string `json:"order_group_uuid"`
+	OrderUUID      string `json:"order_uuid"`
+	Qty            int64  `json:"quantity"`
 }

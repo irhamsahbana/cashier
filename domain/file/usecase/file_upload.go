@@ -14,7 +14,7 @@ func (u *FileUploadUsecase) UploadFile(c context.Context, branchId string, file 
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.FileableUUID); err != nil {
+	if err := validator.Uuid(req.FileableUUID); err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 

@@ -6,7 +6,7 @@ type Invoice struct {
 	Customer        *Customer               `bson:"customer"`
 	Payments        []InvoicePayment        `bson:"payments"`
 	OrderGroups     []OrderGroup            `bson:"order_groups"`
-	Refunds         []Refund                `bson:"refunds"`
+	Refunds         []InvoiceRefund         `bson:"refunds"`
 	CreditContracts []InvoiceCreditContract `bson:"credit_contracts"`
 	TotalAmount     float64                 `bson:"total_amount"`
 	TotalTax        float64                 `bson:"total_tax"`
@@ -19,7 +19,7 @@ type Invoice struct {
 	UpdatedAt       *int64                  `bson:"updated_at"`
 }
 
-type Refund struct {
+type InvoiceRefund struct {
 	UUID           string               `bson:"uuid"`
 	OrderGroupUUID string               `bson:"order_group_uuid"`
 	EmployeeShift  InvoiceEmployeeShift `bson:"employee_shift"`
@@ -69,4 +69,10 @@ type InvoiceSpace struct {
 	ZoneName    string `bson:"zone_name"`
 	GroupCode   string `bson:"group_code"`
 	SpaceNumber int    `bson:"space_number"`
+}
+
+type OrderRefundData struct {
+	OrderGroupUUID string `bson:"order_group_uuid" json:"order_group_uuid"`
+	OrderUUID      string `bson:"order_uuid" json:"order_uuid"`
+	Qty            int64  `bson:"refunded_qty" json:"refunded_qty"`
 }

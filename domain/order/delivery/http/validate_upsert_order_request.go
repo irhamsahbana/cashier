@@ -5,7 +5,7 @@ import (
 	"lucy/cashier/dto"
 	customtype "lucy/cashier/lib/custom_type"
 	"lucy/cashier/lib/helper"
-	"lucy/cashier/lib/validator"
+	valid "lucy/cashier/lib/validator"
 	"time"
 )
 
@@ -28,7 +28,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 		msg = helper.AddMessage("type", "order group type must be either delivery, queue, or space", msg)
 	}
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := valid.Uuid(req.UUID); err != nil {
 		msg = helper.AddMessage("uuid", err.Error(), msg)
 	}
 
@@ -38,7 +38,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate delivery
 	if req.Delivery != nil {
-		if err := validator.IsUUID(req.Delivery.UUID); err != nil {
+		if err := valid.Uuid(req.Delivery.UUID); err != nil {
 			msg = helper.AddMessage("delivery.uuid", err.Error(), msg)
 		}
 
@@ -67,7 +67,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate queue
 	if req.Queue != nil {
-		if err := validator.IsUUID(req.Queue.UUID); err != nil {
+		if err := valid.Uuid(req.Queue.UUID); err != nil {
 			msg = helper.AddMessage("queue.uuid", err.Error(), msg)
 		}
 
@@ -84,11 +84,11 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate order
 	for orderIndex, order := range req.Orders {
-		if err := validator.IsUUID(order.UUID); err != nil {
+		if err := valid.Uuid(order.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.uuid", orderIndex), err.Error(), msg)
 		}
 
-		if err := validator.IsUUID(order.Item.UUID); err != nil {
+		if err := valid.Uuid(order.Item.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("orders.%d.item.uuid", orderIndex), err.Error(), msg)
 		}
 
@@ -102,7 +102,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 		// order modifiers
 		for modIndex, modifier := range order.Modifiers {
-			if err := validator.IsUUID(modifier.UUID); err != nil {
+			if err := valid.Uuid(modifier.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.modifiers.%d.uuid", orderIndex, modIndex), err.Error(), msg)
 			}
 
@@ -113,11 +113,11 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 		// order waiter
 		if order.Waiter != nil {
-			if err := validator.IsUUID(order.Waiter.UUID); err != nil {
+			if err := valid.Uuid(order.Waiter.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.waiter.uuid", orderIndex), err.Error(), msg)
 			}
 
-			if err := validator.IsUUID(order.Waiter.BranchUUID); err != nil {
+			if err := valid.Uuid(order.Waiter.BranchUUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("orders.%d.waiter.branch_uuid", orderIndex), err.Error(), msg)
 			}
 		}
@@ -125,7 +125,7 @@ func validateUpserOrderRequest(req *dto.OrderGroupUpsertRequest) customtype.Mess
 
 	// validate taxes
 	for taxIndex, tax := range req.Taxes {
-		if err := validator.IsUUID(tax.UUID); err != nil {
+		if err := valid.Uuid(tax.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("taxes.%d.uuid", taxIndex), err.Error(), msg)
 		}
 

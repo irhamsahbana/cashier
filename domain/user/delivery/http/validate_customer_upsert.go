@@ -13,7 +13,7 @@ func validateUpsertCustomerRequest(req *dto.CustomerUpserRequest) customtype.Mes
 	msg := customtype.Message{}
 
 	// uuid
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		msg = helper.AddMessage("uuid", "customer uuid is not valid", msg)
 	}
 	// -- uuid

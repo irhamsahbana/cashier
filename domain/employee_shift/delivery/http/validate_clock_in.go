@@ -11,16 +11,16 @@ import (
 func ValidateClockInRequest(req *dto.EmployeeShiftClockInRequest) customtype.Message {
 	msg := customtype.Message{}
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		helper.AddMessage("uuid", err.Error(), msg)
 	}
 
-	if err := validator.IsUUID(req.UserUUID); err != nil {
+	if err := validator.Uuid(req.UserUUID); err != nil {
 		helper.AddMessage("user_uuid", err.Error(), msg)
 	}
 
 	if req.SupportingUUID != nil {
-		if err := validator.IsUUID(*req.SupportingUUID); err != nil {
+		if err := validator.Uuid(*req.SupportingUUID); err != nil {
 			helper.AddMessage("supporting_uuid", err.Error(), msg)
 		}
 	}

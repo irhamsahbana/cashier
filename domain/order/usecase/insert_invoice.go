@@ -102,6 +102,9 @@ func DTOtoDomain_InsertInvoice(data *domain.Invoice, req *dto.InvoiceInsertReque
 
 		data.CreditContracts = append(data.CreditContracts, cc)
 	}
+
+	// refunds
+	data.Refunds = []domain.InvoiceRefund{}
 }
 
 func DomainToDTO_InsertInvoice(resp *dto.InvoiceResponse, data *domain.Invoice) {
@@ -180,4 +183,18 @@ func DomainToDTO_InsertInvoice(resp *dto.InvoiceResponse, data *domain.Invoice) 
 	}
 
 	resp.Refunds = []dto.InvoiceRefundResponse{}
+	for _, r := range data.Refunds {
+		var refund dto.InvoiceRefundResponse
+		refund.UUID = r.UUID
+		refund.OrderGroupUUID = r.OrderGroupUUID
+		refund.Total = r.Total
+
+		refund.EmployeeShift.EmployeeShiftUUID = r.EmployeeShift.EmployeeShiftUUID
+		refund.EmployeeShift.UserUUID = r.EmployeeShift.UserUUID
+		refund.EmployeeShift.Name = r.EmployeeShift.Name
+
+		refund.CreatedAt = time.UnixMicro(r.CreatedAt)
+
+		resp.Refunds = append(resp.Refunds, refund)
+	}
 }

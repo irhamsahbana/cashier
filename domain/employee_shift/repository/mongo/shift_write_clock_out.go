@@ -68,9 +68,7 @@ func (repo *employeeShiftMongoRepository) ClockOut(ctx context.Context, branchId
 		}
 
 		arrayFilters := bson.A{
-			bson.M{
-				"elem.end_time": nil,
-			},
+			bson.M{"elem.end_time": nil},
 		}
 
 		_, err := repo.Collection.UpdateOne(ctx, filter, update, options.Update().SetArrayFilters(options.ArrayFilters{

@@ -12,7 +12,7 @@ func (u *spaceGroupUsecase) UpsertSpaceGroup(c context.Context, branchId string,
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
@@ -64,6 +64,8 @@ func validateSpaceGroupShape(shape domain.SpaceGroupShape) error {
 	case "circle":
 		return nil
 	case "square":
+		return nil
+	case "rectangle":
 		return nil
 	default:
 		return domain.ErrSpaceGroupShapeInvalid

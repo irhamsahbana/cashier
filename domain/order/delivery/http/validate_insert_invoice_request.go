@@ -12,7 +12,7 @@ import (
 func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Message {
 	msg := customtype.Message{}
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		msg = helper.AddMessage("uuid", err.Error(), msg)
 	}
 
@@ -38,16 +38,16 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 	// Payments
 	for payIndex, payment := range req.Payments {
-		if err := validator.IsUUID(payment.UUID); err != nil {
+		if err := validator.Uuid(payment.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("payments.%d.uuid", payIndex), err.Error(), msg)
 		}
 
-		if err := validator.IsUUID(payment.OrderGroupUUID); err != nil {
+		if err := validator.Uuid(payment.OrderGroupUUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("payments.%d.order_group_uuid", payIndex), err.Error(), msg)
 		}
 
 		// payment method
-		if err := validator.IsUUID(payment.PaymentMethod.PaymentMethodUUID); err != nil {
+		if err := validator.Uuid(payment.PaymentMethod.PaymentMethodUUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("payments.%d.payment_method.payment_method_uuid", payIndex), err.Error(), msg)
 		}
 
@@ -90,11 +90,11 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 		// --payment method
 
 		// employee shift
-		if err := validator.IsUUID(payment.EmployeeShift.EmployeeShiftUUID); err != nil {
+		if err := validator.Uuid(payment.EmployeeShift.EmployeeShiftUUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("payments.%d.employee_shift.employee_shift_uuid", payIndex), err.Error(), msg)
 		}
 
-		if err := validator.IsUUID(payment.EmployeeShift.UserUUID); err != nil {
+		if err := validator.Uuid(payment.EmployeeShift.UserUUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("payments.%d.employee_shift.user_uuid", payIndex), err.Error(), msg)
 		}
 
@@ -140,7 +140,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 			msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.type", ogIndex), "order group type must be either delivery, queue, or space", msg)
 		}
 
-		if err := validator.IsUUID(og.UUID); err != nil {
+		if err := validator.Uuid(og.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.uuid", ogIndex), err.Error(), msg)
 		}
 
@@ -150,7 +150,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 		// validate delivery
 		if og.Delivery != nil {
-			if err := validator.IsUUID(og.Delivery.UUID); err != nil {
+			if err := validator.Uuid(og.Delivery.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.delivery.uuid", ogIndex), err.Error(), msg)
 			}
 
@@ -179,7 +179,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 		// validate queue
 		if og.Queue != nil {
-			if err := validator.IsUUID(og.Queue.UUID); err != nil {
+			if err := validator.Uuid(og.Queue.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.queue.uuid", ogIndex), err.Error(), msg)
 			}
 
@@ -196,11 +196,11 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 		// validate order
 		for orderIndex, order := range og.Orders {
-			if err := validator.IsUUID(order.UUID); err != nil {
+			if err := validator.Uuid(order.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.orders.%d.uuid", ogIndex, orderIndex), err.Error(), msg)
 			}
 
-			if err := validator.IsUUID(order.Item.UUID); err != nil {
+			if err := validator.Uuid(order.Item.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.orders.%d.item.uuid", ogIndex, orderIndex), err.Error(), msg)
 			}
 
@@ -214,7 +214,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 			// order modifiers
 			for modIndex, modifier := range order.Modifiers {
-				if err := validator.IsUUID(modifier.UUID); err != nil {
+				if err := validator.Uuid(modifier.UUID); err != nil {
 					msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.orders.%d.modifiers.%d.uuid", ogIndex, orderIndex, modIndex), err.Error(), msg)
 				}
 
@@ -225,11 +225,11 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 			// order waiter
 			if order.Waiter != nil {
-				if err := validator.IsUUID(order.Waiter.UUID); err != nil {
+				if err := validator.Uuid(order.Waiter.UUID); err != nil {
 					msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.orders.%d.waiter.uuid", ogIndex, orderIndex), err.Error(), msg)
 				}
 
-				if err := validator.IsUUID(order.Waiter.BranchUUID); err != nil {
+				if err := validator.Uuid(order.Waiter.BranchUUID); err != nil {
 					msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.orders.%d.waiter.branch_uuid", ogIndex, orderIndex), err.Error(), msg)
 				}
 			}
@@ -237,7 +237,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 		// validate taxes
 		for taxIndex, tax := range og.Taxes {
-			if err := validator.IsUUID(tax.UUID); err != nil {
+			if err := validator.Uuid(tax.UUID); err != nil {
 				msg = helper.AddMessage(fmt.Sprintf("order_groups.%d.taxes.%d.uuid", ogIndex, taxIndex), err.Error(), msg)
 			}
 
@@ -254,7 +254,7 @@ func ValidateInsertInvoiceRequest(req *dto.InvoiceInsertRequest) customtype.Mess
 
 	// credit contracts
 	for ccIndex, cc := range req.CreditContracts {
-		if err := validator.IsUUID(cc.UUID); err != nil {
+		if err := validator.Uuid(cc.UUID); err != nil {
 			msg = helper.AddMessage(fmt.Sprintf("credit_contracts.%d.uuid", ccIndex), err.Error(), msg)
 		}
 

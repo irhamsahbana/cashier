@@ -15,7 +15,7 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 	ctx, cancel := context.WithTimeout(c, u.contextTimeout)
 	defer cancel()
 
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		return nil, http.StatusUnprocessableEntity, err
 	}
 
@@ -28,7 +28,7 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 	for _, modifierGroup := range req.ModifierGroups {
 		var modifierGroupItem domain.ModifierGroup
 
-		if err := validator.IsUUID(modifierGroup.UUID); err != nil {
+		if err := validator.Uuid(modifierGroup.UUID); err != nil {
 			return nil, http.StatusUnprocessableEntity, err
 		}
 
@@ -50,7 +50,7 @@ func (u *itemCategoryUsecase) UpsertItemCategoryAndModifiers(c context.Context, 
 				modifierItem.Price = modifier.Price
 				modifierItem.CreatedAt = time.Now().UnixMicro()
 
-				if err := validator.IsUUID(modifier.UUID); err != nil {
+				if err := validator.Uuid(modifier.UUID); err != nil {
 					return nil, http.StatusUnprocessableEntity, err
 				}
 

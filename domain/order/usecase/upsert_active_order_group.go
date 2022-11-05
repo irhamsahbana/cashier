@@ -275,15 +275,16 @@ func DomainToDTO_UpsertActiveOrder(resp *dto.OrderGroupResponse, data *domain.Or
 			orderDeletedAt = &deletedAt
 		}
 		orders = append(orders, dto.OrderResponse{
-			UUID:      order.UUID,
-			Item:      item,
-			Modifiers: modifiers,
-			Discounts: discounts,
-			Waiter:    waiter,
-			Note:      order.Note,
-			CreatedAt: time.UnixMicro(order.CreatedAt).Format(time.RFC3339Nano),
-			UpdatedAt: orderUpdatedAt,
-			DeletedAt: orderDeletedAt,
+			UUID:        order.UUID,
+			Item:        item,
+			Modifiers:   modifiers,
+			Discounts:   discounts,
+			Waiter:      waiter,
+			Note:        order.Note,
+			RefundedQty: order.RefundedQty,
+			CreatedAt:   time.UnixMicro(order.CreatedAt).Format(time.RFC3339Nano),
+			UpdatedAt:   orderUpdatedAt,
+			DeletedAt:   orderDeletedAt,
 		})
 	}
 	resp.Orders = orders

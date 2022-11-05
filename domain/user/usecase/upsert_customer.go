@@ -42,7 +42,7 @@ func (u *userUsecase) UpsertCustomer(c context.Context, branchId string, req *dt
 }
 
 func validateUpsertCustomerRequest(req *dto.CustomerUpserRequest) error {
-	if err := validator.IsUUID(req.UUID); err != nil {
+	if err := validator.Uuid(req.UUID); err != nil {
 		return errors.New("invalid uuid")
 	}
 

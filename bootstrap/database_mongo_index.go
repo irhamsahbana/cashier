@@ -193,6 +193,16 @@ func initMongoDatabaseIndexes(ctx context.Context, client *mongo.Client, dbName 
 					},
 					Options: options.Index().SetUnique(true),
 				},
+				{
+					Keys: bson.D{
+						{Key: "order_groups.uuid", Value: 1},
+					},
+				},
+				{
+					Keys: bson.D{
+						{Key: "order_groups.orders.uuid", Value: 1},
+					},
+				},
 			})
 			errCollectionIndexingCheck(err, collection)
 			notifyCollectionIndexesCreated(res)
