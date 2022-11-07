@@ -104,6 +104,7 @@ type OrderGroupUpsertRequest struct {
 
 type OrderGroupDeleteRequest struct {
 	CancelReason string `json:"cancel_reason"`
+	DeletedAt    string `json:"deleted_at"`
 }
 
 // -- requests

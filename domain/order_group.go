@@ -94,7 +94,7 @@ type Customer struct {
 type OrderRepositoryContract interface {
 	UpsertActiveOrder(ctx context.Context, branchId string, OrderGroup *OrderGroup) (*OrderGroup, int, error)
 	FindActiveOrders(ctx context.Context, branchId string) ([]OrderGroup, int, error)
-	DeleteActiveOrder(ctx context.Context, branchId, OrderId, reason string) (*OrderGroup, int, error)
+	DeleteActiveOrder(ctx context.Context, branchId, OrderId, reason string, deletedAt int64) (*OrderGroup, int, error)
 
 	InsertInvoice(ctx context.Context, branchId string, data *Invoice) (*Invoice, int, error)
 	FindInvoiceHistories(ctx context.Context) (invoices []Invoice, nextCur, prevCur *int64, code int, err error)

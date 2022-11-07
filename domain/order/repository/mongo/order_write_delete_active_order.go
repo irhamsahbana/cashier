@@ -6,14 +6,13 @@ import (
 	"lucy/cashier/domain"
 	"lucy/cashier/lib/logger"
 	"net/http"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (repo *orderRepository) DeleteActiveOrder(ctx context.Context, branchId, orderId, reason string) (*domain.OrderGroup, int, error) {
+func (repo *orderRepository) DeleteActiveOrder(ctx context.Context, branchId, orderId, reason string, deletedAt int64) (*domain.OrderGroup, int, error) {
 	filter := bson.M{
 		"$and": []bson.M{
 			{"branch_uuid": branchId},
@@ -35,7 +34,6 @@ func (repo *orderRepository) DeleteActiveOrder(ctx context.Context, branchId, or
 	}
 
 	data.CancelReason = &reason
-	deletedAt := time.Now().UTC().UnixMicro()
 	data.DeletedAt = &deletedAt
 
 	// save to deleted_order_groups
